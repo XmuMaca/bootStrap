@@ -62,7 +62,7 @@
             </div>
             <div class="row-form">
                 <div class="span12">
-                    <input type="text" name="password_input" placeholder="password"/>
+                    <input type="password" name="password_input" placeholder="password"/>
                 </div>            
             </div>
             <div class="row-form">

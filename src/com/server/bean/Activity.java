@@ -20,7 +20,27 @@ public class Activity
 	
 	private String album;
 	
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getShares() {
+		return shares;
+	}
+
+	public void setShares(int shares) {
+		this.shares = shares;
+	}
+
 	private int isBanned;
+	
+	private int likes;
+	
+	private int shares;
 
 	public String getId() {
 		return id;

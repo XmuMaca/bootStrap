@@ -214,7 +214,8 @@
                                     </div>                                    
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
+                        <button class="btn btn-warning" type="button" onClick="document.location.href = 'LogoutServlet';">Logout</button>                        
                     </div>
                 </li>                
             </ul>

@@ -60,6 +60,13 @@ public class BoardcastServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
+		String[] userids = request.getParameterValues("ms_example");
+		/*for(int i = 0; i < userids.length; i++)
+		{
+			System.out.printf("%s\r\n", userids[i]);
+		}*/
+		
+		
 		message = new Message();
 		message.setMsgId(request.getParameter("msgId_input"));
 		message.setMsgType(request.getParameter("msgType_input"));
@@ -70,7 +77,7 @@ public class BoardcastServlet extends HttpServlet {
 		db.createConnection();
 		
 		msg_sql = String.format("insert into %s values(?,?,?,?)", IStringConstans.MESSAGE_TABLE_NAME);
-		user_sql = String.format("select * from %s", IStringConstans.USER_TABLE_NAME);
+		user_sql = String.format("select * from %s where userId = ?", IStringConstans.USER_TABLE_NAME);
 		receive_sql = String.format("insert into %s values(?,?)", IStringConstans.RECEIVE_TABLE_NAME);
 		
 		users = new ArrayList<String>();
@@ -85,11 +92,18 @@ public class BoardcastServlet extends HttpServlet {
 			pstat.executeUpdate();
 			pstat.close();
 			
-			ResultSet rs = db.executeQuery(user_sql);
-			while(rs.next())
+			for(int i = 0; i < userids.length; i++)
 			{
-				String id = rs.getString("userId");
-				users.add(id);
+				pstat = db.getConnection().prepareStatement(user_sql);
+				pstat.setString(1, userids[i]);
+				ResultSet rs = pstat.executeQuery();
+				while(rs.next())
+				{
+					String id = rs.getString("userId");
+					users.add(id);
+				}
+				rs.close();
+				pstat.close();
 			}
 			
 			for(String ele : users)
