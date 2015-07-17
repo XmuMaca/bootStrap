@@ -18,7 +18,7 @@ public interface IStringConstans
 	String SAEURL = "jdbc:mysql://r.rdc.sae.sina.com.cn:3307/app_softwebserver";
 	
 	/*user & password*/
-	String USER = "cz";
+	String USER = "root";
 	String PASSWORD = "software";
 	
 	String LOCAL_USER = "root";
@@ -26,4 +26,10 @@ public interface IStringConstans
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
+	
+	
+	String REMOTE_IMAGE_PATH = "http://101.200.191.149:8080/FirstWeb/images_repo/";
+	
+	/*the pattern of the image*/
+	String PNG = ".png";
 }
