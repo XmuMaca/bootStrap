@@ -67,6 +67,7 @@ public class SettingsServlet extends HttpServlet {
 		}
 		user.setGender(request.getParameter("userGender_input"));
 		user.setLocation(request.getParameter("userLocation_input"));
+		System.out.println(request.getParameter("userLocation_input"));
 		user.setEmail(request.getParameter("userEmail_input"));
 		user.setPhone(request.getParameter("userPhone_input"));
 		

@@ -26,6 +26,7 @@ public class LoginServlet extends HttpServlet
 	private static final long serialVersionUID = 1L;
     
 	private Account account;
+	private String adminIcon;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -47,7 +48,7 @@ public class LoginServlet extends HttpServlet
 		String id = request.getParameter("userid_input");
 		String password = request.getParameter("password_input");
 		
-		String query_sql = String.format("select * from %s where userId=%s and userPassword=%s", IStringConstans.USER_TABLE_NAME, id, password);
+		String query_sql = String.format("select * from %s where userId='%s' and userPassword='%s' and userIdentity='admin'", IStringConstans.USER_TABLE_NAME, id, password);
 		
 		if (db.query(query_sql))
 		{
@@ -55,13 +56,14 @@ public class LoginServlet extends HttpServlet
 			{
 				ResultSet rs = db.executeQuery(query_sql);
 				account = new Account();
+				
 				while(rs.next())
 				{
 					request.getSession().setAttribute("userId", rs.getString("userId"));
 					
 					account.setId(rs.getString("userId"));
 					account.setName(rs.getString("userName"));
-					account.setIcon(rs.getString("userIcon"));
+					adminIcon = rs.getString("adminIcon");
 					account.setGender(rs.getString("userGender"));
 					account.setLocation(rs.getString("userLocation"));
 					account.setEmail(rs.getString("userEmail"));
@@ -76,6 +78,7 @@ public class LoginServlet extends HttpServlet
 			}
 			
 			request.getSession().setAttribute("account", account);
+			request.getSession().setAttribute("adminIcon", adminIcon);
 			
 			response.sendRedirect("activities.jsp");
 			//response.sendRedirect("settings.jsp");

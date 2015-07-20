@@ -7,7 +7,7 @@ import com.server.bean.Account;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 
-public class UsersDAO {
+public class BanedUsersDAO {
 	
 	public ArrayList<Account> readUsers()
 	{
@@ -22,7 +22,7 @@ public class UsersDAO {
 		{
 			db.createConnection();
 			conn = db.getConnection();
-			String sql = String.format("select * from %s where userIdentity='normal'", IStringConstans.USER_TABLE_NAME);
+			String sql = String.format("select * from %s where userIdentity='normal' and userIsBaned=1", IStringConstans.USER_TABLE_NAME);
 			pstmt = conn.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery();

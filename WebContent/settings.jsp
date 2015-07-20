@@ -3,6 +3,12 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <% request.setCharacterEncoding("utf-8"); %>
+
+<%
+	Account account = (Account)session.getAttribute("account");
+	String adminIcon = (String)session.getAttribute("adminIcon");
+%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>        
@@ -38,6 +44,9 @@
     <script type='text/javascript' src='js/plugins/tagsinput/jquery.tagsinput.min.js'></script>
     <script type='text/javascript' src='js/plugins/maskedinput/jquery.maskedinput-1.3.min.js'></script>
     <script type='text/javascript' src='js/plugins/multiselect/jquery.multi-select.min.js'></script>
+    
+    <script type='text/javascript' src='js/plugins/validationEngine/languages/jquery.validationEngine-en.js'></script>
+    <script type='text/javascript' src='js/plugins/validationEngine/jquery.validationEngine.js'></script>
     
     <script type='text/javascript' src='js/plugins/shbrush/XRegExp.js'></script>
     <script type='text/javascript' src='js/plugins/shbrush/shCore.js'></script>
@@ -225,7 +234,7 @@
                 
                 <div class="page-header">
                     <div class="icon">
-                        <span class="ico-pen-2"></span>
+                        <span class="ico-cog-2"></span>
                     </div>
                     <h1>Form <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
@@ -241,63 +250,65 @@
                                 </ul>                                  
                             </div>                                        
                             <div class="data-fluid">
-                            <form id="settings_form" action="SettingsServlet" method="post">
+                            <form id="validate" action="SettingsServlet" method="post">
                               
-								<%
-								Account account = (Account)session.getAttribute("account");
-								%>
-                                
-                                <div class="row-form">
+                                <div class="row-form info">
                                     <div class="span3">User Id:</div>
-                                    <div class="span9"><input type="text" name="userId_input" value="<%=account.getId() %>"/></div>
+                                    <div class="span9"><input type="text" name="userId_input" value="<%=account.getId() %>" readonly="readonly"/></div>
                                 </div>
                                 <div class="row-form">
                                     <div class="span3">User Name:</div>
-                                    <div class="span9"><input type="text" name="userName_input" value="<%=account.getName() %>"/></div>
+                                    <div class="span9">
+                                    	<input type="text" name="userName_input" class="validate[required,maxSize[8]]" value="<%=account.getName() %>"/>
+                                    	<span class="bottom">Required, max size = 8</span>
+                                    </div>
                                 </div>
                                 <div class="row-form">
                                     <div class="span3">NewPassword:</div>
-                                    <div class="span9"><input type="password" name="userNewPassword_input" value="<%=account.getPassword() %>"/></div>
+                                    <div class="span9">
+                                    	<input type="password" name="userNewPassword_input" class="validate[required,maxSize[8]]" value="<%=account.getPassword() %>"/>
+                                    	<span class="bottom">Required, max size = 8</span>
+                                    </div>
                                 </div>
                                 <div class="row-form">
                                     <div class="span3">Comfirmed:</div>
-                                    <div class="span9"><input type="password" name="userComfirmPassword_input" value="<%=account.getPassword() %>"/></div>
+                                    <div class="span9">
+                                    	<input type="password" name="userComfirmPassword_input" class="validate[required,equals[password]]" value="<%=account.getPassword() %>"/>
+                                    	<span class="bottom">Required, equals Password</span>
+                                    </div>
                                 </div>
                                 <div class="row-form">
                                     <div class="span3">Gender:</div>
                                     <div class="span9">
-                                        <input type="radio" checked="checked" name="r_example" value="1"/>Male 
-                                        <input type="radio" name="r_example" value="2"/>Female 
+                                        <input type="radio" class="validate[required]" <%=account.getGender().equals("male")?"checked":"" %> name="userGender_input" value="male"/>Male
+                                        <input type="radio" class="validate[required]" <%=account.getGender().equals("male")?"":"checked" %> name="userGender_input" value="female"/>Female
+                                        <span class="bottom">Required</span> 
                                     </div>
                                 </div>
                                 
                                 <div class="row-form">
                                     <div class="span3">Location:</div>
                                     <div class="span9">
-                                        <select name="s_example">
-                                            <option value="0">choose a option...</option>
-                                            <option value="1">Andorra</option>
-                                            <option value="2">Antarctica</option>
-                                            <option value="3">Bulgaria</option>
-                                            <option value="4">Germany</option>
-                                            <option value="5">Dominican Republic</option>
-                                            <option value="6">Micronesia</option>
-                                            <option value="7">United Kingdom</option>
-                                            <option value="8">Greece</option>
-                                            <option value="9">Italy</option>
-                                            <option value="10">Ukraine</option>                                                                       
+                                        <select name="userLocation_input">
+                                            <option value="北京" <%=account.getLocation().equals("北京")?"selected":"" %>>北京</option>
+                                            <option value="上海" <%=account.getLocation().equals("上海")?"selected":"" %>>上海</option>
+                                            <option value="广州" <%=account.getLocation().equals("广州")?"selected":"" %>>广州</option>
+                                            <option value="厦门" <%=account.getLocation().equals("厦门")?"selected":"" %>>厦门</option>
                                         </select>
                                     </div>
                                 </div> 
                                 <div class="row-form">
                                     <div class="span3">Email:</div>
-                                    <div class="span9"><input type="text" name="userEmail_input" value="<%=account.getEmail() %>"/></div>
+                                    <div class="span9">
+                                    	<input type="text" class="mask_email" name="userEmail_input" value="<%=account.getEmail() %>"/>
+                                    	<span class="bottom">Example: 123456789@qq.com</span>
+                                    </div>
                                 </div>
                                 <div class="row-form">
                                     <div class="span3">Phone:</div>
                                     <div class="span9">
                                         <input type="text" class="mask_phone" name="userPhone_input" value="<%=account.getPhone() %>"/>
-                                        <span class="bottom">Example: 98 (765) 432-10-98</span>
+                                        <span class="bottom">Example: 136 0093 2716</span>
                                     </div>
                                 </div>
                             
@@ -316,24 +327,8 @@
                     		
                     			<div class="row-form">
                     				<div class="span3">User Icon:</div>
-                    				<img src="#" width="200px" height="240px" />
+                    				<img src="<%=adminIcon %>" style="width:180px;margin-top:4px;border-radius:180px;box-shadow:0px 0px 12px #7E7E7E;" onclick="window.location.href='iconChange.jsp'" />
                     			</div>
-                    			<div class="row-form">
-                                    <div class="span3">IconUpload:</div>
-                                    <div class="span9">                            
-                                        <div class="input-append file">
-                                            <input type="file" name="file"/>
-                                            <input type="text"/>
-                                            <button class="btn">Browse</button>
-                                        </div>                            
-                                    </div>
-                                </div>
-                                <div class="row-form">
-                                	<div class="span3">&nbsp;</div>
-                                </div>
-                                <div class="row-form">
-                                	<div class="span3">&nbsp;</div>
-                                </div>
                             </div>
                     	</div>
                     </div>            
@@ -358,7 +353,7 @@
                     		
                                 <div class="row-form" style="float:right;">
 									<button class="btn btn-warning" type="button" onClick="doChange();">Change</button>	
-                                	<button class="btn btn-success" type="button" onClick="document.getElementById('settings_form').submit();">Submit</button> 
+                                	<button class="btn btn-success" type="button" onClick="document.getElementById('validate').submit();">Submit</button> 
                                     <button class="btn" type="button" onClick="doCancel();">Cancel</button>
                                 </div>
                             </div>

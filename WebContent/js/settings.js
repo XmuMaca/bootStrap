@@ -1,5 +1,6 @@
 function pageInit(){
-	var inputs = document.getElementsByTagName("input");
+	var settingsForm = document.getElementById("validate");
+	var inputs = settingsForm.getElementsByTagName("input");
 	
 	for(var i = 1; i < inputs.length; i++){
 		inputs[i].readOnly = true;
@@ -7,7 +8,8 @@ function pageInit(){
 }
 
 function doChange(){
-	var inputs = document.getElementsByTagName("input");
+	var settingsForm = document.getElementById("validate");
+	var inputs = settingsForm.getElementsByTagName("input");
 	
 	for(var i = 1; i < inputs.length; i++){
 		inputs[i].readOnly = false;
@@ -15,9 +17,11 @@ function doChange(){
 }
 
 function doCancel(){
-var inputs = document.getElementsByTagName("input");
+	/*var settingsForm = document.getElementById("validate");
+	var inputs = settingsForm.getElementsByTagName("input");
 	
 	for(var i = 1; i < inputs.length; i++){
 		inputs[i].readOnly = true;
-	}
+	}*/
+	window.location.href = "settings.jsp";
 }

@@ -77,8 +77,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                 <li class="active">
                 	<a href="activities.jsp" class="blblue">Activities</a>
                 </li>
-                <li>
-                	<a href="users.jsp" class="blyellow">Users</a>
+                <li class="active">
+                	<a href="#" class="blyellow">Users</a>
+                	<div class="open"></div>
+                    <ul>
+                        <li class="active"><a href="users.jsp">all users</a></li>
+                        <li><a href="banedUsers.jsp">baned users</a></li>
+                    </ul>
                 </li>
                 <li>
                     <a href="communities.jsp" class="blgreen">Communities</a>

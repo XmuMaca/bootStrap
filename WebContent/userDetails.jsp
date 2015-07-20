@@ -222,6 +222,30 @@
                 </div>
                 
                 <div class="row-fluid">
+                    <div class="span12">
+                        <div class="block">
+                            <div class="head">
+                                <div class="icon"><span class="ico-picture"></span></div>
+                                <h2>Simple Gallery</h2>                    
+                            </div>                           
+                            <div class="data-fluid sGallery">
+                                <div class="item"><a href="img/examples/photo/example_1.jpg" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_2.jpg" class="fb" rel="group"><img src="img/examples/photo/example_2.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_3.jpg" class="fb" rel="group"><img src="img/examples/photo/example_3.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_4.jpg" class="fb" rel="group"><img src="img/examples/photo/example_4.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_5.jpg" class="fb" rel="group"><img src="img/examples/photo/example_5.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_6.jpg" class="fb" rel="group"><img src="img/examples/photo/example_6.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_7.jpg" class="fb" rel="group"><img src="img/examples/photo/example_7.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_8.jpg" class="fb" rel="group"><img src="img/examples/photo/example_8.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_9.jpg" class="fb" rel="group"><img src="img/examples/photo/example_9.jpg" width="220"/></a></div>
+                                <div class="item"><a href="img/examples/photo/example_10.jpg" class="fb" rel="group"><img src="img/examples/photo/example_10.jpg" width="220"/></a></div>
+                            </div>
+                        </div>     
+                    </div>
+                    
+                </div>
+                
+                <div class="row-fluid">
 
                     <div class="span8">                
 

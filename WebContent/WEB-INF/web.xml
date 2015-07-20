@@ -73,12 +73,20 @@
     <servlet-name>AtyChangeStatusServlet</servlet-name>
     <url-pattern>/AtyChangeStatusServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <servlet-name>IconChangeServlet</servlet-name>
+    <servlet-class>com.server.servlet.IconChangeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IconChangeServlet</servlet-name>
+    <url-pattern>/IconChangeServlet</url-pattern>
+  </servlet-mapping>
   <filter>
-  	<filter-name>SetCharacterEncodingFilter</filter-name>
-  	<filter-class>com.server.filter.SetCharacterEncodingFilter</filter-class>
+    <filter-name>SetCharacterEncodingFilter</filter-name>
+    <filter-class>com.server.filter.SetCharacterEncodingFilter</filter-class>
   </filter>
   <filter-mapping>
-  	<filter-name>SetCharacterEncodingFilter</filter-name>
-  	<url-pattern>/*</url-pattern>
+    <filter-name>SetCharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
   </filter-mapping>
 </web-app>
