@@ -23,10 +23,14 @@ public class Activity
 	private String content;
 	
 	private String album;
-	
+
+
 	private int isBanned;
 	
+
 	private int comments;
+
+
 
 	public String getId() {
 		return id;

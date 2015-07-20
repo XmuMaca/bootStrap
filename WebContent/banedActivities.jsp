@@ -1,24 +1,33 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ page import="com.server.dao.UsersDAO" %>
-<%@ page import="com.server.bean.Account" %>
+<%@ page import="com.server.dao.BanedActivitiesDAO" %>
+<%@ page import="com.server.bean.Activity" %>
 <%@ page import="java.util.*" %>
+
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
-<head>        
+<head>
+	
+	<base href="<%=basePath%>" />
+	        
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />    
     <!--[if gt IE 8]>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />        
     <![endif]-->                
-    <title>Forms - Aries Premium Admin Template</title>
+    <title>Dynamic Tables - Aries Premium Admin Template</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     
     <link href="css/stylesheets.css" rel="stylesheet" type="text/css" />
     <!--[if lte IE 7]>
         <link href="css/ie.css" rel="stylesheet" type="text/css" />
         <script type='text/javascript' src='js/plugins/other/lte-ie7.js'></script>
-    <![endif]-->     
+    <![endif]-->      
     <script type='text/javascript' src='js/plugins/jquery/jquery-1.9.1.min.js'></script>
     <script type='text/javascript' src='js/plugins/jquery/jquery-ui-1.10.1.custom.min.js'></script>
     <script type='text/javascript' src='js/plugins/jquery/jquery-migrate-1.1.1.min.js'></script>
@@ -27,20 +36,13 @@
     
     <script type='text/javascript' src='js/plugins/other/jquery.mousewheel.min.js'></script>
         
-    <script type='text/javascript' src='js/plugins/bootstrap/bootstrap.min.js'></script>
+    <script type='text/javascript' src='js/plugins/bootstrap/bootstrap.min.js'></script>            
     
     <script type='text/javascript' src='js/plugins/cookies/jquery.cookies.2.2.0.min.js'></script>    
     
-    <script type='text/javascript' src='js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'></script>    
-    
     <script type='text/javascript' src="js/plugins/uniform/jquery.uniform.min.js"></script>
-    <script type='text/javascript' src="js/plugins/select/select2.min.js"></script>
-    <script type='text/javascript' src='js/plugins/tagsinput/jquery.tagsinput.min.js'></script>
-    <script type='text/javascript' src='js/plugins/maskedinput/jquery.maskedinput-1.3.min.js'></script>
-    <script type='text/javascript' src='js/plugins/multiselect/jquery.multi-select.min.js'></script>
     
-    <script type='text/javascript' src='js/plugins/validationEngine/languages/jquery.validationEngine-en.js'></script>
-    <script type='text/javascript' src='js/plugins/validationEngine/jquery.validationEngine.js'></script>
+    <script type='text/javascript' src='js/plugins/datatables/jquery.dataTables.min.js'></script>
     
     <script type='text/javascript' src='js/plugins/shbrush/XRegExp.js'></script>
     <script type='text/javascript' src='js/plugins/shbrush/shCore.js'></script>
@@ -51,9 +53,10 @@
     <script type='text/javascript' src='js/plugins.js'></script>
     <script type='text/javascript' src='js/charts.js'></script>
     <script type='text/javascript' src='js/actions.js'></script>
+    <script type='text/javascript' src='js/activities.js'></script>
     
 </head>
-<body>    
+<body>
     <div id="loader"><img src="img/loader.gif"/></div>
     <div class="wrapper">
         
@@ -70,8 +73,13 @@
             </div>
             
             <ul class="navigation" id="tags">            
-                <li>
-                	<a href="activities.jsp" class="blblue">Activities</a>
+                <li class="active">
+                	<a href="#" class="blblue">Activities</a>
+                	<div class="open"></div>
+                    <ul>
+                        <li><a href="activities.jsp">all activities</a></li>
+                        <li class="active"><a href="banedActivities.jsp">baned activities</a></li>
+                    </ul>
                 </li>
                 <li>
                 	<a href="users.jsp" class="blyellow">Users</a>
@@ -80,9 +88,9 @@
                     <a href="communities.jsp" class="blgreen">Communities</a>
                 </li>
                 <li>
-                	<a href="#" class="blred">Boardcast</a>
+                	<a href="boardcast.jsp" class="blred">Boardcast</a>
                 </li>                
-                <li class="active">
+                <li>
                     <a href="settings.jsp" class="bldblue">Settings</a>
                 </li>
             </ul>
@@ -164,7 +172,7 @@
                             <span class="ico-box"></span>
                         </div>                    
                         <div class="name">Samples</div>
-                    </a>                          
+                    </a>                
                     <ul class="sub">
                         <li><a href="faq.html">FAQ</a></li>
                         <li><a href="invoice.html">Invoice</a></li>
@@ -177,14 +185,14 @@
                         <div class="icon">
                             <span class="ico-cloud"></span>
                         </div>                    
-                        <div class="name">Other</div>                        
+                        <div class="name">Other</div>                       
                     </a>                
                     <ul class="sub">
                         <li><a href="files.html">File handling</a></li>
                         <li><a href="images.html">Images</a></li>
                         <li><a href="typography.html">Typography</a></li>
                         <li><a href="404.html">Error 404</a></li>
-                    </ul>                              
+                    </ul>                                        
                 </li>                
                 <li>
                     <div class="user">
@@ -216,10 +224,11 @@
                                     </div>                                    
                                 </div>
                             </div>
-                        </div> 
-                        <button class="btn btn-warning" type="button" onClick="document.location.href = 'LogoutServlet';">Logout</button>                       
+                            
+                        </div>
+                        <button class="btn btn-warning" type="button" onClick="document.location.href = 'LogoutServlet';">Logout</button>                        
                     </div>
-                </li>                
+                </li>               
             </ul>
             
             
@@ -227,108 +236,82 @@
                 
                 <div class="page-header">
                     <div class="icon">
-                        <span class="ico-pen-2"></span>
+                        <span class="ico-layout-7"></span>
                     </div>
-                    <h1>Form <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>Dynamic Tables <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
-                
 
                 <div class="row-fluid">
-					<form id="validate" name="boardcast_form" method="post" action="BoardcastServlet">
-                    <div class="span6">                
-
+                    <div class="span12">
+                                    
                         <div class="block">
-                            <div class="head">                                
-                                <h2>Default form elements</h2>
-                                <ul class="buttons">             
-                                    <li><a href="#" onClick="source('form_default'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
-                                </ul>                                  
-                            </div>                                        
-                            <div class="data-fluid">
-                                
-                                <div class="row-form">
-                                    <div class="span3">Title:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgId_input" class="validate[required]"/>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Type:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgType_input" class="validate[required]"/>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Time:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgTime_input" class="validate[required,custom[date]]"/>
-                                    	<span class="bottom">Required, date YYYY-MM-DD</span>
-                                    </div>
-                                </div>                  
-                                <div class="row-form">
-                                    <div class="span3">Content:</div>
-                                    <div class="span9">
-                                    	<textarea name="msgContent_input" class="validate[required]"></textarea>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="row-form" style="float:right;">	
-                                	<button class="btn btn-success" type="submit" >Submit</button> 
-                                    <button class="btn" type="button">Cancel</button>
-                                </div>
-							
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="span6">
-                        <div class="block">
-                            <div class="head">                                
-                                <h2>select users:</h2>
-                                                                                                 
-                            </div>                  
-                            <div class="data-fluid">
-
-                                <div class="row-form">
-                                    <div class="span12">
-                                        <select name="ms_example" multiple="multiple" id="msc">
-                                        	 <%
-                                        	UsersDAO userDAO = new UsersDAO();
-                                        	ArrayList<Account> userList = userDAO.readUsers();
-                                        	int count = -1;
-                                        	for(Account user : userList){ 
-												count++;                                        	
+                            <div class="head orange">
+                                <div class="icon"><span class="ico-layout-9"></span></div>
+                                <h2>Table sorting pagination</h2>
+                                <ul class="buttons">
+                                    <li><a href="#" onClick="source('table_sort_pagination'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
+                                </ul>                                                        
+                            </div>                
+                                <div class="data-fluid">
+                                    <table class="table fpTable lcnp" cellpadding="0" cellspacing="0" width="100%" id="atyTable">
+                                        <thead>
+                                            <tr>
+                                                <th><input type="checkbox" class="checkall"/></th>
+                                                <th width="20%">Name</th>
+                                                <th>Product</th>
+                                                <th width="20%">Status</th>
+                                                <th width="20%">Date</th>
+                                                <th width="80" class="TAC">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        	<%
+                                        	BanedActivitiesDAO atyDAO = new BanedActivitiesDAO();
+                                        	ArrayList<Activity> atyList = atyDAO.readActivities();
+                                        	for(Activity aty : atyList){
+                                        		String status = null;
+                                        		String statusClass = null;
+                                        		if(aty.getIsBanned() == 0)
+                                        		{
+                                        			status = "normal";
+                                        			statusClass = "label label-success";
+                                        		}
+                                        		else
+                                        		{
+                                        			status = "banned";
+                                        			statusClass = "label label-important";
+                                        		}
                                         	%>
                                         	
-                                            <option name="<%=user.getId() %>" value="<%=user.getId() %>"><%=user.getId() %>(<%=user.getName() %>)</option>
-                                            
-                                            							<%}
-                                            %>
-                                        </select>
-                                        <div class="btn-group">
-                                            <button class="btn btn-mini" id="ms_select">Select all</button>
-                                            <button class="btn btn-mini" id="ms_deselect">Deselect all</button>
-                                        </div>
-                                    </div>
-                                </div>                    
+                                            <tr>
+                                                <td><input type="checkbox" name="order[]" value="528"/></td>
+                                                <td><a href="AtyDetailsServlet?atyId=<%=aty.getId() %>"><%=aty.getId() %></a></td>
+                                                <td><%=aty.getType() %></td>
+                                                <td><span class="<%=statusClass%>"><%=status %></span></td>
+                                                <td><%=aty.getStartTime() %></td>
+                                                <td>
+                                                    <a href="AtyChangeStatusServlet?atyId=<%=aty.getId() %>&status=0" class="button green">
+                                                        <div class="icon"><span class="ico-pencil"></span></div>
+                                                    </a>
+                                                    <a href="AtyChangeStatusServlet?atyId=<%=aty.getId() %>&status=1" class="button red">
+                                                        <div class="icon"><span class="ico-remove"></span></div>
+                                                    </a>                                              
+                                                </td>
+                                            </tr>
+                                            						<%}
+                                            %>                                
+                                        </tbody>
+                                    </table>                    
+                                </div> 
+                        </div>            
 
-                            </div>
-                        </div>
-                    </div>            
-				</form>
-                </div>                
-                
+                    </div>
+                </div>  
             </div>
             
         </div>
         
     </div>
-    
-    <div class="dialog" id="source" style="display: none;" title="Source"></div>    
-    
+    <div class="dialog" id="source" style="display: none;" title="Source"></div>      
 </body>
 </html>

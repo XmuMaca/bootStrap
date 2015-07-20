@@ -37,6 +37,9 @@ $(document).ready(function(){
         $("input.mask_tin").mask('99-9999999',{completed:function(){
                                                 //action
                                               }});
+        $("input.mask_email").mask('999999999@qq.com',{completed:function(){
+            									//action
+          									  }});
         $("input.mask_ssn").mask('999-99-9999',{completed:function(){
                                                 //action
                                               }});        
@@ -46,7 +49,7 @@ $(document).ready(function(){
         $("input.mask_product").mask('a*-999-a999',{completed:function(){
                                                 //action
                                               }});
-        $("input.mask_phone").mask('99 (999) 999-99-99',{completed:function(){
+        $("input.mask_phone").mask('999 9999 9999',{completed:function(){
                                                 //action
                                               }});
         $("input.mask_phone_ext").mask('99 (999) 999-9999? x99999',{completed:function(){

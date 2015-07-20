@@ -8,8 +8,6 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import oracle.net.aso.a;
-
 import com.server.strings.IStringConstans;
 
 public class IconAndUrl 

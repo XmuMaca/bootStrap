@@ -54,6 +54,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
     <script type='text/javascript' src='js/charts.js'></script>
     <script type='text/javascript' src='js/actions.js'></script>
     <script type='text/javascript' src='js/activities.js'></script>
+    <script type='text/javascript' src='js/users.js'></script>
     
 </head>
 <body>
@@ -76,8 +77,13 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                 <li class="active">
                 	<a href="activities.jsp" class="blblue">Activities</a>
                 </li>
-                <li>
-                	<a href="users.jsp" class="blyellow">Users</a>
+                <li class="active">
+                	<a href="#" class="blyellow">Users</a>
+                	<div class="open"></div>
+                    <ul>
+                        <li class="active"><a href="users.jsp">all users</a></li>
+                        <li><a href="banedUsers.jsp">baned users</a></li>
+                    </ul>
                 </li>
                 <li>
                     <a href="communities.jsp" class="blgreen">Communities</a>
@@ -196,7 +202,6 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             <span>Dmitry Ivaniuk</span>
                             <span class="sm">Administrator</span>
                         </a>
-                        <button class="btn btn-warning" type="button" onClick="callServlet();">Change</button>
                     </div>
                     <div class="buttons">
                         <div class="sbutton green navButton">
@@ -220,7 +225,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                     </div>                                    
                                 </div>
                             </div>
-                        </div>                        
+                        </div>
+                        <button class="btn btn-warning" type="button" onClick="document.location.href = 'LogoutServlet';">Logout</button>                        
                     </div>
                 </li>               
             </ul>
@@ -247,7 +253,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                 </ul>                                                        
                             </div>                
                                 <div class="data-fluid">
-                                    <table class="table fpTable lcnp" cellpadding="0" cellspacing="0" width="100%">
+                                    <table class="table fpTable lcnp" cellpadding="0" cellspacing="0" width="100%" id="userTable">
                                         <thead>
                                             <tr>
                                                 <th><input type="checkbox" class="checkall"/></th>
@@ -262,19 +268,32 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                         	<%
                                         	UsersDAO userDAO = new UsersDAO();
                                         	ArrayList<Account> userList = userDAO.readUsers();
-                                        	for(Account user : userList){ %>
+                                        	for(Account user : userList){
+                                        		String status = null;
+                                        		String statusClass = null;
+                                        		if(user.getIsBaned() == 0)
+                                        		{
+                                        			status = "normal";
+                                        			statusClass = "label label-success";
+                                        		}
+                                        		else
+                                        		{
+                                        			status = "banned";
+                                        			statusClass = "label label-important";
+                                        		}
+                                        	%>
                                         	
                                             <tr>
                                                 <td><input type="checkbox" name="order[]" value="528"/></td>
-                                                <td><a href="#"><%=user.getId() %></a></td>
+                                                <td><a href="UserDetailsServlet?userId=<%=user.getId() %>"><%=user.getId() %></a></td>
                                                 <td><%=user.getName() %></td>
-                                                <td><span class="label label-important"><%=user.getIsBaned() %></span></td>
+                                                <td><span class="<%=statusClass%>"><%=status %></span></td>
                                                 <td><%=user.getEmail() %></td>
                                                 <td>
-                                                    <a href="#" class="button green">
+                                                    <a href="UserChangeStatusServlet?userId=<%=user.getId() %>&status=0" class="button green">
                                                         <div class="icon"><span class="ico-pencil"></span></div>
                                                     </a>
-                                                    <a href="#" class="button red">
+                                                    <a href="UserChangeStatusServlet?userId=<%=user.getId() %>&status=1" class="button red">
                                                         <div class="icon"><span class="ico-remove"></span></div>
                                                     </a>                                              
                                                 </td>

@@ -3,15 +3,15 @@ package com.server.dao;
 import java.sql.*;
 import java.util.ArrayList;
 
-import com.server.bean.Account;
+import com.server.bean.Activity;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 
-public class UsersDAO {
+public class BanedActivitiesDAO {
 	
-	public ArrayList<Account> readUsers()
+	public ArrayList<Activity> readActivities()
 	{
-		ArrayList<Account> userList = new ArrayList<Account>();
+		ArrayList<Activity> atyList = new ArrayList<Activity>();
 		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -22,20 +22,20 @@ public class UsersDAO {
 		{
 			db.createConnection();
 			conn = db.getConnection();
-			String sql = String.format("select * from %s where userIdentity='normal'", IStringConstans.USER_TABLE_NAME);
+			String sql = String.format("select * from %s where atyIsBanned=1", IStringConstans.ACTIVITY_TABLE_NAME);
 			pstmt = conn.prepareStatement(sql);
 			
 			rs = pstmt.executeQuery();
 			while(rs.next())
 			{
-				Account tempUser = new Account();
+				Activity tempAty = new Activity();
 				
-				tempUser.setId(rs.getString("userId"));
-				tempUser.setName(rs.getString("userName"));
-				tempUser.setEmail(rs.getString("userEmail"));
-				tempUser.setIsBaned(rs.getInt("userIsBaned"));
+				tempAty.setId(rs.getString("atyId"));
+				tempAty.setType(rs.getString("atyType"));
+				tempAty.setStartTime(rs.getString("atyStartTime"));
+				tempAty.setIsBanned(rs.getInt("atyIsBanned"));
 				
-				userList.add(tempUser);
+				atyList.add(tempAty);
 			}
 		}
 		catch(Exception e)
@@ -65,7 +65,7 @@ public class UsersDAO {
 			}
 		}
 		
-		return userList;
+		return atyList;
 		
 	}
 }

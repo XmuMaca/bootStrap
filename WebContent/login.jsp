@@ -28,7 +28,18 @@
         
     <script type='text/javascript' src='js/plugins/bootstrap/bootstrap.min.js'></script>
     
+    <script type='text/javascript' src='js/plugins/cookies/jquery.cookies.2.2.0.min.js'></script>    
+    
+    <script type='text/javascript' src='js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'></script>
+    
     <script type='text/javascript' src="js/plugins/uniform/jquery.uniform.min.js"></script>
+    <script type='text/javascript' src="js/plugins/select/select2.min.js"></script>
+    <script type='text/javascript' src='js/plugins/tagsinput/jquery.tagsinput.min.js'></script>
+    <script type='text/javascript' src='js/plugins/maskedinput/jquery.maskedinput-1.3.min.js'></script>
+    <script type='text/javascript' src='js/plugins/multiselect/jquery.multi-select.min.js'></script>
+    
+    <script type='text/javascript' src='js/plugins/validationEngine/languages/jquery.validationEngine-en.js'></script>
+    <script type='text/javascript' src='js/plugins/validationEngine/jquery.validationEngine.js'></script>
     
     <script type='text/javascript' src='js/plugins/shbrush/XRegExp.js'></script>
     <script type='text/javascript' src='js/plugins/shbrush/shCore.js'></script>
@@ -54,15 +65,17 @@
         </div>        
         
         <div class="row-fluid">
-        <form id="login_form" name="login_form" method="get" action="LoginServlet">
+        <form id="validate" name="login_form" method="get" action="LoginServlet">
             <div class="row-form">
                 <div class="span12">
-                    <input type="text" name="userid_input" placeholder="userid"/>
+                    <input type="text" name="userid_input" class="validate[required,maxSize[8]]" placeholder="userid"/>
+                    <span class="bottom">Required, max size = 8</span>
                 </div>
             </div>
             <div class="row-form">
                 <div class="span12">
-                    <input type="text" name="password_input" placeholder="password"/>
+                    <input type="password" name="password_input" class="validate[required,maxSize[8]]" placeholder="password"/>
+                    <span class="bottom">Required, max size = 8</span>
                 </div>            
             </div>
             <div class="row-form">
@@ -72,7 +85,7 @@
             </div>
             <div class="row-form">
                 <div class="span12">
-                    <button class="btn" onclick="document.getElementById('login_form').submit();">Sign in <span class="icon-arrow-next icon-white"></span></button>
+                    <button class="btn" type="submit">Sign in <span class="icon-arrow-next icon-white"></span></button>
                 </div>                
             </div>
         </form>

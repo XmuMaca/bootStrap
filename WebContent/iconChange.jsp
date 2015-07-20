@@ -1,8 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
-<%@ page import="com.server.dao.UsersDAO" %>
-<%@ page import="com.server.bean.Account" %>
-<%@ page import="java.util.*" %>
+    
+<%
+    String adminIcon = (String)session.getAttribute("adminIcon");
+%>
+    
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>        
@@ -15,6 +17,7 @@
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     
     <link href="css/stylesheets.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="css/myiconstyle.css" type="text/css" />
     <!--[if lte IE 7]>
         <link href="css/ie.css" rel="stylesheet" type="text/css" />
         <script type='text/javascript' src='js/plugins/other/lte-ie7.js'></script>
@@ -51,6 +54,7 @@
     <script type='text/javascript' src='js/plugins.js'></script>
     <script type='text/javascript' src='js/charts.js'></script>
     <script type='text/javascript' src='js/actions.js'></script>
+    <script type="text/javascript" src="js/cropbox.js"></script>
     
 </head>
 <body>    
@@ -80,10 +84,10 @@
                     <a href="communities.jsp" class="blgreen">Communities</a>
                 </li>
                 <li>
-                	<a href="#" class="blred">Boardcast</a>
+                	<a href="boardcast.jsp" class="blred">Boardcast</a>
                 </li>                
                 <li class="active">
-                    <a href="settings.jsp" class="bldblue">Settings</a>
+                    <a href="#" class="bldblue">Settings</a>
                 </li>
             </ul>
             
@@ -234,8 +238,8 @@
                 
 
                 <div class="row-fluid">
-					<form id="validate" name="boardcast_form" method="post" action="BoardcastServlet">
-                    <div class="span6">                
+					<form id="validate" name="icon_form" method="post" action="IconChangeServlet">
+                    <div class="span8">                
 
                         <div class="block">
                             <div class="head">                                
@@ -244,83 +248,113 @@
                                     <li><a href="#" onClick="source('form_default'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
                                 </ul>                                  
                             </div>                                        
+                            <div class="container">
+                                
+                                <div class="imageBox">
+    								<div class="thumbBox"></div>
+   	 								<div class="spinner" style="display: none">Loading...</div>
+  								</div>
+  								<div class="action"> 
+    							<!-- <input type="file" id="file" style=" width: 200px">-->
+    								<div class="new-contentarea tc"> 
+    									<a href="javascript:void(0)" class="upload-img">
+      										<label for="upload-file" style="font-size:20px;margin:18px auto auto auto;">上传图像</label>
+      									</a>
+      									<input type="file" class="" name="upload-file" id="upload-file" />
+    								</div>
+    								<input type="button" id="btnCrop"  class="Btnsty_peyton" value="裁切">
+    								<input type="button" id="btnZoomIn" class="Btnsty_peyton" value="放大"  >
+    								<input type="button" id="btnZoomOut" class="Btnsty_peyton" value="缩小" >
+  								</div>
+								<div class="cropped"></div>
+                            </div>
+                            <script type="text/javascript">
+							$(window).load(function() {
+								var options =
+								{
+									thumbBox: '.thumbBox',
+									spinner: '.spinner',
+									imgSrc: 'img/avatar.png'
+								}
+								var cropper = $('.imageBox').cropbox(options);
+								$('#upload-file').on('change', function(){
+								var reader = new FileReader();
+								reader.onload = function(e) {
+									options.imgSrc = e.target.result;
+									cropper = $('.imageBox').cropbox(options);
+								}
+								reader.readAsDataURL(this.files[0]);
+								this.files = [];
+								})
+								$('#btnCrop').on('click', function(){
+									var img = cropper.getDataURL();
+									$('.cropped').html('');
+									
+									$('.cropped').append('<input name="iconDataURL" type="text" value="'+img+'"></input>');
+									
+									$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:64px;margin-top:4px;border-radius:64px;box-shadow:0px 0px 12px #7E7E7E;" ><p>64px*64px</p>');
+									$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:128px;margin-top:4px;border-radius:128px;box-shadow:0px 0px 12px #7E7E7E;"><p>128px*128px</p>');
+									$('.cropped').append('<img src="'+img+'" align="absmiddle" style="width:180px;margin-top:4px;border-radius:180px;box-shadow:0px 0px 12px #7E7E7E;"><p>180px*180px</p>');
+								})
+								$('#btnZoomIn').on('click', function(){
+									cropper.zoomIn();
+								})
+								$('#btnZoomOut').on('click', function(){
+									cropper.zoomOut();
+								})
+							});
+							</script>
+                        </div>
+
+                    </div>
+                    <div class="span4">
+                    	<div class="block">
+                    		<div class="head">                                
+                                <h2></h2>                                  
+                            </div>
+                    		<div class="data-fluid">
+                    		
+                    			<div class="row-form">
+                    				<div class="span3">User Icon:</div>
+                    				<img src="<%=adminIcon %>" style="width:180px;margin-top:4px;border-radius:180px;box-shadow:0px 0px 12px #7E7E7E;" />
+                    			</div>
+                    			<div class="row-form">
+                    				<div class="span3">&nbsp;</div>
+                    				<button class="btn btn-large" type="button" onClick="history.back();">cancel</button>
+                                    <button class="btn btn-large btn-success" type="submit">confirm</button>
+                    			</div>
+                            </div>
+                    	</div>
+                    </div>
+
+				</form>
+                </div>
+                
+                <div class="row-fluid">
+                	<div class="span8">                
+                        <div class="block">
+                                                                    
                             <div class="data-fluid">
                                 
-                                <div class="row-form">
-                                    <div class="span3">Title:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgId_input" class="validate[required]"/>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Type:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgType_input" class="validate[required]"/>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Time:</div>
-                                    <div class="span9">
-                                    	<input type="text" name="msgTime_input" class="validate[required,custom[date]]"/>
-                                    	<span class="bottom">Required, date YYYY-MM-DD</span>
-                                    </div>
-                                </div>                  
-                                <div class="row-form">
-                                    <div class="span3">Content:</div>
-                                    <div class="span9">
-                                    	<textarea name="msgContent_input" class="validate[required]"></textarea>
-                                    	<span class="bottom">Required</span>
-                                    </div>
-                                </div>
-                                
-                                <div class="row-form" style="float:right;">	
-                                	<button class="btn btn-success" type="submit" >Submit</button> 
-                                    <button class="btn" type="button">Cancel</button>
-                                </div>
-							
                             </div>
                         </div>
 
                     </div>
-
-                    <div class="span6">
-                        <div class="block">
-                            <div class="head">                                
-                                <h2>select users:</h2>
-                                                                                                 
-                            </div>                  
-                            <div class="data-fluid">
-
-                                <div class="row-form">
-                                    <div class="span12">
-                                        <select name="ms_example" multiple="multiple" id="msc">
-                                        	 <%
-                                        	UsersDAO userDAO = new UsersDAO();
-                                        	ArrayList<Account> userList = userDAO.readUsers();
-                                        	int count = -1;
-                                        	for(Account user : userList){ 
-												count++;                                        	
-                                        	%>
-                                        	
-                                            <option name="<%=user.getId() %>" value="<%=user.getId() %>"><%=user.getId() %>(<%=user.getName() %>)</option>
-                                            
-                                            							<%}
-                                            %>
-                                        </select>
-                                        <div class="btn-group">
-                                            <button class="btn btn-mini" id="ms_select">Select all</button>
-                                            <button class="btn btn-mini" id="ms_deselect">Deselect all</button>
-                                        </div>
-                                    </div>
-                                </div>                    
-
+                    
+                    <div class="span4">
+                    	<div class="block">
+                    		
+                    		<div class="data-fluid">
+                    		
+                                <div class="row-form" style="float:right;">
+									<button class="btn btn-warning" type="button" onClick="doChange();">Change</button>	
+                                	<button class="btn btn-success" type="button" onClick="document.getElementById('validate').submit();">Submit</button> 
+                                    <button class="btn" type="button" onClick="doCancel();">Cancel</button>
+                                </div>
                             </div>
-                        </div>
-                    </div>            
-				</form>
-                </div>                
+                    	</div>
+                    </div>
+                </div>
                 
             </div>
             

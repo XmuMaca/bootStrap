@@ -33,7 +33,7 @@
     <servlet-name>BoardcastServlet</servlet-name>
     <url-pattern>/BoardcastServlet</url-pattern>
   </servlet-mapping>
-    <servlet>
+ <servlet>
     <servlet-name>ClientPostServlet</servlet-name>
     <servlet-class>com.client.servlet.ClientPostServlet</servlet-class>
   </servlet>
@@ -42,4 +42,61 @@
     <url-pattern>/ClientPostServlet</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>com.server.servlet.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/LogoutServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AtyDetailsServlet</servlet-name>
+    <servlet-class>com.server.servlet.AtyDetailsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AtyDetailsServlet</servlet-name>
+    <url-pattern>/AtyDetailsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>UserDetailsServlet</servlet-name>
+    <servlet-class>com.server.servlet.UserDetailsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserDetailsServlet</servlet-name>
+    <url-pattern>/UserDetailsServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>UserChangeStatusServlet</servlet-name>
+    <servlet-class>com.server.servlet.UserChangeStatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>UserChangeStatusServlet</servlet-name>
+    <url-pattern>/UserChangeStatusServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AtyChangeStatusServlet</servlet-name>
+    <servlet-class>com.server.servlet.AtyChangeStatusServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AtyChangeStatusServlet</servlet-name>
+    <url-pattern>/AtyChangeStatusServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>IconChangeServlet</servlet-name>
+    <servlet-class>com.server.servlet.IconChangeServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IconChangeServlet</servlet-name>
+    <url-pattern>/IconChangeServlet</url-pattern>
+  </servlet-mapping>
+  <filter>
+    <filter-name>SetCharacterEncodingFilter</filter-name>
+    <filter-class>com.server.filter.SetCharacterEncodingFilter</filter-class>
+  </filter>
+  <filter-mapping>
+    <filter-name>SetCharacterEncodingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
 </web-app>

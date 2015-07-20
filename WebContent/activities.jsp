@@ -74,7 +74,12 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
             
             <ul class="navigation" id="tags">            
                 <li class="active">
-                	<a href="activities.jsp" class="blblue">Activities</a>
+                	<a href="#" class="blblue">Activities</a>
+                	<div class="open"></div>
+                    <ul>
+                        <li class="active"><a href="activities.jsp">all activities</a></li>
+                        <li><a href="banedActivities.jsp">baned activities</a></li>
+                    </ul>
                 </li>
                 <li>
                 	<a href="users.jsp" class="blyellow">Users</a>
@@ -221,7 +226,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                             </div>
                             
                         </div>
-                        <button class="btn btn-warning" type="button" onClick="callServlet();">Change</button>                        
+                        <button class="btn btn-warning" type="button" onClick="document.location.href = 'LogoutServlet';">Logout</button>                        
                     </div>
                 </li>               
             </ul>
@@ -248,7 +253,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                 </ul>                                                        
                             </div>                
                                 <div class="data-fluid">
-                                    <table class="table fpTable lcnp" cellpadding="0" cellspacing="0" width="100%">
+                                    <table class="table fpTable lcnp" cellpadding="0" cellspacing="0" width="100%" id="atyTable">
                                         <thead>
                                             <tr>
                                                 <th><input type="checkbox" class="checkall"/></th>
@@ -263,19 +268,32 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                         	<%
                                         	ActivitiesDAO atyDAO = new ActivitiesDAO();
                                         	ArrayList<Activity> atyList = atyDAO.readActivities();
-                                        	for(Activity aty : atyList){ %>
+                                        	for(Activity aty : atyList){
+                                        		String status = null;
+                                        		String statusClass = null;
+                                        		if(aty.getIsBanned() == 0)
+                                        		{
+                                        			status = "normal";
+                                        			statusClass = "label label-success";
+                                        		}
+                                        		else
+                                        		{
+                                        			status = "banned";
+                                        			statusClass = "label label-important";
+                                        		}
+                                        	%>
                                         	
                                             <tr>
                                                 <td><input type="checkbox" name="order[]" value="528"/></td>
-                                                <td><a href="#"><%=aty.getId() %></a></td>
+                                                <td><a href="AtyDetailsServlet?atyId=<%=aty.getId() %>"><%=aty.getId() %></a></td>
                                                 <td><%=aty.getType() %></td>
-                                                <td><span class="label label-important"><%=aty.getIsBanned() %></span></td>
+                                                <td><span class="<%=statusClass%>"><%=status %></span></td>
                                                 <td><%=aty.getStartTime() %></td>
                                                 <td>
-                                                    <a href="#" class="button green">
+                                                    <a href="AtyChangeStatusServlet?atyId=<%=aty.getId() %>&status=0" class="button green">
                                                         <div class="icon"><span class="ico-pencil"></span></div>
                                                     </a>
-                                                    <a href="#" class="button red">
+                                                    <a href="AtyChangeStatusServlet?atyId=<%=aty.getId() %>&status=1" class="button red">
                                                         <div class="icon"><span class="ico-remove"></span></div>
                                                     </a>                                              
                                                 </td>
