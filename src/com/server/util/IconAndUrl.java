@@ -62,7 +62,7 @@ public class IconAndUrl
 
 	private String createIconName()
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		return sdf.format(new Date()) + IStringConstans.PNG;
 	}
 }

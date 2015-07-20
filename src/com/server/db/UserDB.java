@@ -69,4 +69,25 @@ public class UserDB extends DB
 			return null;
 		}
 	}
+
+	/*
+	 * get the activity id which is liked or joined by someone
+	 * */
+	public List<String> getAtyId(String sql)
+	{
+		List<String> result = new ArrayList<>();
+		ResultSet rs = executeQuery(sql);
+		
+		try {
+			while(rs.next())
+			{
+				result.add(rs.getString("atyId"));
+			}
+			return result;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 }

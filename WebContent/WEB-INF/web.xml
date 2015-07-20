@@ -33,4 +33,13 @@
     <servlet-name>BoardcastServlet</servlet-name>
     <url-pattern>/BoardcastServlet</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <servlet-name>ClientPostServlet</servlet-name>
+    <servlet-class>com.client.servlet.ClientPostServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ClientPostServlet</servlet-name>
+    <url-pattern>/ClientPostServlet</url-pattern>
+  </servlet-mapping>
+  
 </web-app>

@@ -7,7 +7,11 @@ public interface IStringConstans
 	String ACTIVITY_TABLE_NAME = "activity";
 	String MESSAGE_TABLE_NAME = "message";
 	String RECEIVE_TABLE_NAME = "receive";
-	String RELEASE_TABLE_NAME = "release";
+	String DISTRIBUTE_TABLE_NAME = "distribute";
+	String EVALUATION_TABLE_NAME = "evaluation";
+	String COMMENT_TABLE_NAME = "comment";
+	String LIKE_TABLE_NAME = "islike";
+	String JOIN_TABLE_NAME = "joining";
 	
 	/*mysql connection url*/
 	String MYSQL_DRIVER = "com.mysql.jdbc.Driver";
@@ -28,7 +32,7 @@ public interface IStringConstans
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
 	
 	
-	String REMOTE_IMAGE_PATH = "http://101.200.191.149:8080/FirstWeb/images_repo/";
+	String REMOTE_IMAGE_PATH = "http://101.200.191.149:8080/bootstrapRepository/images_repo/";
 	
 	/*the pattern of the image*/
 	String PNG = ".png";

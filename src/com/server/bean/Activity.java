@@ -15,12 +15,18 @@ public class Activity
 	private String place;
 	
 	private int members;
+
+	private int likes;
+	
+	private int shares;
 	
 	private String content;
 	
 	private String album;
 	
 	private int isBanned;
+	
+	private int comments;
 
 	public String getId() {
 		return id;
@@ -100,6 +106,30 @@ public class Activity
 
 	public void setIsBanned(int isBanned) {
 		this.isBanned = isBanned;
+	}
+	
+	public int getLikes() {
+		return likes;
+	}
+
+	public void setLikes(int likes) {
+		this.likes = likes;
+	}
+
+	public int getShares() {
+		return shares;
+	}
+
+	public void setShares(int shares) {
+		this.shares = shares;
+	}
+
+	public int getComments() {
+		return comments;
+	}
+
+	public void setComments(int comments) {
+		this.comments = comments;
 	}
 	
 	

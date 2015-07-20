@@ -12,8 +12,13 @@ public class CreateId
 	
 	public static String createAtyId(String userId)
 	{
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		return userId + sdf.format(new Date());
+	}
+	
+	public static String createCommentId(String userId)
+	{
+		return createAtyId(userId);		
 	}
 	
 	

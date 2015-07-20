@@ -3,9 +3,14 @@ package com.server.db;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import com.server.strings.*;
+
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
+import com.server.strings.IStringConstans;
 
 public class DB 
 {	
@@ -19,12 +24,7 @@ public class DB
 	{
 		try 
 		{
-			Class.forName(IStringConstans.MYSQL_DRIVER);
-			
-
-//			String url = IStringConstans.URL;
-//			String user = IStringConstans.USER;
-//			String password = IStringConstans.PASSWORD;
+			Class.forName(IStringConstans.MYSQL_DRIVER);	
 			
 			String url = IStringConstans.LocalURL;
 			String user = IStringConstans.USER;
@@ -75,6 +75,35 @@ public class DB
 		}
 		
 	}
+
+	public JSONArray queryGetJsonArray(String sql)
+	{
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObj = new JSONObject();
+		
+		ResultSet rs = executeQuery(sql);
+		ResultSetMetaData rsmd;
+		try {
+			
+			rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			while (rs.next()) 
+			{
+				for (int i = 1; i <= cols; i++) 
+				{
+					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				jsonArray.add(jsonObj);
+				
+			}
+			
+			return jsonArray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public void close()
 	{
@@ -100,4 +129,6 @@ public class DB
 		}
 		
 	}
+
+
 }
