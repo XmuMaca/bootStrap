@@ -130,6 +130,9 @@ public class ClientPostServlet extends HttpServlet
 		case "showMembers":
 			showMembers(resp, jsobj);
 			break;
+		case "community":
+			showCommunity(resp, jsobj);
+			break;
 		case "showAtyInCommunity":
 			showAtyInCommunity(resp, jsobj);
 			break;
@@ -1053,6 +1056,63 @@ public class ClientPostServlet extends HttpServlet
 		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId = joining.userId and joining.atyId='%s'", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void showCommunity(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String ctyId = jsobj.getString("ctyId");
+		
+		String queryCtyDetails = String.format("select * from communnity where ctyType='s'", ctyId);
+		
+		JSONObject outJson = new JSONObject(); 
+		if(db.query(queryCtyDetails))
+		{
+			try
+			{
+				ResultSet rs = db.executeQuery(queryCtyDetails);
+				String ctyIcon = null;
+				int ctyMembers = 0;
+				while(rs.next())
+				{
+					ctyIcon = rs.getString("ctyIcon");
+					ctyMembers = rs.getInt("ctyMembers");
+				}
+				
+				outJson.put("ctyId", ctyId);
+				outJson.put("ctyIcon", ctyIcon);
+				outJson.put("ctyMembers", ctyMembers);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+		
+		String queryAttentionCty = String.format("select * from attention where userId='%s'", userId);
+		
+		try
+		{
+			ResultSet rs = db.executeQuery(queryAttentionCty);
+			while(rs.next())
+			{
+				if(rs.getString("ctyId").equals(ctyId))
+				{
+					outJson.put("ctyIsAttention", "true");
+				}
+				else
+				{
+					outJson.put("ctyIsAttention", "false");
+				}
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
 		writeJson(resp, outJson.toString());
 	}
 	
