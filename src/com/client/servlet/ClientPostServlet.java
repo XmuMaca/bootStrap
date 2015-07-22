@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 
@@ -111,6 +110,13 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "atyMembers":
 			atyMembers(resp, jsobj);
+			break;
+		case "showCredit":
+			showCredit(resp, jsobj);
+			break;
+		case "message":
+			sendMessage(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -284,6 +290,17 @@ public class ClientPostServlet extends HttpServlet
 		}
 		
 		writeJson(resp, outJSon.toString());
+		
+		
+		//credit
+		String userId = jsobj.getString("userId");
+		String creditId = CreateId.createCreditId(userId);
+		String creditContent = "注册成功";
+		int creditNumbers = 50;
+		
+		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		
+		db.excuteUpdate(insert_credit);
 	}
 
 	private void release(HttpServletResponse resp, JSONObject jsobj)
@@ -315,6 +332,15 @@ public class ClientPostServlet extends HttpServlet
 		
 		outJson.put("atyId", activity.getId());
 		writeJson(resp, outJson.toString());
+		
+		//credit
+		String creditId = CreateId.createCreditId(userId);
+		String creditContent = "发布活动：" + jsobj.getString("atyName");
+		int creditNumbers = 10;
+		
+		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		
+		db.excuteUpdate(insert_credit);
 		
 	}
 	
@@ -374,9 +400,20 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 		String insert_like = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, atyId);
-		db.excuteUpdate(update_aty);
-		db.excuteUpdate(insert_like);	
+		db.excuteUpdate(update_aty);	
 		
+		db.excuteUpdate(insert_like);
+		
+		//credit
+		String creditId = CreateId.createCreditId(userId);
+		String atyName = jsobj.getString("atyName");
+		String creditContent = "参加活动：" + atyName;
+		int creditNumbers = 5;
+		
+		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+				
+		db.excuteUpdate(insert_credit);		
+
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
 		writeJson(resp, outJson.toString());
@@ -396,6 +433,16 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(update_aty);
 		db.excuteUpdate(delete_aty);
 		
+		//credit
+		String creditId = CreateId.createCreditId(userId);
+		String atyName = jsobj.getString("atyName");
+		String creditContent = "退出活动：" + atyName;
+		int creditNumbers = -5;
+				
+		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+						
+		db.excuteUpdate(insert_credit);
+
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
 		writeJson(resp, outJson.toString());
@@ -845,6 +892,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());	
 	}
 	
+
 	private void atyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
@@ -857,6 +905,26 @@ public class ClientPostServlet extends HttpServlet
 		
 		writeJson(resp, jsArray.toString());
 	}
+
+	private void showCredit(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllCredit = String.format("select creditContent, creditNumber from %s where userId='%s'", IStringConstans.ADDCREDIT_TABLE_NAME, userId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllCredit);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void sendMessage(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllMsg = String.format("select * from %s,%s where userId='%s' and receive.msgId=message.msgId", IStringConstans.RECEIVE_TABLE_NAME, IStringConstans.MESSAGE_TABLE_NAME , userId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
+		writeJson(resp, outJson.toString());
+	} 
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
 	{

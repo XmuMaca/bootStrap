@@ -21,5 +21,8 @@ public class CreateId
 		return createAtyId(userId);		
 	}
 	
-	
+	public static String createCreditId(String userId)
+	{
+		return createAtyId(userId);
+	}
 }
