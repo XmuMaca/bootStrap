@@ -130,7 +130,10 @@ public class ClientPostServlet extends HttpServlet
 		case "showMembers":
 			showMembers(resp, jsobj);
 			break;
-		case "community":
+		case "showAllCommunities":
+			showAllCommunities(resp, jsobj);
+			break;
+		case "showCommunity":
 			showCommunity(resp, jsobj);
 			break;
 		case "showAtyInCommunity":
@@ -1056,6 +1059,16 @@ public class ClientPostServlet extends HttpServlet
 		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId = joining.userId and joining.atyId='%s'", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void showAllCommunities(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllCty = String.format("select * from attention where userId='%s'", userId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
 		writeJson(resp, outJson.toString());
 	}
 	

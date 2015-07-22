@@ -216,13 +216,11 @@
                         </div>
                         <div class="widgets">
                             <div class="widget blue value">
-                                <div class="left"><img src="img/music.png" style="width:86px; height:86px;"/></div>
+                                <div class="left">
+                                	<img src="img/music.png" style="width:86px; height:86px;"/>
+                                </div>
                                 <div class="right">
-                                    1 Some text here<br/>
-                                    2 Some text here<br/>
-                                    3 Some text here<br/>
-                                    4 Some text here<br/>
-                                    5 Some text here<br/>
+                                    <h1>music</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
@@ -233,23 +231,7 @@
                                     <img src="img/sport.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
-                                    <table cellpadding="0" cellspacing="0" width="100%">
-                                        <tr>
-                                            <td>1 table row</td><td>text</td>
-                                        </tr>
-                                        <tr>
-                                            <td>2 table row</td><td>13,42</td>
-                                        </tr>
-                                        <tr>
-                                            <td>3 table row</td><td>1 / 5</td> 
-                                        </tr>
-                                        <tr>
-                                            <td>4 table row</td><td>15 rounds</td> 
-                                        </tr>
-                                        <tr>
-                                            <td>5 table row</td><td>yeah</td>
-                                        </tr>
-                                    </table>
+                                    <h1>sport</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
@@ -260,11 +242,7 @@
                                     <img src="img/draws.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
-                                    1 Some text here<br/>
-                                    2 Some text here<br/>
-                                    3 Some text here<br/>
-                                    4 Some text here<br/>
-                                    5 Some text here<br/>
+                                    <h1>painting</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
@@ -275,11 +253,7 @@
                                 	<img src="img/reading1.png" style="width:86px; height:86px;"/>                                   
                                 </div>
                                 <div class="right">
-                                    1 Some text here<br/>
-                                    2 Some text here<br/>
-                                    3 Some text here<br/>
-                                    4 Some text here<br/>
-                                    5 Some text here<br/>
+                                    <h1>reading</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
@@ -290,11 +264,7 @@
 									<img src="img/plant.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
-                                    1 Some text here<br/>
-                                    2 Some text here<br/>
-                                    3 Some text here<br/>
-                                    4 Some text here<br/>
-                                    5 Some text here<br/>
+                                    <h1>environmental</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
@@ -305,11 +275,7 @@
                                 	<img src="img/science1.png" style="width:86px; height:86px;"/>                                  
                                 </div>
                                 <div class="right">
-                                    1 Some text here<br/>
-                                    2 Some text here<br/>
-                                    3 Some text here<br/>
-                                    4 Some text here<br/>
-                                    5 Some text here<br/>
+                                   <h1>science</h1>
                                 </div>
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
