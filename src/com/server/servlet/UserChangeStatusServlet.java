@@ -2,6 +2,9 @@ package com.server.servlet;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -69,6 +72,17 @@ public class UserChangeStatusServlet extends HttpServlet {
 		{
 			e.printStackTrace();
 		}
+		
+		sql = String.format("insert into %s values(?,?,?,?,?)", IStringConstans.MESSAGE_TABLE_NAME);
+		Date date = new Date();
+		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		String time = format.format(date);
+		/*try
+		{
+			pstat = db.getConnection().prepareStatement(sql);
+			pstat.setString(1, );
+		}*/
+		
 		
 		db.close();
 		
