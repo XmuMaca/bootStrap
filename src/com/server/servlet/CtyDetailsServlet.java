@@ -3,6 +3,7 @@ package com.server.servlet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -10,28 +11,23 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.server.bean.Account;
-import com.server.bean.Activity;
 import com.server.db.UserDB;
-import com.server.strings.IStringConstans;
 
 /**
- * Servlet implementation class UserDetailsServlet
+ * Servlet implementation class CtyDetailsServlet
  */
-@WebServlet("/UserDetailsServlet")
-public class UserDetailsServlet extends HttpServlet {
+@WebServlet("/CtyDetailsServlet")
+public class CtyDetailsServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
     
 	private UserDB db;
 	private String sql;
 	private PreparedStatement pstat;
 	
-	private Account user;
-	
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public UserDetailsServlet() {
+    public CtyDetailsServlet() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -55,43 +51,69 @@ public class UserDetailsServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
-		String userId = request.getParameter("userId");
+		String ctyId = request.getParameter("ctyId");
 		
 		db = new UserDB();
 		db.createConnection();
 		
-		sql = String.format("select * from %s where userId = ?", IStringConstans.USER_TABLE_NAME);
+		sql = String.format("select atyId, atyName from activity where atyType='%s'", ctyId);
 		
-		user = new Account();
+		ArrayList<String> aty = new ArrayList<String>();
+		ArrayList<ArrayList<String>> atyList = new ArrayList<ArrayList<String>>();
 		
 		try
 		{
 			pstat = db.getConnection().prepareStatement(sql);
-			pstat.setString(1, userId);
 			
 			ResultSet rs = pstat.executeQuery();
 			while(rs.next())
 			{
-				user.setId(rs.getString("userId"));
-				user.setName(rs.getString("userName"));
-				user.setPassword(rs.getString("userPassword"));
-				user.setIcon(rs.getString("userIcon"));
-				user.setGender(rs.getString("userGender"));
-				user.setLocation(rs.getString("userLocation"));
-				user.setEmail(rs.getString("userEmail"));
-				user.setPhone(rs.getString("userPhone"));
+				aty.add(rs.getString("atyId"));
+				aty.add(rs.getString("atyName"));
+				
+				atyList.add(aty);
+				
+				aty = new ArrayList<String>();
 			}
-			
-			pstat.close();
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 		
-		request.setAttribute("user", user);
+		System.out.println(atyList);
 		
-		request.getRequestDispatcher("userDetails.jsp").forward(request, response);
+		request.setAttribute("atyList", atyList);
+		
+		sql = String.format("select user.userId, userName from attention, user where user.userId=attention.userId and ctyId='%s'", ctyId);
+		
+		ArrayList<String> user = new ArrayList<String>();
+		ArrayList<ArrayList<String>> userList = new ArrayList<ArrayList<String>>();
+		
+		try
+		{
+			pstat = db.getConnection().prepareStatement(sql);
+			
+			ResultSet rs = pstat.executeQuery();
+			while(rs.next())
+			{
+				user.add(rs.getString("user.userId"));
+				user.add(rs.getString("userName"));
+				
+				userList.add(user);
+				
+				user = new ArrayList<String>();
+			}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		request.setAttribute("userList", userList);
+		
+		request.getRequestDispatcher("ctyDetails.jsp").forward(request, response);
+		
 	}
 
 }

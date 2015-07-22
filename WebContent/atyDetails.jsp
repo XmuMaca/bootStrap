@@ -239,25 +239,26 @@
                             <h2><%=aty.getName() %></h2>
                             <div class="row-fluid">
                                 <div class="span12">
-                                    <p><strong>Content</strong>, consectetur adipiscing elit. Etiam non luctus mauris. <a href="#">Nunc et turpis ac nibh vehicula venenatis</a> vitae sed eros. Donec non dignissim purus. Nam et urna et arcu ultricies suscipit. Nam elit erat, blandit sed congue sit amet, consequat sit amet nulla. <em>Proin lorem ipsum, vehicula a pellentesque ac</em>, tincidunt a mauris. In vel purus urna, a sodales nisl. Praesent nec tellus nec ante ullamcorper facilisis a ut velit. Praesent dictum rutrum leo ut condimentum. Nullam nec varius enim. Maecenas hendrerit risus id tellus venenatis a hendrerit urna eleifend. Aenean sed tincidunt nibh. Cras sodales porta sodales. Fusce vulputate interdum risus, porttitor blandit risus tincidunt eget.</p>
-                                    <p>Maecenas tempus vehicula neque, a dictum lectus ullamcorper nec. <span class="text-error">Ut pellentesque nibh a lorem pharetra vitae lobortis felis semper. Sed vehicula scelerisque semper.</span> Donec arcu enim, ornare adipiscing adipiscing imperdiet, imperdiet nec ante. Proin sit amet odio turpis. Etiam non porttitor orci. Duis massa est, tincidunt eget faucibus eu, ultricies id turpis. Morbi imperdiet euismod nulla. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Sed accumsan, dui et fermentum blandit, lectus est placerat est, placerat accumsan mi tortor non purus. Morbi lacus metus, fringilla et tempor sit amet, tempor volutpat leo. Nulla at interdum mi.</p>                            
+                                    <p><strong>Content:</strong><%=aty.getContent() %></p>                            
                                 </div>
                             </div>
-
+							
+							<br/>
 							<h4>Type</h4>
-                            <p>dota</p>
+                            <p><%=aty.getType() %></p>
 
+							<br/>
                             <h4>Time</h4>
-                            <p><strong>Begin:</strong>2015/7/16<strong>End:</strong>2015/7/16</p>
-
+                            <p><strong>Begin:</strong><%=aty.getStartTime() %></p>
+                            <p><strong>End:</strong><%=aty.getEndTime() %></p>
+							
+							<br/>
 							<h4>Place</h4>
-                            <p>haiyun2</p>
+                            <p><%=aty.getPlace() %></p>
 							
-							
+							<br/>
                             <h4>Members</h4>
-                            <blockquote>
-                            <p>23333</p>
-                            </blockquote>
+                            <p><%=aty.getMembers() %></p>
 
                             <div class="clearfix"></div>
 

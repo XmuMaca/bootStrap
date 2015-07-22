@@ -201,14 +201,14 @@
                     <div class="icon">
                         <span class="ico-cube"></span>
                     </div>
-                    <h1>Widgets <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>Communities <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
                 
                 <div class="row-fluid">
                     <div class="span12">
                         <div class="block title">
                             <div class="head">
-                                <h2>Widget structure</h2>
+                                <h2>Community Structure</h2>
                                 <ul class="buttons">
                                     <li><a href="#" onClick="source('widgets'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
                                 </ul>                                            
@@ -223,10 +223,10 @@
                                     <h1>music</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=dota">click here to enter</a>
                                 </div>
                             </div>
-                            <div class="widget green icon">
+                            <div class="widget green value">
                                 <div class="left">
                                     <img src="img/sport.png" style="width:86px; height:86px;"/>
                                 </div>
@@ -234,7 +234,7 @@
                                     <h1>sport</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=sport">click here to enter</a>
                                 </div>                            
                             </div>
                             <div class="widget purple chart">
@@ -245,7 +245,7 @@
                                     <h1>painting</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=painting">click here to enter</a>
                                 </div>                            
                             </div>
                             <div class="widget orange chart">
@@ -256,7 +256,7 @@
                                     <h1>reading</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=reading">click here to enter</a>
                                 </div>                            
                             </div>                              
                             <div class="widget yellow chart">
@@ -264,10 +264,10 @@
 									<img src="img/plant.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
-                                    <h1>environmental</h1>
+                                    <h1>planting</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=planting">click here to enter</a>
                                 </div>                            
                             </div>                   
                             <div class="widget red chart">
@@ -278,7 +278,7 @@
                                    <h1>science</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="#">Some link for widget</a>
+                                    <a href="CtyDetailsServlet?ctyId=science">Some link for widget</a>
                                 </div>                            
                             </div>
                                                                           

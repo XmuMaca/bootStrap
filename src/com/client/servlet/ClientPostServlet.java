@@ -147,6 +147,9 @@ public class ClientPostServlet extends HttpServlet
 		case "notJoinCty":
 			notJoinCty(resp, jsobj);
 			break;
+		case "creditRank":
+			creditRank(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -1123,6 +1126,14 @@ public class ClientPostServlet extends HttpServlet
 		
 		db.excuteUpdate(update_cty);
 		db.excuteUpdate(delete_attention);
+	}
+	
+	private void creditRank(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String queryCredit = String.format("select userId, userName, userIcon from %s order by userCredit", IStringConstans.USER_TABLE_NAME);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryCredit);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)

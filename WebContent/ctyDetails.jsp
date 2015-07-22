@@ -1,12 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ page import="com.server.bean.Account" %>
-<%@page import="java.sql.Connection"%>
+<%@ page import="java.sql.Connection"%>
+<%@ page import="java.util.*" %>
 
 <%
 	Account account = (Account)session.getAttribute("account");
 	String adminIcon = (String)session.getAttribute("adminIcon");
 %>
+
+<%
+	ArrayList<ArrayList<String>> atyList = (ArrayList<ArrayList<String>>)request.getAttribute("atyList");
+ArrayList<ArrayList<String>> userList = (ArrayList<ArrayList<String>>)request.getAttribute("userList");
+%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
 <head>        
@@ -22,7 +29,7 @@
     <!--[if lte IE 7]>
         <link href="css/ie.css" rel="stylesheet" type="text/css" />
         <script type='text/javascript' src='js/plugins/other/lte-ie7.js'></script>
-    <![endif]-->    
+    <![endif]-->      
     <script type='text/javascript' src='js/plugins/jquery/jquery-1.9.1.min.js'></script>
     <script type='text/javascript' src='js/plugins/jquery/jquery-ui-1.10.1.custom.min.js'></script>
     <script type='text/javascript' src='js/plugins/jquery/jquery-migrate-1.1.1.min.js'></script>
@@ -33,7 +40,17 @@
         
     <script type='text/javascript' src='js/plugins/bootstrap/bootstrap.min.js'></script>            
     
-    <script type='text/javascript' src='js/plugins/cookies/jquery.cookies.2.2.0.min.js'></script>
+    <script type='text/javascript' src='js/plugins/cookies/jquery.cookies.2.2.0.min.js'></script>    
+    
+    <script type='text/javascript' src='js/plugins/jflot/jquery.flot.js'></script>    
+    <script type='text/javascript' src='js/plugins/jflot/jquery.flot.stack.js'></script>    
+    <script type='text/javascript' src='js/plugins/jflot/jquery.flot.pie.js'></script>
+    <script type='text/javascript' src='js/plugins/jflot/jquery.flot.resize.js'></script>
+        
+    <script type='text/javascript' src='js/plugins/epiechart/jquery.easy-pie-chart.js'></script>    
+    <script type='text/javascript' src='js/plugins/sparklines/jquery.sparkline.min.js'></script>        
+    
+    <script type='text/javascript' src='js/plugins/mcustomscrollbar/jquery.mCustomScrollbar.min.js'></script>    
     
     <script type='text/javascript' src="js/plugins/uniform/jquery.uniform.min.js"></script>
     
@@ -42,8 +59,6 @@
     <script type='text/javascript' src='js/plugins/shbrush/shBrushXml.js'></script>
     <script type='text/javascript' src='js/plugins/shbrush/shBrushJScript.js'></script>
     <script type='text/javascript' src='js/plugins/shbrush/shBrushCss.js'></script>    
-    
-    <script type='text/javascript' src='js/plugins/fancybox/jquery.fancybox.pack.js'></script>
     
     <script type='text/javascript' src='js/plugins.js'></script>
     <script type='text/javascript' src='js/charts.js'></script>
@@ -66,15 +81,15 @@
                 </div>
             </div>
             
-             <ul class="navigation" id="tags">            
-                <li class="active">
+            <ul class="navigation" id="tags">            
+                <li>
                 	<a href="activities.jsp" class="blblue">Activities</a>
                 </li>
                 <li>
-                	<a href="#" class="blyellow">Users</a>
+                	<a href="users.jsp" class="blyellow">Users</a>
                 </li>
-                <li>
-                    <a href="communities.jsp" class="blgreen">Communities</a>
+                <li class="active">
+                    <a href="#" class="blgreen">Communities</a>
                 </li>
                 <li>
                 	<a href="boardcast.jsp" class="blred">Boardcast</a>
@@ -186,105 +201,68 @@
                 </li>
             </ul>
             
+            
             <div class="content">
-            	<div class="page-header">
+                
+                <div class="page-header">
                     <div class="icon">
-                        <span class="ico-pen-2"></span>
+                        <span class="ico-cube"></span>
                     </div>
-                    <h1>User Details <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>Communities <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
                 
                 <div class="row-fluid">
-                    <div class="span12">
-                        <div class="block">
-                            <div class="head">
-                                <div class="icon"><span class="ico-picture"></span></div>
-                                <h2>Album</h2>                    
-                            </div>                           
-                            <div class="data-fluid sGallery">
-                                <div class="item"><a href="img/examples/photo/example_1.jpg" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_2.jpg" class="fb" rel="group"><img src="img/examples/photo/example_2.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_3.jpg" class="fb" rel="group"><img src="img/examples/photo/example_3.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_4.jpg" class="fb" rel="group"><img src="img/examples/photo/example_4.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_5.jpg" class="fb" rel="group"><img src="img/examples/photo/example_5.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_6.jpg" class="fb" rel="group"><img src="img/examples/photo/example_6.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_7.jpg" class="fb" rel="group"><img src="img/examples/photo/example_7.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_8.jpg" class="fb" rel="group"><img src="img/examples/photo/example_8.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_9.jpg" class="fb" rel="group"><img src="img/examples/photo/example_9.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_10.jpg" class="fb" rel="group"><img src="img/examples/photo/example_10.jpg" width="220"/></a></div>
+                	<div class="span6">
+                		<div class="block">
+                            <div class="head">                                
+                                <h2>Activities</h2>
+                                <ul class="buttons">
+                                    <li><a href="#" onClick="source('sortable'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
+                                </ul>                                
+                            </div>                        
+                            <div class="data-fluid">
+                                <ul class="sList" id="sort_1">
+                                	<%
+                                	for(ArrayList<String> aty : atyList)
+                                	{%>
+
+                                    <li><%=aty.get(0) %>(<%=aty.get(1) %>)</li>
+                                    
+                                   <% }%>
+                                </ul>
                             </div>
-                        </div>     
-                    </div>
-                    
+                        </div>
+                	</div>
+                	
+                	<div class="span6">
+                		<div class="block">
+                            <div class="head">                                
+                                <h2>Members</h2>
+                                <ul class="buttons">
+                                    <li><a href="#" onClick="source('sortable'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
+                                </ul>                                
+                            </div>                        
+                            <div class="data-fluid">
+                                <ul class="sList" id="sort_1">
+                                   <%
+                                	for(ArrayList<String> user : userList)
+                                	{%>
+
+                                    <li><%=user.get(0) %>(<%=user.get(1) %>)</li>
+                                    
+                                   <% }%>
+                                </ul>
+                            </div>
+                        </div>
+                	</div>
                 </div>
                 
                 <div class="row-fluid">
-
-                    <div class="span8">                
-
-                        <div class="block">
-                            <div class="head">                                
-                                <h2>Details</h2>
-                            </div>                                        
-                            <div class="data-fluid">
-                                
-                                <%
-                                Account user = (Account)request.getAttribute("user");
-                                %>
-                                
-                                <div class="row-form">
-                                    <div class="span3">Id:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getId() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Name:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getName() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Password:</div>
-                                    <div class="span9"><input type="password" value="<%=user.getPassword() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Gender:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getGender() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Location:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getLocation() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Email:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getEmail() %>" readonly="readonly"/></div>
-                                </div>
-                                <div class="row-form">
-                                    <div class="span3">Phone:</div>
-                                    <div class="span9"><input type="text" value="<%=user.getPhone() %>" readonly="readonly"/></div>
-                                </div>
-
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="span4">                
-
-                        <div class="block">
-                            <div class="head">                                
-                                <h2>&nbsp;</h2>
-                                                                                                  
-                            </div>                                    
-                            <div class="data-fluid">
-								
-								<div class="row-form">
-                    				<div class="span3">User Icon:</div>
-                    				<img src="<%=user.getIcon() %>" width="200px" height="240px" />
-                    			</div>
-								
-                            </div>                
-                        </div>
-
-                    </div>            
-
+                	<br/>
+                	<br/>
+                	<br/>
+                	<br/>
+                	<br/>
                 </div>
                 
                 <div class="row-fluid">
@@ -299,14 +277,15 @@
                             </div>
                     	</div>
                     </div>
-                </div>
-            	
+                </div>                
+                
             </div>
-            
             
         </div>
         
     </div>
+    
     <div class="dialog" id="source" style="display: none;" title="Source"></div>    
+    
 </body>
 </html>
