@@ -118,6 +118,9 @@ public class ClientPostServlet extends HttpServlet
 		case "message":
 			sendMessage(resp, jsobj);
 			break;
+		case "showMessage":
+			showMessage(resp, jsobj);
+			break;
 		case "setPublicTrue":
 			setPublicTrue(resp, jsobj);
 			break;
@@ -133,13 +136,20 @@ public class ClientPostServlet extends HttpServlet
 		case "showMembersInCommunity":
 			showMembersInCommunity(resp, jsobj);
 			break;
+		case "joinCty":
+			joinCty(resp, jsobj);
+			break;
+		case "notJoinCty":
+			notJoinCty(resp, jsobj);
+			break;
+		case "editAlbumRight":
+			editAlbumRight(resp, jsobj);
 		default:
 			break;
 		}
 		
 		db.close();
 	}
-
 	
 	private JSONObject readJson(HttpServletRequest req)
 	{
@@ -167,7 +177,6 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 	}
-	
 	
 	private void writeJson(HttpServletResponse resp, String json)
 	{
@@ -290,12 +299,13 @@ public class ClientPostServlet extends HttpServlet
 			account.setPassword(jsobj.getString("userPassword"));
 			account.setGender(jsobj.getString("userGender"));
 			account.setName(jsobj.getString("userName"));
+			String isPublic = jsobj.getString("userAlbumIsPublic");
 			
 			String iconData = jsobj.getString("userIcon");		
 			IconAndUrl icon2url = new IconAndUrl();
 			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone) values('%s','%s','%s','%s','%s','%s','%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone());
+			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
 			outJSon.put("result", "true");
@@ -342,6 +352,7 @@ public class ClientPostServlet extends HttpServlet
 		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
+		String atyIsPublic = jsobj.getString("atyIsPublic");
 		
 		/*insert all pictures*/
 		JSONArray jsonArray = new JSONArray();
@@ -352,15 +363,15 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < jsonArray.size(); i++) 
 		{
 			IconAndUrl icon2url = new IconAndUrl();
-			String picurl = icon2url.getUrl(IMAGE_PATH, jsonArray.getString(i));
-			String insert_pics_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, albumId_aty, picurl);
-			String insert_pics_sql2 = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, albumId_user, picurl);
+			String picurl = icon2url.getUrl(IMAGE_PATH, jsonArray.getString(i), i);
+			String insert_pics_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_aty);
+			String insert_pics_sql2 = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_user);
 			db.excuteUpdate(insert_pics_sql);
 			db.excuteUpdate(insert_pics_sql2);
 		}
 		
 		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
-		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares());
+		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 		
 		db.excuteUpdate(insert_sql1);
@@ -488,7 +499,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = "select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
+		String queryAllAty = "select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
 							"from activity, user, distribute " +
 							"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0";
 		
@@ -511,6 +522,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -556,7 +573,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic" +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " +
 											"order by atyMembers", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -580,6 +597,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -628,7 +651,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		Double userLatitude = Double.parseDouble(jsobj.getString("latitude"));
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 "
 											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
@@ -654,6 +677,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -698,7 +727,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " +
 											"order by atyLikes", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -722,6 +751,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -812,7 +847,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " + 
+		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = joining.atyId and user.userId = joining.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, userId);		
 		
@@ -832,6 +867,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -876,7 +917,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " + 
+		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
 		
@@ -895,6 +936,12 @@ public class ClientPostServlet extends HttpServlet
 		for (int i = 0; i < outJson.size(); i++) 
 		{
 			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
 			
 			if (likeAty.size() > 0) 
 			{
@@ -971,6 +1018,16 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(query_update);
 	}
 	
+	private void showMessage(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s' and msgIsSend=1", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
+	
+		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
+		writeJson(resp, outJson.toString());
+	}
+	
 	private void setPublicTrue(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1003,12 +1060,53 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String ctyType = jsobj.getString("ctyType");
 		
-		String queryAllAty = String.format("select ");
+		String queryAllAty = String.format("select user.userIcon, activity.atyId, activity.atyName "
+				+ "from activity, distribute, user "
+				+ "where atyType='%s' and distribute.atyId=activity.atyId and distribute.userId=user.userId", ctyType);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllAty);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void showMembersInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
+		String ctyType = jsobj.getString("ctyType");
 		
+		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId=attention.userId and ctyId='%s'", IStringConstans.USER_TABLE_NAME, IStringConstans.ATTENTION_TABLE_NAME, ctyType);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void joinCty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String ctyType = jsobj.getString("ctyType");
+		
+		String update_cty = String.format("update %s " +
+				"set ctyMembers=ctyMembers+1 " +
+				"where ctyType='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+
+		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyType);
+		
+		db.excuteUpdate(update_cty);	
+
+		db.excuteUpdate(insert_attention);
+	}
+	
+	private void notJoinCty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String ctyType = jsobj.getString("ctyType");
+		
+		String update_cty = String.format("update %s " +
+				"set ctyMembers=ctyMembers-1 " +
+				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+		
+		String delete_attention = String.format("delete from %s where ctyId='%s' and userId='%s'", IStringConstans.ATTENTION_TABLE_NAME, ctyType, userId);
+		
+		db.excuteUpdate(update_cty);
+		db.excuteUpdate(delete_attention);
 	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
@@ -1026,6 +1124,20 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("result", "success");
 		writeJson(resp, outJson.toString());
 	}
-
+	
+	private void editAlbumRight(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String albumIsPublic = jsobj.getString("userAlbumIsPublic");
+		
+		String sql = String.format("update %s set userAlbumIsPublic='%s' where userId='%s'", IStringConstans.USER_TABLE_NAME, albumIsPublic, userId);
+		db.excuteUpdate(sql);
+		
+		
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, outJson.toString());
+		
+	}
 	
 }

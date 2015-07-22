@@ -40,6 +40,29 @@ public class IconAndUrl
 		return IStringConstans.REMOTE_IMAGE_PATH + imageName;
 	}
 	
+	public String getUrl(String store_path, byte[] icon, int var)
+	{
+		String imageName = createIconName();
+		String path = store_path + var + imageName;
+		writeIcon(path, icon);		
+		
+		return IStringConstans.REMOTE_IMAGE_PATH + var + imageName ;
+	}
+	
+	public String getUrl(String store_path, String icon, int var)
+	{
+		try 
+		{
+			byte[] ic;	
+			ic = icon.getBytes("ISO-8859-1");				//make sure the encoding pattern 
+			return getUrl(store_path, ic, var);	
+		} catch (UnsupportedEncodingException e) {
+
+			e.printStackTrace();
+			return null;
+		}
+	}	
+	
 	private void writeIcon(String path, byte[] icon) 
 	{
 		try {

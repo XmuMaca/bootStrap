@@ -22,13 +22,13 @@ public class Account
 	
 	private int isBaned; 
 	
-	private int isPublic;
+	private String isPublic;
 	
-	public int getIsPublic() {
+	public String getIsPublic() {
 		return isPublic;
 	}
 
-	public void setIsPublic(int isPublic) {
+	public void setIsPublic(String isPublic) {
 		this.isPublic = isPublic;
 	}
 

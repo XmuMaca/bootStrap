@@ -13,7 +13,12 @@ public interface IStringConstans
 	String LIKE_TABLE_NAME = "islike";
 	String JOIN_TABLE_NAME = "joining";
 	String ADDCREDIT_TABLE_NAME = "addCredit";
+
 	String PHOTOS_TABLE_NAME = "photos";
+
+	String ATTENTION_TABLE_NAME = "attention";
+	String COMMUNITY_TABLE_NAME = "communnity";
+
 	
 	/*mysql connection url*/
 	String MYSQL_DRIVER = "com.mysql.jdbc.Driver";

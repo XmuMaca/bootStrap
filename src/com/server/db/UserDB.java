@@ -5,6 +5,8 @@ import java.util.List;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import net.sf.json.JSONArray;
+
 import com.server.bean.Account;
 
 public class UserDB extends DB 
@@ -60,6 +62,7 @@ public class UserDB extends DB
 				account.setPhone(rs.getString("userPhone"));
 				account.setIdentity(rs.getString("userIdentity"));
 				account.setIsBaned(rs.getInt("userIsBaned"));
+				account.setIsPublic(rs.getString("userAlbumIsPublic"));
 				result.add(account);
 			}
 			return result;
@@ -89,5 +92,25 @@ public class UserDB extends DB
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public JSONArray getAlbumUrl(String sql)
+	{
+		JSONArray jsarray = new JSONArray();
+		ResultSet rs = executeQuery(sql);
+		
+		try {
+			while(rs.next())
+			{
+				jsarray.add(rs.getString("photoId"));
+			}
+			return jsarray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		
 	}
 }
