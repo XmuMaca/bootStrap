@@ -27,8 +27,8 @@ public class DB
 			Class.forName(IStringConstans.MYSQL_DRIVER);	
 			
 			String url = IStringConstans.LocalURL;
-			String user = IStringConstans.LOCAL_USER;
-			String password = IStringConstans.LOCAL_PASSWORD;
+			String user = IStringConstans.USER;
+			String password = IStringConstans.PASSWORD;
 			
 			connection = DriverManager.getConnection(url, user, password);
 			//System.out.print("connection succeed.");

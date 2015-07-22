@@ -75,7 +75,7 @@ public class ClientPostServlet extends HttpServlet
 		case "showJoinedAty":
 			showJoinedAty(resp, jsobj);
 			break;
-		case "showDistributingAty":
+		case "showDistributedAty":
 			showDistributeAty(resp, jsobj);
 			break;
 		case "comment":
@@ -221,7 +221,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String update_sql = String.format("update %s " +
 										  "set userName='%s' ,userEmail='%s', userPhone='%s' ,userGender='%s', userLocation='%s' " +
-										  "where userId='%s'", IStringConstans.USER_TABLE_NAME, userName, userEmail, userPhone, userGender, userLocation);
+										  "where userId='%s'", IStringConstans.USER_TABLE_NAME, userName, userEmail, userPhone, userGender, userLocation, userId);
 		
 		db.excuteUpdate(update_sql);
 		
@@ -250,7 +250,7 @@ public class ClientPostServlet extends HttpServlet
 			if (accout.getIsBaned() == 0) 
 			{
 				outJSon.put("userId", accout.getId());
-				//outJSon.put("userPassword", );
+				outJSon.put("userPassword", accout.getPassword());
 				outJSon.put("userName", accout.getName());
 				outJSon.put("userIcon", accout.getIcon());
 				outJSon.put("userGender", accout.getGender());
@@ -355,7 +355,7 @@ public class ClientPostServlet extends HttpServlet
 		String creditContent = "发布活动：" + jsobj.getString("atyName");
 		int creditNumbers = 10;
 		
-		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 		
 		db.excuteUpdate(insert_credit);
 		
@@ -427,7 +427,7 @@ public class ClientPostServlet extends HttpServlet
 		String creditContent = "参加活动：" + atyName;
 		int creditNumbers = 5;
 		
-		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 				
 		db.excuteUpdate(insert_credit);		
 
@@ -456,7 +456,7 @@ public class ClientPostServlet extends HttpServlet
 		String creditContent = "退出活动：" + atyName;
 		int creditNumbers = -5;
 				
-		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 						
 		db.excuteUpdate(insert_credit);
 
@@ -865,13 +865,13 @@ public class ClientPostServlet extends HttpServlet
 				 "from %s " +
 				 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
 
-		String queryIsJoined =String.format("select atyId " +
+		String queryDistributed =String.format("select atyId " +
 					"from %s " +
 					"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);	
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllAty);
 		List<String> likeAty = db.getAtyId(queryIsLike);
-		List<String> joinAty = db.getAtyId(queryIsJoined);
+		List<String> joinAty = db.getAtyId(queryDistributed);
 		
 		for (int i = 0; i < outJson.size(); i++) 
 		{
