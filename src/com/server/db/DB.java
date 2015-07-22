@@ -6,6 +6,10 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -94,7 +98,7 @@ public class DB
 					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
 				}
 				jsonArray.add(jsonObj);
-				
+				jsonObj = new JSONObject();				
 			}
 			
 			return jsonArray;
@@ -105,6 +109,48 @@ public class DB
 		}
 	}
 	
+//	public JSONArray queryGetJsonArray2(String sql)
+//	{
+//		JSONArray jsonArray = new JSONArray();
+//		JSONObject jsonObj = new JSONObject();
+//		
+//		ResultSet rs = executeQuery(sql);
+//		ResultSetMetaData rsmd;
+//		
+//		Map<String, String> map = new HashMap<String, String>();
+//		List<Map<String, String>> maplist = new ArrayList<Map<String,String>>() ;
+//		
+//		try {
+//			
+//			rsmd = rs.getMetaData();
+//			int cols = rsmd.getColumnCount();
+//			while (rs.next()) 
+//			{
+//				for (int i = 1; i <= cols; i++) 
+//				{
+//					//jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+//					map.put(rsmd.getColumnName(i), rs.getString(i));
+//				}
+//				//jsonArray.add(jsonObj);
+//				maplist.add(map);
+//				map = new HashMap<String, String>();
+//			}
+//			
+//			
+//			
+////			return jsonArray;
+//		} catch (SQLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+////			return null;
+//		}
+//		
+//		for (int i = 0; i < maplist.size(); i++) 
+//		{
+//			
+//		}
+//	}
+//	
 	public JSONObject queryGetJsonObj(String sql)
 	{
 		JSONArray jsarray = queryGetJsonArray(sql);

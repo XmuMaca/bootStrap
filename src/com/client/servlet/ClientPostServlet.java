@@ -311,7 +311,7 @@ public class ClientPostServlet extends HttpServlet
 			IconAndUrl icon2url = new IconAndUrl();
 			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
 			outJSon.put("result", "true");
@@ -331,7 +331,7 @@ public class ClientPostServlet extends HttpServlet
 		String creditContent = "×¢²á³É¹¦";
 		int creditNumbers = 50;
 		
-		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 		
 		db.excuteUpdate(insert_credit);
 	}
@@ -987,7 +987,6 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());	
 	}
 	
-
 	private void atyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
@@ -1008,6 +1007,7 @@ public class ClientPostServlet extends HttpServlet
 		String queryAllCredit = String.format("select creditContent, creditNumbers from %s where userId='%s'", IStringConstans.ADDCREDIT_TABLE_NAME, userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCredit);
+		System.out.println(outJson.toString());
 		writeJson(resp, outJson.toString());
 	}
 	
@@ -1066,7 +1066,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllCty = String.format("select * from attention where userId='%s'", userId);
+		String queryAllCty = String.format("select ctyId, ctyIcon,ctyMembers from attention, communnity where userId='%s' and attention.ctyId=communnity.ctyId", userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
 		writeJson(resp, outJson.toString());
@@ -1078,16 +1078,16 @@ public class ClientPostServlet extends HttpServlet
 		
 		String ctyId = jsobj.getString("ctyId");
 		
-		String queryCtyDetails = String.format("select * from communnity where ctyType='s'", ctyId);
+		String queryCtyDetails = String.format("select * from communnity where ctyId='%s'", ctyId);
 		
 		JSONObject outJson = new JSONObject(); 
 		if(db.query(queryCtyDetails))
 		{
+			ResultSet rs = db.executeQuery(queryCtyDetails);
+			String ctyIcon = null;
+			int ctyMembers = 0;
 			try
 			{
-				ResultSet rs = db.executeQuery(queryCtyDetails);
-				String ctyIcon = null;
-				int ctyMembers = 0;
 				while(rs.next())
 				{
 					ctyIcon = rs.getString("ctyIcon");
@@ -1131,11 +1131,11 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void showAtyInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String ctyType = jsobj.getString("ctyType");
+		String ctyId = jsobj.getString("ctyId");
 		
 		String queryAllAty = String.format("select user.userIcon, activity.atyId, activity.atyName "
 				+ "from activity, distribute, user "
-				+ "where atyType='%s' and distribute.atyId=activity.atyId and distribute.userId=user.userId", ctyType);
+				+ "where atyType='%s' and distribute.atyId=activity.atyId and distribute.userId=user.userId", ctyId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllAty);
 		writeJson(resp, outJson.toString());
@@ -1143,9 +1143,9 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void showMembersInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String ctyType = jsobj.getString("ctyType");
+		String ctyId = jsobj.getString("ctyId");
 		
-		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId=attention.userId and ctyId='%s'", IStringConstans.USER_TABLE_NAME, IStringConstans.ATTENTION_TABLE_NAME, ctyType);
+		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId=attention.userId and ctyId='%s'", IStringConstans.USER_TABLE_NAME, IStringConstans.ATTENTION_TABLE_NAME, ctyId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
 		writeJson(resp, outJson.toString());
@@ -1154,32 +1154,40 @@ public class ClientPostServlet extends HttpServlet
 	private void joinCty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
-		String ctyType = jsobj.getString("ctyType");
+		String ctyId = jsobj.getString("ctyId");
 		
 		String update_cty = String.format("update %s " +
 				"set ctyMembers=ctyMembers+1 " +
-				"where ctyType='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyId);
 
-		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyType);
+		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyId);
 		
 		db.excuteUpdate(update_cty);	
 
 		db.excuteUpdate(insert_attention);
+		
+		JSONObject out = new JSONObject();
+		out.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, out.toString());
 	}
 	
 	private void notJoinCty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
-		String ctyType = jsobj.getString("ctyType");
+		String ctyId = jsobj.getString("ctyId");
 		
 		String update_cty = String.format("update %s " +
 				"set ctyMembers=ctyMembers-1 " +
-				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyId);
 		
-		String delete_attention = String.format("delete from %s where ctyId='%s' and userId='%s'", IStringConstans.ATTENTION_TABLE_NAME, ctyType, userId);
+		String delete_attention = String.format("delete from %s where ctyId='%s' and userId='%s'", IStringConstans.ATTENTION_TABLE_NAME, ctyId, userId);
 		
 		db.excuteUpdate(update_cty);
 		db.excuteUpdate(delete_attention);
+		
+		JSONObject out = new JSONObject();
+		out.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, out.toString());
 	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
