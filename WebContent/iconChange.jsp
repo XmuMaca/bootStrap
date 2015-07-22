@@ -201,9 +201,9 @@
                 
                 <div class="page-header">
                     <div class="icon">
-                        <span class="ico-pen-2"></span>
+                        <span class="ico-cog-2"></span>
                     </div>
-                    <h1>Form <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>Settings <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
                 
 
@@ -213,7 +213,7 @@
 
                         <div class="block">
                             <div class="head">                                
-                                <h2>Default form elements</h2>
+                                <h2>Image Upload Preview</h2>
                                 <ul class="buttons">             
                                     <li><a href="#" onClick="source('form_default'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
                                 </ul>                                  

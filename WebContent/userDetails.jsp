@@ -191,7 +191,7 @@
                     <div class="icon">
                         <span class="ico-pen-2"></span>
                     </div>
-                    <h1>Form <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>User Details <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
                 
                 <div class="row-fluid">
@@ -199,7 +199,7 @@
                         <div class="block">
                             <div class="head">
                                 <div class="icon"><span class="ico-picture"></span></div>
-                                <h2>Simple Gallery</h2>                    
+                                <h2>Album</h2>                    
                             </div>                           
                             <div class="data-fluid sGallery">
                                 <div class="item"><a href="img/examples/photo/example_1.jpg" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
@@ -224,7 +224,7 @@
 
                         <div class="block">
                             <div class="head">                                
-                                <h2>Default form elements</h2>
+                                <h2>Details</h2>
                             </div>                                        
                             <div class="data-fluid">
                                 

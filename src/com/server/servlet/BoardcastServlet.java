@@ -76,7 +76,7 @@ public class BoardcastServlet extends HttpServlet {
 		db = new UserDB();
 		db.createConnection();
 		
-		msg_sql = String.format("insert into %s values(?,?,?,?)", IStringConstans.MESSAGE_TABLE_NAME);
+		msg_sql = String.format("insert into %s values(?,?,?,?,?)", IStringConstans.MESSAGE_TABLE_NAME);
 		user_sql = String.format("select * from %s where userId = ?", IStringConstans.USER_TABLE_NAME);
 		receive_sql = String.format("insert into %s values(?,?)", IStringConstans.RECEIVE_TABLE_NAME);
 		
@@ -89,6 +89,7 @@ public class BoardcastServlet extends HttpServlet {
 			pstat.setString(2, message.getMsgType());
 			pstat.setString(3, message.getMsgTime());
 			pstat.setString(4, message.getMsgContent());
+			pstat.setInt(5, 0);
 			pstat.executeUpdate();
 			pstat.close();
 			
