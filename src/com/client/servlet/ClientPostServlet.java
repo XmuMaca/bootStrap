@@ -117,6 +117,9 @@ public class ClientPostServlet extends HttpServlet
 		case "message":
 			sendMessage(resp, jsobj);
 			break;
+		case "showMessage":
+			showMessage(resp, jsobj);
+			break;
 		case "setPublicTrue":
 			setPublicTrue(resp, jsobj);
 			break;
@@ -131,6 +134,12 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showMembersInCommunity":
 			showMembersInCommunity(resp, jsobj);
+			break;
+		case "joinCty":
+			joinCty(resp, jsobj);
+			break;
+		case "notJoinCty":
+			notJoinCty(resp, jsobj);
 			break;
 		default:
 			break;
@@ -943,13 +952,23 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 
-		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s' and msgIsSend=0", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
 				
 		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
 		writeJson(resp, outJson.toString());
 		
 		String query_update = String.format("update %s set msgIsSend=1 where msgId in (select msgId from %s where userId='%s')", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
 		db.excuteUpdate(query_update);
+	}
+	
+	private void showMessage(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s' and msgIsSend=1", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
+	
+		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void setPublicTrue(HttpServletResponse resp, JSONObject jsobj)
@@ -984,12 +1003,53 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String ctyType = jsobj.getString("ctyType");
 		
-		String queryAllAty = String.format("select ");
+		String queryAllAty = String.format("select user.userIcon, activity.atyId, activity.atyName "
+				+ "from activity, distribute, user "
+				+ "where atyType='%s' and distribute.atyId=activity.atyId and distribute.userId=user.userId", ctyType);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllAty);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void showMembersInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
+		String ctyType = jsobj.getString("ctyType");
 		
+		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId=attention.userId and ctyId='%s'", IStringConstans.USER_TABLE_NAME, IStringConstans.ATTENTION_TABLE_NAME, ctyType);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void joinCty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String ctyType = jsobj.getString("ctyType");
+		
+		String update_cty = String.format("update %s " +
+				"set ctyMembers=ctyMembers+1 " +
+				"where ctyType='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+
+		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyType);
+		
+		db.excuteUpdate(update_cty);	
+
+		db.excuteUpdate(insert_attention);
+	}
+	
+	private void notJoinCty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String ctyType = jsobj.getString("ctyType");
+		
+		String update_cty = String.format("update %s " +
+				"set ctyMembers=ctyMembers-1 " +
+				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyType);
+		
+		String delete_attention = String.format("delete from %s where ctyId='%s' and userId='%s'", IStringConstans.ATTENTION_TABLE_NAME, ctyType, userId);
+		
+		db.excuteUpdate(update_cty);
+		db.excuteUpdate(delete_attention);
 	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
