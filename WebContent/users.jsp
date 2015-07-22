@@ -25,7 +25,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
     <!--[if gt IE 8]>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />        
     <![endif]-->                
-    <title>Dynamic Tables - Aries Premium Admin Template</title>
+    <title>APlus backstage management system</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     
     <link href="css/stylesheets.css" rel="stylesheet" type="text/css" />
@@ -69,7 +69,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
         <div class="sidebar">
             
             <div class="top">
-                <a href="index-2.html" class="logo"></a>
+                <a href="activities.jsp#"><h1 style="font-size:50px;margin:4px 4px 20px 4px;">APLUS<small>v1.0</small></h1></a>
                 <div class="search">
                     <div class="input-prepend">
                         <span class="add-on orange"><span class="icon-search icon-white"></span></span>

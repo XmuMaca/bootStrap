@@ -15,7 +15,7 @@
     <!--[if gt IE 8]>
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />        
     <![endif]-->                
-    <title>Widgets - Premium Admin Template</title>
+    <title>APlus backstage management system</title>
     <link rel="icon" type="image/ico" href="favicon.ico"/>
     
     <link href="css/stylesheets.css" rel="stylesheet" type="text/css" />
@@ -65,7 +65,7 @@
         <div class="sidebar">
             
             <div class="top">
-                <a href="index-2.html" class="logo"></a>
+                <a href="activities.jsp#"><h1 style="font-size:50px;margin:4px 4px 20px 4px;">APLUS<small>v1.0</small></h1></a>
                 <div class="search">
                     <div class="input-prepend">
                         <span class="add-on orange"><span class="icon-search icon-white"></span></span>
@@ -203,7 +203,7 @@
                     </div>
                     <h1>Widgets <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
-
+                
                 <div class="row-fluid">
                     <div class="span12">
                         <div class="block title">
@@ -216,7 +216,7 @@
                         </div>
                         <div class="widgets">
                             <div class="widget blue value">
-                                <div class="left">468</div>
+                                <div class="left"><img src="img/music.png" style="width:86px; height:86px;"/></div>
                                 <div class="right">
                                     1 Some text here<br/>
                                     2 Some text here<br/>
@@ -230,9 +230,7 @@
                             </div>
                             <div class="widget green icon">
                                 <div class="left">
-                                    <div class="icon">
-                                        <span class="ico-lamp-3"></span>
-                                    </div>
+                                    <img src="img/sport.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
                                     <table cellpadding="0" cellspacing="0" width="100%">
@@ -259,7 +257,7 @@
                             </div>
                             <div class="widget purple chart">
                                 <div class="left">                                    
-                                    <span class="mChartBar" sparkWidth="90" sparkHeight="90" sparkType="pie">10,9,8.5,8</span>
+                                    <img src="img/draws.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
                                     1 Some text here<br/>
@@ -273,8 +271,8 @@
                                 </div>                            
                             </div>
                             <div class="widget orange chart">
-                                <div class="left">                                    
-                                    <span class="mChartBar" sparkWidth="90" sparkHeight="90" sparkType="bar" sparkBarColor="#FFFFFF" sparkBarWidth="10">10,9,8.5,8,9,8,7,7.5</span>
+                                <div class="left"> 
+                                	<img src="img/reading1.png" style="width:86px; height:86px;"/>                                   
                                 </div>
                                 <div class="right">
                                     1 Some text here<br/>
@@ -289,7 +287,7 @@
                             </div>                              
                             <div class="widget yellow chart">
                                 <div class="left">                                    
-                                    <span class="mChartBar" sparkWidth="90" sparkHeight="90" sparkType="line" sparkLineWidth="3" sparkLineColor="#FFFFFF" sparkFillColor="false">10,9,8.5,8,9,8,7,7.5</span>
+									<img src="img/plant.png" style="width:86px; height:86px;"/>
                                 </div>
                                 <div class="right">
                                     1 Some text here<br/>
@@ -303,8 +301,8 @@
                                 </div>                            
                             </div>                   
                             <div class="widget red chart">
-                                <div class="left">                                    
-                                    <span class="mChartBar" sparkWidth="90" sparkHeight="90" sparkType="tristate" sparkPosBarColor="#FFFFFF" sparkNegBarColor="#FFFFFF" sparkZeroBarColor="#FFFFFF" sparkBarWidth="10">2,1,-1,0,3,-2,-1,0,1,-2</span>
+                                <div class="left">  
+                                	<img src="img/science1.png" style="width:86px; height:86px;"/>                                  
                                 </div>
                                 <div class="right">
                                     1 Some text here<br/>
@@ -316,283 +314,20 @@
                                 <div class="bottom">
                                     <a href="#">Some link for widget</a>
                                 </div>                            
-                            </div>                                               
+                            </div>
+                                                                          
                             
                         </div>
                     </div>
-                </div>                
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="block title">
-                            <div class="head">
-                                <h2>Small widget structure</h2>
-                                <ul class="buttons">
-                                    <li><a href="#" onClick="source('swidgets'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
-                                </ul>                                            
-                            </div>
-                        </div>                        
-                        <div class="widgets">
-                            
-                            <a href="#" class="swidget purple clean">
-                                <div class="icon">
-                                    <span class="ico-stack-3"></span>
-                                </div>         
-                            </a>
-                                                        
-                            <a href="#" class="swidget green clean">
-                                <div class="epc mini">
-                                    <span class="epcm-green" data-percent="65">65%</span>
-                                </div>                                
-                            </a>                            
-
-                            <a href="#" class="swidget dblue clean">
-                                <div class="value">
-                                    5,231
-                                </div>                             
-                            </a>                            
-                            
-                            <a href="#" class="swidget blue">
-                                <div class="icon">
-                                    <span class="ico-box"></span>
-                                </div>
-                                <div class="bottom">
-                                    <div class="text">Products</div>
-                                </div>                                
-                            </a>
-
-                            <a href="#" class="swidget orange">
-                                <div class="icon">
-                                    <span class="ico-info"></span>
-                                </div>
-                                <div class="bottom">
-                                    <div class="text">Info</div>
-                                    <div class="value">2,312</div>
-                                </div>                                
-                            </a>                            
-
-                            <a href="#" class="swidget red">
-                                <div class="epc mini">
-                                    <span class="epcm-red" data-percent="81">81%</span>
-                                </div>                                
-                                <div class="bottom">
-                                    <div class="text">Statistic</div>                                    
-                                </div>                                
-                            </a>                            
-
-                            <a href="#" class="swidget blue">
-                                <div class="epc mini">
-                                    <span class="epcm-blue" data-percent="75">75%</span>
-                                </div>                                
-                                <div class="bottom">
-                                    <div class="text">Statistic</div>                             
-                                    <div class="value">1,345</div>
-                                </div>                                
-                            </a>                            
-
-                            <a href="#" class="swidget yellow">
-                                <div class="value">
-                                    5,231
-                                </div>           
-                                <div class="bottom">
-                                    <div class="text">Information</div>                                                                 
-                                </div>                                                                
-                            </a>                             
-
-                            <a href="#" class="swidget green">
-                                <div class="value">
-                                    5,231
-                                </div>           
-                                <div class="bottom">
-                                    <div class="text">Information</div>    
-                                    <div class="value">345</div>
-                                </div>                                                                
-                            </a>                                                         
-                            
-                        </div>
-                        
-                    </div>
-                </div> 
-                <div class="row-fluid">
-                    <div class="span12">
-                        <div class="block title">
-                            <div class="head">
-                                <h2>Block structure</h2>
-                                <ul class="buttons">
-                                    <li><a href="#" onClick="source('block'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
-                                </ul>                                            
-                            </div>
-                        </div>                
-                    </div>
                 </div>
+                
                 <div class="row-fluid">
-                    <div class="span4">
-                        <div class="block">
-                            <div class="head">                                
-                                <h2>Simple block</h2>                          
-                            </div>
-                            <div class="data">
-                                Sample of simple block without any features
-                            </div>
-                        </div>                               
-                    </div>
-                    <div class="span4">
-                        <div class="block">
-                            <div class="head">
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Simple block</h2>
-                            </div>
-                            <div class="data">
-                                Sample of simple block with icon
-                            </div>                            
-                        </div>                                
-                    </div>
-                    <div class="span4">
-                        <div class="block">
-                            <div class="head">
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Simple block</h2>
-                                <ul class="buttons">                                    
-                                    <li><a href="#"><div class="icon"><span class="ico-cog"></span></div></a></li>                                    
-                                </ul>                                
-                            </div>
-                            <div class="data">
-                                Sample of simple block with buttons block and icon
-                            </div>
-                        </div>                               
-                    </div>
+                	<br/>
+                	<br/>
+                	<br/>
+                	<br/>
+                	<br/>
                 </div>                
-                <div class="row-fluid">
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head dblue">                                
-                                <h2>Block with head</h2>                                
-                            </div>
-                            <div class="data">
-                                Sample of simple block with head
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head blue">                        
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Block with head</h2>
-                            </div>
-                            <div class="data">
-                                Sample of block with head and icon
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head orange">
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Block with head</h2>                 
-                                <ul class="buttons">                                    
-                                    <li>
-                                        <a href="#"><div class="icon"><span class="ico-cog"></span></div></a>
-                                        <ul class="dropdown-menu">
-                                            <li><a href="#">Add new</a></li>
-                                            <li><a href="#">Upload</a></li>
-                                            <li><a href="#">Search</a></li>
-                                            <li class="divider"></li>
-                                            <li><a href="#">Clear folder</a></li>
-                                        </ul>
-                                    </li>                                    
-                                    
-                                </ul>                                
-                            </div>
-                            <div class="data">
-                                Example of block with head, icon and buttons
-                            </div>
-                        </div>                          
-                     </div>                     
-                </div>
-                <div class="row-fluid">
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head purple">                                
-                                <h2>Block with dark content</h2>                                
-                            </div>
-                            <div class="data dark">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head yellow">
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Block loader example</h2>                           
-                                <ul class="buttons">
-                                    <li><a href="#" class="ublock"><div class="icon"><span class="ico-undo"></span></div></a></li>
-                                </ul>
-                            </div>
-                            <div class="data">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head green">                        
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Collapsible block</h2>
-                                <ul class="buttons">                                    
-                                    <li><a href="#" class="cblock"><div class="icon"><span class="ico-sort"></span></div></a></li>
-                                </ul>                                
-                            </div>
-                            <div class="data">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan
-                            </div>
-                        </div>                          
-                     </div>                    
-                 </div>                
-                <div class="row-fluid">
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head green">                                
-                                <h2>Block with scrolling</h2>                                
-                            </div>
-                            <div class="data npr">
-                                <div class="scroll" style="height: 100px;">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan. 
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan. 
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan.
-                                </div>
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head orange">         
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Block with scrolling </h2>                                
-                            </div>
-                            <div class="data npr dark">
-                                <div class="scroll" style="height: 100px;">
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan. 
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan. 
-                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan.
-                                </div>
-                            </div>
-                        </div>                          
-                     </div>
-                     <div class="span4">
-                        <div class="block">
-                            <div class="head yellow">                        
-                                <div class="icon"><i class="ico-grid"></i></div>
-                                <h2>Block with label</h2>
-                                <div class="items">
-                                    <span class="label label-info">Example text</span>
-                                </div>
-                            </div>
-                            <div class="data">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam leo ligula, aliquam in ullamcorper sed, adipiscing vitae ligula. Morbi sed mi ipsum. Vivamus laoreet, ante eget bibendum accumsan
-                            </div>
-                        </div>                          
-                     </div>                    
-                 </div>  
                 
             </div>
             
