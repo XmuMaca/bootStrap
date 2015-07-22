@@ -105,6 +105,12 @@ public class DB
 		}
 	}
 	
+	public JSONObject queryGetJsonObj(String sql)
+	{
+		JSONArray jsarray = queryGetJsonArray(sql);
+		return jsarray.getJSONObject(0);
+	}
+	
 	public void close()
 	{
 		try 
