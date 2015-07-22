@@ -26,6 +26,7 @@ import com.server.util.IconAndUrl;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
+import net.sf.json.processors.JsonBeanProcessorMatcher;
 
 public class ClientPostServlet extends HttpServlet
 {
@@ -205,6 +206,7 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("userGender", account.getGender());
 		outJson.put("userLocation", account.getLocation());
 		outJson.put("userPhone", account.getPhone());
+		outJson.put("userAlbumIsPublic", account.getIsPublic());
 		
 		writeJson(resp, outJson.toString());
 		
@@ -339,6 +341,24 @@ public class ClientPostServlet extends HttpServlet
 		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
 		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
 		
+		String atyAlbumStr = jsobj.getString("atyAlbum");
+		
+		/*insert all pictures*/
+		JSONArray jsonArray = new JSONArray();
+		jsonArray = JSONArray.fromObject(atyAlbumStr);
+		
+		String albumId_aty = activity.getId();
+		String albumId_user = userId;
+		for (int i = 0; i < jsonArray.size(); i++) 
+		{
+			IconAndUrl icon2url = new IconAndUrl();
+			String picurl = icon2url.getUrl(IMAGE_PATH, jsonArray.getString(i));
+			String insert_pics_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, albumId_aty, picurl);
+			String insert_pics_sql2 = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, albumId_user, picurl);
+			db.excuteUpdate(insert_pics_sql);
+			db.excuteUpdate(insert_pics_sql2);
+		}
+		
 		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares());
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
@@ -346,9 +366,6 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
 		db.excuteUpdate(joint_sql);
-		
-		outJson.put("atyId", activity.getId());
-		writeJson(resp, outJson.toString());
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -359,6 +376,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		db.excuteUpdate(insert_credit);
 		
+		outJson.put("atyId", activity.getId());
+		writeJson(resp, outJson.toString());		
 	}
 	
 	private void like(HttpServletResponse resp, JSONObject jsobj)
@@ -613,7 +632,7 @@ public class ClientPostServlet extends HttpServlet
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 "
 											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
-											+ "and atyLatitude>%f-1 and atyLatitde<%f+1 ", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userLongitude, userLongitude, userLatitude, userLatitude);
+											+ "and atyLatitude>%f-1 and atyLatitude<%f+1 ", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userLongitude, userLongitude, userLatitude, userLatitude);
 				
 		
 		String queryIsLike =String.format("select atyId " +
@@ -943,7 +962,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 
-		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s' and msgIsSend=0", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
 				
 		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
 		writeJson(resp, outJson.toString());

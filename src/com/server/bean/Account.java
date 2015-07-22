@@ -22,6 +22,16 @@ public class Account
 	
 	private int isBaned; 
 	
+	private int isPublic;
+	
+	public int getIsPublic() {
+		return isPublic;
+	}
+
+	public void setIsPublic(int isPublic) {
+		this.isPublic = isPublic;
+	}
+
 	public String getId() {
 		return id;
 	}
