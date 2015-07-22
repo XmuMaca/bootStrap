@@ -126,6 +126,12 @@ public class ClientPostServlet extends HttpServlet
 		case "showMembers":
 			showMembers(resp, jsobj);
 			break;
+		case "showAtyInCommunity":
+			showAtyInCommunity(resp, jsobj);
+			break;
+		case "showMembersInCommunity":
+			showMembersInCommunity(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -326,13 +332,15 @@ public class ClientPostServlet extends HttpServlet
 		activity.setStartTime(jsobj.getString("atyStartTime"));
 		activity.setEndTime(jsobj.getString("atyEndTime"));
 		activity.setPlace(jsobj.getString("atyPlace"));
+		activity.setLongitude(Double.parseDouble(jsobj.getString("longitude")));
+		activity.setLatitude(Double.parseDouble(jsobj.getString("latitude")));
 		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
 		activity.setContent(jsobj.getString("atyContent"));
 		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
 		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
 		
 		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
-		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyMembers, atyContent, atyShares) values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getMembers(), activity.getContent(), activity.getShares());
+		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares());
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 		
 		db.excuteUpdate(insert_sql1);
@@ -597,13 +605,15 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String longitude = jsobj.getString("longitude");
+		Double userLongitude = Double.parseDouble(jsobj.getString("longitude"));
 		
-		String latitude = jsobj.getString("latitude");
+		Double userLatitude = Double.parseDouble(jsobj.getString("latitude"));
 		
 		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
 											"from %s, %s, %s " +
-											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " , IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 "
+											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
+											+ "and atyLatitude>%f-1 and atyLatitde<%f+1 ", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userLongitude, userLongitude, userLatitude, userLatitude);
 				
 		
 		String queryIsLike =String.format("select atyId " +
@@ -923,7 +933,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllCredit = String.format("select creditContent, creditNumber from %s where userId='%s'", IStringConstans.ADDCREDIT_TABLE_NAME, userId);
+		String queryAllCredit = String.format("select creditContent, creditNumbers from %s where userId='%s'", IStringConstans.ADDCREDIT_TABLE_NAME, userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCredit);
 		writeJson(resp, outJson.toString());
@@ -934,9 +944,12 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 
 		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
-		
+				
 		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
 		writeJson(resp, outJson.toString());
+		
+		String query_update = String.format("update %s set msgIsSend=1 where msgId in (select msgId from %s where userId='%s')", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
+		db.excuteUpdate(query_update);
 	}
 	
 	private void setPublicTrue(HttpServletResponse resp, JSONObject jsobj)
@@ -965,6 +978,18 @@ public class ClientPostServlet extends HttpServlet
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
 		writeJson(resp, outJson.toString());
+	}
+	
+	private void showAtyInCommunity(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String ctyType = jsobj.getString("ctyType");
+		
+		String queryAllAty = String.format("select ");
+	}
+	
+	private void showMembersInCommunity(HttpServletResponse resp, JSONObject jsobj)
+	{
+		
 	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
