@@ -117,6 +117,15 @@ public class ClientPostServlet extends HttpServlet
 		case "message":
 			sendMessage(resp, jsobj);
 			break;
+		case "setPublicTrue":
+			setPublicTrue(resp, jsobj);
+			break;
+		case "setPublicFalse":
+			setPublicFalse(resp, jsobj);
+			break;
+		case "showMembers":
+			showMembers(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -588,6 +597,10 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
+		String longitude = jsobj.getString("longitude");
+		
+		String latitude = jsobj.getString("latitude");
+		
 		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " , IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -919,12 +932,40 @@ public class ClientPostServlet extends HttpServlet
 	private void sendMessage(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
-		
-		String queryAllMsg = String.format("select * from %s,%s where userId='%s' and receive.msgId=message.msgId", IStringConstans.RECEIVE_TABLE_NAME, IStringConstans.MESSAGE_TABLE_NAME , userId);
+
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
 		writeJson(resp, outJson.toString());
-	} 
+	}
+	
+	private void setPublicTrue(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String query_update = String.format("update %s set userAlbumIsPublic=1 where userId='%s'", IStringConstans.USER_TABLE_NAME, userId);
+		
+		db.excuteUpdate(query_update);
+	}
+	
+	private void setPublicFalse(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String query_update = String.format("update %s set userAlbumIsPublic=0 where userId='%s'", IStringConstans.USER_TABLE_NAME, userId);
+		
+		db.excuteUpdate(query_update);
+	}
+	
+	private void showMembers(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String atyId = jsobj.getString("atyId");
+		
+		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId = joining.userId and joining.atyId='%s'", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
 	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
 	{

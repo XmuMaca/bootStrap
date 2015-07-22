@@ -210,7 +210,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     <div class="icon">
                         <span class="ico-layout-7"></span>
                     </div>
-                    <h1>Dynamic Tables <small>METRO STYLE ADMIN PANEL</small></h1>
+                    <h1>All Users <small>METRO STYLE ADMIN PANEL</small></h1>
                 </div>
 
                 <div class="row-fluid">
@@ -219,7 +219,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                         <div class="block">
                             <div class="head orange">
                                 <div class="icon"><span class="ico-layout-9"></span></div>
-                                <h2>Table sorting pagination</h2>
+                                <h2>Users Table</h2>
                                 <ul class="buttons">
                                     <li><a href="#" onClick="source('table_sort_pagination'); return false;"><div class="icon"><span class="ico-info"></span></div></a></li>
                                 </ul>                                                        
