@@ -44,7 +44,7 @@ public class ClientPostServlet extends HttpServlet
 			throws ServletException, IOException {
 		
 		//IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
-		IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo\\";
+		IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
 		System.out.println(IMAGE_PATH);
 		
 		db.createConnection();
@@ -106,6 +106,10 @@ public class ClientPostServlet extends HttpServlet
 			notJoin(resp, jsobj);
 			break;
 		case "editProfile":
+			editProfile(resp, jsobj);
+			break;
+		case "atyMembers":
+			atyMembers(resp, jsobj);
 			break;
 		case "showCredit":
 			showCredit(resp, jsobj);
@@ -121,17 +125,14 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showMembers":
 			showMembers(resp, jsobj);
+			break;
 		default:
 			break;
 		}
 		
 		db.close();
 	}
-	
-//	private JSONObject readPic(HttpServletResponse req)
-//	{
-//		
-//	}
+
 	
 	private JSONObject readJson(HttpServletRequest req)
 	{
@@ -159,6 +160,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 	}
+	
 	
 	private void writeJson(HttpServletResponse resp, String json)
 	{
@@ -204,6 +206,22 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void editProfile(HttpServletResponse resp, JSONObject json)
 	{
+		String userId = json.getString("userId");
+		String userName = json.getString("userName");
+		String userEmail = json.getString("userEmail");
+		String userPhone = json.getString("userPhone");
+		String userGender = json.getString("userGender");	
+		String userLocation = json.getString("userLocation");
+		
+		String update_sql = String.format("update %s " +
+										  "set userName='%s' ,userEmail='%s', userPhone='%s' ,userGender='%s', userLocation='%s' " +
+										  "where userId='%s'", IStringConstans.USER_TABLE_NAME, userName, userEmail, userPhone, userGender, userLocation);
+		
+		db.excuteUpdate(update_sql);
+		
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, outJson.toString());
 		
 	}
 	
@@ -255,7 +273,7 @@ public class ClientPostServlet extends HttpServlet
 		Account account = new Account();
 		
 		account.setId(jsobj.getString("userId"));
-		String query_sql = String.format("select * from %s where userId=%s", IStringConstans.USER_TABLE_NAME, account.getId());
+		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
 		
 		if (!db.query(query_sql)) 
 		{
@@ -300,7 +318,6 @@ public class ClientPostServlet extends HttpServlet
 		Activity activity = new Activity();
 		
 		String userId = jsobj.getString("userId");
-		//-------------------release time still lack!
 		String releaseTime = jsobj.getString("releaseTime");
 		
 		activity.setId(CreateId.createAtyId(userId));
@@ -311,12 +328,16 @@ public class ClientPostServlet extends HttpServlet
 		activity.setPlace(jsobj.getString("atyPlace"));
 		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
 		activity.setContent(jsobj.getString("atyContent"));
-		activity.setShares(Integer.parseInt(jsobj.getString("atyShare")));
+		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
+		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
 		
 		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
-		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyMembers, atyContent, atyShares,atyReleaseTime) values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getMembers(), activity.getContent(), activity.getShares(), releaseTime);
+		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyMembers, atyContent, atyShares) values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getMembers(), activity.getContent(), activity.getShares());
+		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
+		
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
+		db.excuteUpdate(joint_sql);
 		
 		outJson.put("atyId", activity.getId());
 		writeJson(resp, outJson.toString());
@@ -343,9 +364,17 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 		
-		String insert_like = String.format("insert into %s values('%s', '%s')", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
-		db.excuteUpdate(update_aty);
-		db.excuteUpdate(insert_like);
+		String insert_like = String.format("insert into %s values('%s','%s')", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+		int row1 = db.excuteUpdate(update_aty);
+		int row2 = db.excuteUpdate(insert_like);
+		
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		outJson.put("row1", row1);
+		outJson.put("row2", row2);
+		writeJson(resp, outJson.toString());
+		
+		
 	}
 	
 	private void notLike(HttpServletResponse resp, JSONObject jsobj)
@@ -360,7 +389,12 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 		String delete_like = String.format("delete from %s where userId='%s' and atyId='%s'", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+		db.excuteUpdate(update_aty);
 		db.excuteUpdate(delete_like);
+		
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void join(HttpServletResponse resp, JSONObject jsobj)
@@ -375,7 +409,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 		String insert_like = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, atyId);
-		db.excuteUpdate(update_aty);
+		db.excuteUpdate(update_aty);	
+		
 		db.excuteUpdate(insert_like);
 		
 		//credit
@@ -387,6 +422,10 @@ public class ClientPostServlet extends HttpServlet
 		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 				
 		db.excuteUpdate(insert_credit);		
+
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void notJoin(HttpServletResponse resp, JSONObject jsobj)
@@ -395,14 +434,13 @@ public class ClientPostServlet extends HttpServlet
 		String atyId = jsobj.getString("atyId");
 		
 		String update_aty = String.format("update %s " +
-										"set atyMembers=atyMembers-1 " +
-										"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
+				"set atyMembers=atyMembers-1 " +
+				"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
 		
+		String delete_aty = String.format("delete from %s where atyId='%s' and userId='%s'", IStringConstans.JOIN_TABLE_NAME, atyId, userId);
 		
-		
-		String insert_like = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, atyId);
 		db.excuteUpdate(update_aty);
-		db.excuteUpdate(insert_like);
+		db.excuteUpdate(delete_aty);
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -413,6 +451,10 @@ public class ClientPostServlet extends HttpServlet
 		String insert_credit = String.format("insert into %s values(%s, %s, %s, %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
 						
 		db.excuteUpdate(insert_credit);
+
+		JSONObject outJson = new JSONObject();
+		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void showActivities(HttpServletResponse resp, JSONObject jsobj)
@@ -715,11 +757,26 @@ public class ClientPostServlet extends HttpServlet
 		String cmtContent = jsobj.getString("cmtContent");
 		String cmtTime = jsobj.getString("cmtTime");
 		
-		String insert_comment = String.format("insert into %s values(%s, %s, %s)", IStringConstans.COMMENT_TABLE_NAME, cmtId, cmtContent, cmtTime);
-		String insert_evaluation = String.format("insert into %s values(%s, %s, %s)", IStringConstans.EVALUATION_TABLE_NAME, userId, atyId, cmtId);
+		String insert_comment = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.COMMENT_TABLE_NAME, cmtId, cmtContent, cmtTime);
+		String insert_evaluation = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.EVALUATION_TABLE_NAME, userId, atyId, cmtId);
+		String update_comments = String.format("update %s " +
+											   "set atyComments=atyComments+1 " +
+											   "where atyId='%s'",IStringConstans.ACTIVITY_TABLE_NAME, atyId);
+		
+		String query_comment = String.format("select userId,userIcon,userName " +
+											 "from %s " +
+											 "where userId='%s'", IStringConstans.USER_TABLE_NAME, userId);
 		
 		db.excuteUpdate(insert_comment);
 		db.excuteUpdate(insert_evaluation);
+		db.excuteUpdate(update_comments);
+		
+		
+		JSONObject out = db.queryGetJsonObj(query_comment);
+		out.put("cmtContent", cmtContent);
+		out.put("cmtTime", cmtTime);
+		
+		writeJson(resp, out.toString());
 	}
 
 	private void showJoinedAty(HttpServletResponse resp, JSONObject jsobj)
@@ -727,10 +784,62 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		
 		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " + 
-										"from %s, %s, %s" +
-										"where activity.atyId = joining.atyId and user.userId = joining.userId and activity.atyIsBanned=0 and userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER, IStringConstans.JOIN_TABLE_NAME, userId);		
-											
-		JSONArray outJson = db.queryGetJsonArray(queryAllAty);		
+										"from %s, %s, %s " +
+										"where activity.atyId = joining.atyId and user.userId = joining.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, userId);		
+		
+		String queryIsLike =String.format("select atyId " +
+				 "from %s " +
+				 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+
+		String queryIsJoined =String.format("select atyId " +
+					"from %s " +
+					"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);	
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllAty);	
+		
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		System.out.println(outJson.toString());
 		writeJson(resp, outJson.toString());		
 	}
 	
@@ -739,12 +848,77 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		
 		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments " + 
-										"from %s, %s, %s" +
-										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 and userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
+										"from %s, %s, %s " +
+										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
+		
+		String queryIsLike =String.format("select atyId " +
+				 "from %s " +
+				 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+
+		String queryIsJoined =String.format("select atyId " +
+					"from %s " +
+					"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);	
+		
 		JSONArray outJson = db.queryGetJsonArray(queryAllAty);
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
 		writeJson(resp, outJson.toString());	
 	}
 	
+
+	private void atyMembers(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String atyId = jsobj.getString("atyId");
+		
+		String select_sql = String.format("select userName, userIcon " +
+										  "from %s, %s " +
+										  "where atyId='%s' and joining.userId=user.userId", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
+		
+		JSONArray jsArray = db.queryGetJsonArray(select_sql);
+		
+		writeJson(resp, jsArray.toString());
+	}
+
 	private void showCredit(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -758,10 +932,10 @@ public class ClientPostServlet extends HttpServlet
 	private void sendMessage(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
+
+		String queryAllMsg = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
 		
-		String queryAllMessage = String.format("select * from %s, %s where receive.msgId=message.msgId and userId='%s'", IStringConstans.MESSAGE_TABLE_NAME, IStringConstans.RECEIVE_TABLE_NAME, userId);
-		
-		JSONArray outJson = db.queryGetJsonArray(queryAllMessage);
+		JSONArray outJson = db.queryGetJsonArray(queryAllMsg);
 		writeJson(resp, outJson.toString());
 	}
 	
@@ -793,8 +967,6 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
-	
-	
 	private void test(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJson = new JSONObject();
@@ -810,4 +982,6 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("result", "success");
 		writeJson(resp, outJson.toString());
 	}
+
+	
 }

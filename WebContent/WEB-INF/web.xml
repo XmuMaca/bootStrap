@@ -90,6 +90,14 @@
     <servlet-name>IconChangeServlet</servlet-name>
     <url-pattern>/IconChangeServlet</url-pattern>
   </servlet-mapping>
+   <servlet>
+    <servlet-name>PicPostServlet</servlet-name>
+    <servlet-class>com.client.servlet.PicPostServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>PicPostServlet</servlet-name>
+    <url-pattern>/PicPostServlet</url-pattern>
+  </servlet-mapping>
   <filter>
     <filter-name>SetCharacterEncodingFilter</filter-name>
     <filter-class>com.server.filter.SetCharacterEncodingFilter</filter-class>
