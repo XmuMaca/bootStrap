@@ -12,7 +12,7 @@ public interface IStringConstans
 	String COMMENT_TABLE_NAME = "comment";
 	String LIKE_TABLE_NAME = "islike";
 	String JOIN_TABLE_NAME = "joining";
-	String ADDCREDIT_TABLE_NAME = "addCredit";
+	String ADDCREDIT_TABLE_NAME = "scores";
 
 	String PHOTOS_TABLE_NAME = "photos";
 

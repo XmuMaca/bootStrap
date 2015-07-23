@@ -212,7 +212,7 @@
                             ArrayList<String> photoURL = (ArrayList<String>)request.getAttribute("photoURL");
                             for(String photo : photoURL)
                             {%>
-                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
+                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="<%=photo %>>" width="220"/></a></div>
                             <%}
                             %>
                             </div>

@@ -96,7 +96,7 @@ public class AtyDetailsServlet extends HttpServlet {
 		request.setAttribute("aty", aty);
 		
 		ArrayList<String> photoURL = new ArrayList<String>();
-		String sql = String.format("select photoId from photos wehere albumId='%s'", atyId);
+		String sql = String.format("select photoId from photos wehere albumId=%s", atyId);
 		try
 		{
 			pstat = db.getConnection().prepareStatement(sql);
