@@ -20,9 +20,19 @@ public class Account
 	
 	private String identity;
 	
+	private String credit;
+	
 	private int isBaned; 
 	
 	private String isPublic;
+	
+	public String getCredit() {
+		return credit;
+	}
+
+	public void setCredit(String credit) {
+		this.credit = credit;
+	}
 	
 	public String getIsPublic() {
 		return isPublic;

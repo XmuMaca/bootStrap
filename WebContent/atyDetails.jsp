@@ -212,8 +212,12 @@
                             ArrayList<String> photoURL = (ArrayList<String>)request.getAttribute("photoURL");
                             for(String photo : photoURL)
                             {%>
+<<<<<<< HEAD
                             	photo = "http://101.200.191.149:8080/bootstrapRepository/images_repo/music.png";
                             	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="<%=photo %>" width="220"/></a></div>
+=======
+                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="<%=photo %>>" width="220"/></a></div>
+>>>>>>> 03f3fcf9f87ada02c3da0eeafe83ca253eaf0132
                             <%}
                             %>
                             

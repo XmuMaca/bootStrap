@@ -63,6 +63,7 @@ public class UserDB extends DB
 				account.setIdentity(rs.getString("userIdentity"));
 				account.setIsBaned(rs.getInt("userIsBaned"));
 				account.setIsPublic(rs.getString("userAlbumIsPublic"));
+				account.setCredit(rs.getString("userCredit"));
 				result.add(account);
 			}
 			return result;

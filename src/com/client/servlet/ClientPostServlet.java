@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -153,6 +154,9 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "editAlbumRight":
 			editAlbumRight(resp, jsobj);
+			
+		case "showUserAlbum":
+			showUserAlbum(resp, jsobj);
 		default:
 			break;
 		}
@@ -225,6 +229,8 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("userLocation", account.getLocation());
 		outJson.put("userPhone", account.getPhone());
 		outJson.put("userAlbumIsPublic", account.getIsPublic());
+		outJson.put("userIcon", account.getIcon());		
+		outJson.put("userCredit", account.getCredit());
 		
 		writeJson(resp, outJson.toString());
 		
@@ -317,6 +323,22 @@ public class ClientPostServlet extends HttpServlet
 			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
+			//credit
+			String userId = jsobj.getString("userId");
+			String creditId = CreateId.createCreditId(userId);
+			String creditContent = "success";
+			int creditNumbers = 50;
+			
+//			String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+			String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+			db.excuteUpdate(insert_credit);
+//			
+//			//userCode
+			String userCode = jsobj.getString("userCode");
+			
+			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
+			db.excuteUpdate(updateCredit);
+			
 			outJSon.put("result", "true");
 			
 		}
@@ -325,23 +347,24 @@ public class ClientPostServlet extends HttpServlet
 			outJSon.put("result", "false");
 		}
 		
+//		//credit
+//		String userId = jsobj.getString("userId");
+//		String creditId = CreateId.createCreditId(userId);
+//		String creditContent = "success";
+//		int creditNumbers = 50;
+//		
+////		String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//		String insert_credit = String.format("insert into %s (userId, creditId) values('%s', '%s')", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId);
+//		db.excuteUpdate(insert_credit);
+//		
+//		//userCode
+//		String userCode = jsobj.getString("userCode");
+//		
+//		String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
+//		db.excuteUpdate(updateCredit);
+		
+		
 		writeJson(resp, outJSon.toString());
-		
-		//userCode
-		String userCode = jsobj.getString("userCode");
-		
-		String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
-		db.excuteUpdate(updateCredit);
-		
-		//credit
-		String userId = jsobj.getString("userId");
-		String creditId = CreateId.createCreditId(userId);
-		String creditContent = "注册成功";
-		int creditNumbers = 50;
-		
-		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-		
-		db.excuteUpdate(insert_credit);
 	}
 
 	private void release(HttpServletResponse resp, JSONObject jsobj)
@@ -468,7 +491,7 @@ public class ClientPostServlet extends HttpServlet
 		//credit
 		String creditId = CreateId.createCreditId(userId);
 		String atyName = jsobj.getString("atyName");
-		String creditContent = "参加活动：" + atyName;
+		String creditContent = "joined activity" + atyName;
 		int creditNumbers = 5;
 		
 		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
@@ -587,7 +610,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic" +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " +
 											"order by atyMembers", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -1074,7 +1097,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllCty = String.format("select ctyId, ctyIcon,ctyMembers from attention, communnity where userId='%s' and attention.ctyId=communnity.ctyId", userId);
+		String queryAllCty = String.format("select attention.ctyId, ctyIcon,ctyMembers from attention, communnity where userId='%s' and attention.ctyId=communnity.ctyId", userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
 		writeJson(resp, outJson.toString());
@@ -1114,6 +1137,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAttentionCty = String.format("select * from attention where userId='%s'", userId);
 		
+		outJson.put("ctyIsAttention", "false");
 		try
 		{
 			ResultSet rs = db.executeQuery(queryAttentionCty);
@@ -1122,6 +1146,7 @@ public class ClientPostServlet extends HttpServlet
 				if(rs.getString("ctyId").equals(ctyId))
 				{
 					outJson.put("ctyIsAttention", "true");
+					break;
 				}
 				else
 				{
@@ -1141,7 +1166,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String ctyId = jsobj.getString("ctyId");
 		
-		String queryAllAty = String.format("select user.userIcon, activity.atyId, activity.atyName "
+		String queryAllAty = String.format("select user.userIcon, activity.atyId, activity.atyName,  user.userId, userName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic  "
 				+ "from activity, distribute, user "
 				+ "where atyType='%s' and distribute.atyId=activity.atyId and distribute.userId=user.userId", ctyId);
 		
@@ -1237,4 +1262,25 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	private void showUserAlbum(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String query_sql = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME, userId);
+		
+		ResultSet rs = db.executeQuery(query_sql);
+		
+		JSONArray jsarray = new JSONArray();
+		try {
+			while (rs.next()) 
+			{
+				jsarray.add(rs.getString("photoId"));				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		writeJson(resp, jsarray.toString());
+	}
 }
