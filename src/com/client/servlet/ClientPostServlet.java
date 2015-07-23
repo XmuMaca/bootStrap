@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -153,6 +154,9 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "editAlbumRight":
 			editAlbumRight(resp, jsobj);
+			
+		case "showUserAlbum":
+			showUserAlbum(resp, jsobj);
 		default:
 			break;
 		}
@@ -225,6 +229,8 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("userLocation", account.getLocation());
 		outJson.put("userPhone", account.getPhone());
 		outJson.put("userAlbumIsPublic", account.getIsPublic());
+		outJson.put("userIcon", account.getIcon());		
+		outJson.put("userCredit", account.getCredit());
 		
 		writeJson(resp, outJson.toString());
 		
@@ -325,8 +331,6 @@ public class ClientPostServlet extends HttpServlet
 			outJSon.put("result", "false");
 		}
 		
-		writeJson(resp, outJSon.toString());
-		
 		//userCode
 		String userCode = jsobj.getString("userCode");
 		
@@ -334,14 +338,16 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(updateCredit);
 		
 		//credit
-		String userId = jsobj.getString("userId");
-		String creditId = CreateId.createCreditId(userId);
-		String creditContent = "×¢²á³É¹¦";
-		int creditNumbers = 50;
+//		String userId = jsobj.getString("userId");
+//		String creditId = CreateId.createCreditId(userId);
+//		String creditContent = "success";
+//		int creditNumbers = 50;
+//		
+//		String insert_credit = String.format("insert into %s (userId, creditId,creditContent) values('%s', '%s', '%s')", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent);
+//		
+//		db.excuteUpdate(insert_credit);
 		
-		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-		
-		db.excuteUpdate(insert_credit);
+		writeJson(resp, outJSon.toString());
 	}
 
 	private void release(HttpServletResponse resp, JSONObject jsobj)
@@ -1114,6 +1120,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAttentionCty = String.format("select * from attention where userId='%s'", userId);
 		
+		outJson.put("ctyIsAttention", "false");
 		try
 		{
 			ResultSet rs = db.executeQuery(queryAttentionCty);
@@ -1122,6 +1129,7 @@ public class ClientPostServlet extends HttpServlet
 				if(rs.getString("ctyId").equals(ctyId))
 				{
 					outJson.put("ctyIsAttention", "true");
+					break;
 				}
 				else
 				{
@@ -1237,4 +1245,25 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	private void showUserAlbum(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String query_sql = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME, userId);
+		
+		ResultSet rs = db.executeQuery(query_sql);
+		
+		JSONArray jsarray = new JSONArray();
+		try {
+			while (rs.next()) 
+			{
+				jsarray.add(rs.getString("photoId"));				
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		writeJson(resp, jsarray.toString());
+	}
 }
