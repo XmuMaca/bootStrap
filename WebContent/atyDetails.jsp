@@ -3,6 +3,7 @@
 <%@ page import="com.server.bean.Activity" %>
 <%@ page import="com.server.bean.Account" %>
 <%@page import="java.sql.Connection"%>
+<%@ page import="java.util.*" %>
 
 <%
 	Account account = (Account)session.getAttribute("account");
@@ -204,18 +205,16 @@
                             <div class="head">
                                 <div class="icon"><span class="ico-picture"></span></div>
                                 <h2>Album</h2>                    
-                            </div>                           
+                            </div>
+                            
                             <div class="data-fluid sGallery">
-                                <div class="item"><a href="img/examples/photo/example_1.jpg" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_2.jpg" class="fb" rel="group"><img src="img/examples/photo/example_2.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_3.jpg" class="fb" rel="group"><img src="img/examples/photo/example_3.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_4.jpg" class="fb" rel="group"><img src="img/examples/photo/example_4.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_5.jpg" class="fb" rel="group"><img src="img/examples/photo/example_5.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_6.jpg" class="fb" rel="group"><img src="img/examples/photo/example_6.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_7.jpg" class="fb" rel="group"><img src="img/examples/photo/example_7.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_8.jpg" class="fb" rel="group"><img src="img/examples/photo/example_8.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_9.jpg" class="fb" rel="group"><img src="img/examples/photo/example_9.jpg" width="220"/></a></div>
-                                <div class="item"><a href="img/examples/photo/example_10.jpg" class="fb" rel="group"><img src="img/examples/photo/example_10.jpg" width="220"/></a></div>
+                            <%
+                            ArrayList<String> photoURL = (ArrayList<String>)request.getAttribute("photoURL");
+                            for(String photo : photoURL)
+                            {%>
+                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
+                            <%}
+                            %>
                             </div>
                         </div>     
                     </div>

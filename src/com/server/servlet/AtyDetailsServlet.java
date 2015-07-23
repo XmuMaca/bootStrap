@@ -3,6 +3,7 @@ package com.server.servlet;
 import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -93,8 +94,26 @@ public class AtyDetailsServlet extends HttpServlet {
 		}
 		
 		request.setAttribute("aty", aty);
-		//request.setAttribute("atyName", aty.getName());
-		//System.out.println(aty.getName());
+		
+		ArrayList<String> photoURL = new ArrayList<String>();
+		String sql = String.format("select photoId from photos wehere albumId='%s'", atyId);
+		try
+		{
+			pstat = db.getConnection().prepareStatement(sql);
+			ResultSet rs = pstat.executeQuery();
+			while(rs.next())
+			{
+				photoURL.add(rs.getString("photoId"));
+			}
+			pstat.executeUpdate();
+			pstat.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		request.setAttribute("photoURL", photoURL);
 		
 		request.getRequestDispatcher("atyDetails.jsp").forward(request, response);
 	}

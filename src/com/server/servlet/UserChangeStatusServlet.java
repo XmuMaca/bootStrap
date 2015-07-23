@@ -77,12 +77,44 @@ public class UserChangeStatusServlet extends HttpServlet {
 		Date date = new Date();
 		DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String time = format.format(date);
-		/*try
+		String content = null;
+		if(status.equals("1"))
+		{
+			content = "您已被禁用！";
+		}
+		else
+		{
+			content = "您已被恢复使用！";
+		}
+		try
 		{
 			pstat = db.getConnection().prepareStatement(sql);
-			pstat.setString(1, );
-		}*/
+			pstat.setString(1, userId + time);
+			pstat.setString(2, "系统通知");
+			pstat.setString(3, time);
+			pstat.setString(4, content);
+			pstat.setInt(5, 0);
+			pstat.executeUpdate();
+			pstat.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
+		sql = String.format("insert into %s values(?,?)", IStringConstans.RECEIVE_TABLE_NAME);
+		try
+		{
+			pstat = db.getConnection().prepareStatement(sql);
+			pstat.setString(1, userId);
+			pstat.setString(2, userId+time);
+			pstat.executeUpdate();
+			pstat.close();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		db.close();
 		
