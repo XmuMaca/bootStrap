@@ -277,7 +277,7 @@
 								
 								<div class="row-form">
                     				<div class="span3">User Icon:</div>
-                    				<img src="<%=user.getIcon() %>" width="200px" height="240px" />
+                    				<img src="<%=user.getIcon() %>" style="width:180px;margin-top:4px;border-radius:180px;box-shadow:0px 0px 12px #7E7E7E;" />
                     			</div>
 								
                             </div>                

@@ -212,9 +212,11 @@
                             ArrayList<String> photoURL = (ArrayList<String>)request.getAttribute("photoURL");
                             for(String photo : photoURL)
                             {%>
-                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="img/examples/photo/example_1.jpg" width="220"/></a></div>
+                            	photo = "http://101.200.191.149:8080/bootstrapRepository/images_repo/music.png";
+                            	<div class="item"><a href="<%=photo %>" class="fb" rel="group"><img src="<%=photo %>" width="220"/></a></div>
                             <%}
                             %>
+                            
                             </div>
                         </div>     
                     </div>
@@ -241,7 +243,7 @@
                                     <p><strong>Content:</strong><%=aty.getContent() %></p>                            
                                 </div>
                             </div>
-							
+							<br/>
 							<br/>
 							<h4>Type</h4>
                             <p><%=aty.getType() %></p>
@@ -249,7 +251,7 @@
 							<br/>
                             <h4>Time</h4>
                             <p><strong>Begin:</strong><%=aty.getStartTime() %></p>
-                            <p><strong>End:</strong><%=aty.getEndTime() %></p>
+                            <p><strong>E n d:</strong><%=aty.getEndTime() %></p>
 							
 							<br/>
 							<h4>Place</h4>

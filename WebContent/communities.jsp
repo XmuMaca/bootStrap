@@ -223,7 +223,7 @@
                                     <h1>music</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="CtyDetailsServlet?ctyId=dota">click here to enter</a>
+                                    <a href="CtyDetailsServlet?ctyId=音乐">click here to enter</a>
                                 </div>
                             </div>
                             <div class="widget green value">
@@ -234,7 +234,7 @@
                                     <h1>sport</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="CtyDetailsServlet?ctyId=sport">click here to enter</a>
+                                    <a href="CtyDetailsServlet?ctyId=体育">click here to enter</a>
                                 </div>                            
                             </div>
                             <div class="widget purple chart">
@@ -245,7 +245,7 @@
                                     <h1>painting</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="CtyDetailsServlet?ctyId=painting">click here to enter</a>
+                                    <a href="CtyDetailsServlet?ctyId=绘画">click here to enter</a>
                                 </div>                            
                             </div>
                             <div class="widget orange chart">
@@ -256,7 +256,7 @@
                                     <h1>reading</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="CtyDetailsServlet?ctyId=reading">click here to enter</a>
+                                    <a href="CtyDetailsServlet?ctyId=读书">click here to enter</a>
                                 </div>                            
                             </div>                              
                             <div class="widget yellow chart">
@@ -267,7 +267,7 @@
                                     <h1>planting</h1>
                                 </div>
                                 <div class="bottom">
-                                    <a href="CtyDetailsServlet?ctyId=planting">click here to enter</a>
+                                    <a href="CtyDetailsServlet?ctyId=环保">click here to enter</a>
                                 </div>                            
                             </div>                   
                             <div class="widget red chart">

@@ -230,8 +230,8 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                         <thead>
                                             <tr>
                                                 <th><input type="checkbox" class="checkall"/></th>
-                                                <th width="20%">Name</th>
-                                                <th>Product</th>
+                                                <th width="20%">Id</th>
+                                                <th>Name</th>
                                                 <th width="20%">Status</th>
                                                 <th width="20%">Date</th>
                                                 <th width="80" class="TAC">Actions</th>
