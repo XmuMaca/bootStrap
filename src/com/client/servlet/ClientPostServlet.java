@@ -62,6 +62,10 @@ public class ClientPostServlet extends HttpServlet
 		case "signup":
 			signup(resp, jsobj);
 			break;
+		case "signupsina":
+			signupsina(resp, jsobj);
+		case "signupqq":
+			signupqq(resp, jsobj);
 		case "release":
 			release(resp, jsobj);
 			break;
@@ -323,21 +327,21 @@ public class ClientPostServlet extends HttpServlet
 			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
-			//credit
-			String userId = jsobj.getString("userId");
-			String creditId = CreateId.createCreditId(userId);
-			String creditContent = "success";
-			int creditNumbers = 50;
-			
-//			String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-			String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-			db.excuteUpdate(insert_credit);
+//			//credit
+//			String userId = jsobj.getString("userId");
+//			String creditId = CreateId.createCreditId(userId);
+//			String creditContent = "success";
+//			int creditNumbers = 50;
 //			
-//			//userCode
-			String userCode = jsobj.getString("userCode");
-			
-			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
-			db.excuteUpdate(updateCredit);
+////			String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//			String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//			db.excuteUpdate(insert_credit);
+////			
+////			//userCode
+//			String userCode = jsobj.getString("userCode");
+//			
+//			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
+//			db.excuteUpdate(updateCredit);
 			
 			outJSon.put("result", "true");
 			
@@ -366,7 +370,111 @@ public class ClientPostServlet extends HttpServlet
 		
 		writeJson(resp, outJSon.toString());
 	}
+	
+	private void signupsina(HttpServletResponse resp, JSONObject jsobj)
+	{
+		JSONObject outJSon = new JSONObject();
+		Account account = new Account();
+		
+		account.setId(jsobj.getString("userId"));
+		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
+		
+		if (!db.query(query_sql)) 
+		{
+//			account.setEmail(jsobj.getString("userEmail"));
+//			account.setPhone(jsobj.getString("userPhone"));
+//			account.setPassword(jsobj.getString("userPassword"));
+			account.setGender(jsobj.getString("userGender"));
+			account.setName(jsobj.getString("userName"));
+//			String isPublic = jsobj.getString("userAlbumIsPublic");
+			String isPublic = "true";
+			
+			String iconData = jsobj.getString("userIcon");		
+			IconAndUrl icon2url = new IconAndUrl();
+			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+			
+			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			db.save(signup_sql);
+			
+//			//credit
+//			String userId = jsobj.getString("userId");
+//			String creditId = CreateId.createCreditId(userId);
+//			String creditContent = "success";
+//			int creditNumbers = 50;
+//			
+//			String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+////			String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//			db.excuteUpdate(insert_credit);
+//			
+//			//userCode
+//			String userCode = jsobj.getString("userCode");
+//			
+//			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
+//			db.excuteUpdate(updateCredit);
+			
+			outJSon.put("result", "true");
+			
+		}
+		else 
+		{
+			outJSon.put("result", "false");
+		}
+		
+		writeJson(resp, outJSon.toString());
+	}
 
+	private void signupqq(HttpServletResponse resp, JSONObject jsobj)
+	{
+		JSONObject outJSon = new JSONObject();
+		Account account = new Account();
+		
+		account.setId(jsobj.getString("userId"));
+		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
+		
+		if (!db.query(query_sql)) 
+		{
+//			account.setEmail(jsobj.getString("userEmail"));
+//			account.setPhone(jsobj.getString("userPhone"));
+//			account.setPassword(jsobj.getString("userPassword"));
+			account.setGender(jsobj.getString("userGender"));
+			account.setName(jsobj.getString("userName"));
+//			String isPublic = jsobj.getString("userAlbumIsPublic");
+			String isPublic = "true";
+			
+			String iconData = jsobj.getString("userIcon");		
+			IconAndUrl icon2url = new IconAndUrl();
+			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+			
+			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			db.save(signup_sql);
+			
+//			//credit
+//			String userId = jsobj.getString("userId");
+//			String creditId = CreateId.createCreditId(userId);
+//			String creditContent = "success";
+//			int creditNumbers = 50;
+//			
+//			String insert_credit = String.format("insert into %s (userId, creditId,creditContent, creditNumbers) values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//			String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
+//			db.excuteUpdate(insert_credit);
+//			
+//			//userCode
+//			String userCode = jsobj.getString("userCode");
+//			
+//			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
+//			db.excuteUpdate(updateCredit);
+			
+			outJSon.put("result", "true");
+			
+		}
+		else 
+		{
+			outJSon.put("result", "false");
+		}
+		
+		writeJson(resp, outJSon.toString());
+	}
+	
 	private void release(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJson = new JSONObject();

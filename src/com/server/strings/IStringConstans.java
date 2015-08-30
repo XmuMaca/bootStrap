@@ -39,7 +39,8 @@ public interface IStringConstans
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
 	
 	/*the url of the image*/
-	String REMOTE_IMAGE_PATH = "http://101.200.191.149:8080/bootstrapRepository/images_repo/";
+	//String REMOTE_IMAGE_PATH = "http://101.200.191.149:8080/bootstrapRepository/images_repo/";
+	String REMOTE_IMAGE_PATH = "http://192.168.56.1:8081/bootStrap/WebContent/images_repo/";
 	
 	/*the pattern of the image*/
 	String PNG = ".png";
