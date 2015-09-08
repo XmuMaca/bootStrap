@@ -56,16 +56,24 @@ public class ClientPostServlet extends HttpServlet
 		
 		
 		switch (action) {
-		case "login":
-			login(resp, jsobj);
+		case "loginemail":
+			loginemail(resp, jsobj);
 			break;
-		case "signup":
-			signup(resp, jsobj);
+		case "loginsina":
+			loginsina(resp, jsobj);
+			break;
+		case "loginqq":
+			loginqq(resp, jsobj);
+			break;
+		case "signupemail":
+			signupemail(resp, jsobj);
 			break;
 		case "signupsina":
 			signupsina(resp, jsobj);
+			break;
 		case "signupqq":
 			signupqq(resp, jsobj);
+			break;
 		case "release":
 			release(resp, jsobj);
 			break;
@@ -261,12 +269,12 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
-	private void login(HttpServletResponse resp, JSONObject jsobj)
+	private void loginemail(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String id = jsobj.getString("userId");
+		String id = jsobj.getString("userEmail");
 		String password = jsobj.getString("userPassword");
 		
-		//System.out.println("id:" + id + " password:" + password);
+		System.out.println("id:" + id + " password:" + password);
 		
 		String query_sql = String.format("select * from %s where userId='%s' and userPassword='%s'", IStringConstans.USER_TABLE_NAME, id, password);
 		
@@ -303,28 +311,112 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
-	private void signup(HttpServletResponse resp, JSONObject jsobj)
+	private void loginsina(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String id = jsobj.getString("userId");
+		
+		//System.out.println("id:" + id + " password:" + password);
+		
+		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, id);
+		
+		JSONObject outJSon = new JSONObject();
+		
+		if (db.query(query_sql)) 
+		{
+			List<Account> list = db.queryResult(query_sql);
+			Account accout = list.get(0);
+			
+			if (accout.getIsBaned() == 0) 
+			{
+				outJSon.put("userId", accout.getId());
+				outJSon.put("userPassword", accout.getPassword());
+				outJSon.put("userName", accout.getName());
+				outJSon.put("userIcon", accout.getIcon());
+				outJSon.put("userGender", accout.getGender());
+				outJSon.put("userEmail", accout.getEmail());
+				outJSon.put("userPhone", accout.getPhone());
+				outJSon.put("userIsBaned", accout.getIsBaned());
+				outJSon.put("result", "true");
+			}
+			else 
+			{
+				outJSon.put("result", "isBanned");
+			}
+		}
+		else 
+		{
+			outJSon.put("result", "false");
+		}
+		
+		writeJson(resp, outJSon.toString());
+		
+	}
+	
+	private void loginqq(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String id = jsobj.getString("userId");
+		
+		//System.out.println("id:" + id + " password:" + password);
+		
+		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, id);
+		
+		JSONObject outJSon = new JSONObject();
+		
+		if (db.query(query_sql)) 
+		{
+			List<Account> list = db.queryResult(query_sql);
+			Account accout = list.get(0);
+			
+			if (accout.getIsBaned() == 0) 
+			{
+				outJSon.put("userId", accout.getId());
+				outJSon.put("userPassword", accout.getPassword());
+				outJSon.put("userName", accout.getName());
+				outJSon.put("userIcon", accout.getIcon());
+				outJSon.put("userGender", accout.getGender());
+				outJSon.put("userEmail", accout.getEmail());
+				outJSon.put("userPhone", accout.getPhone());
+				outJSon.put("userIsBaned", accout.getIsBaned());
+				outJSon.put("result", "true");
+			}
+			else 
+			{
+				outJSon.put("result", "isBanned");
+			}
+		}
+		else 
+		{
+			outJSon.put("result", "false");
+		}
+		
+		writeJson(resp, outJSon.toString());
+		
+	}
+	
+	private void signupemail(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJSon = new JSONObject();
 		Account account = new Account();
 		
-		account.setId(jsobj.getString("userId"));
+		account.setId(jsobj.getString("userEmail"));
 		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
 		
 		if (!db.query(query_sql)) 
 		{
 			account.setEmail(jsobj.getString("userEmail"));
-			account.setPhone(jsobj.getString("userPhone"));
+			//account.setPhone(jsobj.getString("userPhone"));
 			account.setPassword(jsobj.getString("userPassword"));
 			account.setGender(jsobj.getString("userGender"));
 			account.setName(jsobj.getString("userName"));
-			String isPublic = jsobj.getString("userAlbumIsPublic");
+			//String isPublic = jsobj.getString("userAlbumIsPublic");
+			String isPublic = "true";
 			
 			String iconData = jsobj.getString("userIcon");		
 			IconAndUrl icon2url = new IconAndUrl();
 			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			
+			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail, userAlbumIsPublic) values('%s','%s','%s','%s','%s', '%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), isPublic);
 			db.save(signup_sql);
 			
 //			//credit
@@ -389,9 +481,10 @@ public class ClientPostServlet extends HttpServlet
 //			String isPublic = jsobj.getString("userAlbumIsPublic");
 			String isPublic = "true";
 			
-			String iconData = jsobj.getString("userIcon");		
-			IconAndUrl icon2url = new IconAndUrl();
-			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+//			String iconData = jsobj.getString("userIcon");		
+//			IconAndUrl icon2url = new IconAndUrl();
+//			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+			account.setIcon(jsobj.getString("userIcon"));
 			
 			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
@@ -441,9 +534,10 @@ public class ClientPostServlet extends HttpServlet
 //			String isPublic = jsobj.getString("userAlbumIsPublic");
 			String isPublic = "true";
 			
-			String iconData = jsobj.getString("userIcon");		
-			IconAndUrl icon2url = new IconAndUrl();
-			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+//			String iconData = jsobj.getString("userIcon");		
+//			IconAndUrl icon2url = new IconAndUrl();
+//			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+			account.setIcon(jsobj.getString("userIcon"));
 			
 			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
