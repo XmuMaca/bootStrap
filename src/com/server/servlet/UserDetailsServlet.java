@@ -14,6 +14,7 @@ import com.server.bean.Account;
 import com.server.bean.Activity;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
+import com.server.util.*;
 
 /**
  * Servlet implementation class UserDetailsServlet
@@ -27,6 +28,8 @@ public class UserDetailsServlet extends HttpServlet {
 	private PreparedStatement pstat;
 	
 	private Account user;
+	
+	private DesUtils des;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -55,7 +58,18 @@ public class UserDetailsServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
-		String userId = request.getParameter("userId");
+		String userId = null;
+		
+		try {
+			des = new DesUtils();
+			userId = des.decrypt(request.getParameter("userId"));
+			
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		
 		db = new UserDB();
 		db.createConnection();

@@ -4,6 +4,8 @@ public class Account
 {
 	private String id;
 	
+	private String easemobId;
+	
 	private String name;
 	
 	private String password;
@@ -123,12 +125,18 @@ public class Account
 	public void setIsBaned(int isBaned) {
 		this.isBaned = isBaned;
 	}
+	
+	public String getEasemobId() {
+		return easemobId;
+	}
+
+	public void setEasemobId(String easemobId) {
+		this.easemobId = easemobId;
+	}
 
 	public Account()
 	{
 		
 	}
-
-
 
 }

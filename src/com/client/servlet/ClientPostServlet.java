@@ -1,14 +1,15 @@
 package com.client.servlet;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,6 +19,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 
+import com.easemob.server.example.comm.Constants;
+import com.easemob.server.example.httpclient.apidemo.EasemobIMUsers;
+import com.easemob.server.example.httpclient.apidemo.EasemobMessages;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.server.bean.Account;
 import com.server.bean.Activity;
 import com.server.db.UserDB;
@@ -27,10 +34,16 @@ import com.server.util.IconAndUrl;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
-import net.sf.json.processors.JsonBeanProcessorMatcher;
+
 
 public class ClientPostServlet extends HttpServlet
 {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String IMAGE_PATH;
 	
 	private UserDB db = new UserDB();
@@ -52,10 +65,14 @@ public class ClientPostServlet extends HttpServlet
 		db.createConnection();
 		
 		JSONObject jsobj = readJson(req);		
-		String action = jsobj.getString("action");
+//		String action = jsobj.getString("action");
 		
+		String action = "easemobMsg";
 		
 		switch (action) {
+		case "huanxin":
+			huanxin(resp, jsobj);
+			break;
 		case "loginemail":
 			loginemail(resp, jsobj);
 			break;
@@ -169,6 +186,8 @@ public class ClientPostServlet extends HttpServlet
 			
 		case "showUserAlbum":
 			showUserAlbum(resp, jsobj);
+		case "easemobMsg":
+			easemobMsg(resp, jsobj);
 		default:
 			break;
 		}
@@ -222,6 +241,32 @@ public class ClientPostServlet extends HttpServlet
 			e.printStackTrace();
 		} 
 	}
+	
+	private void easemobMsg(HttpServletResponse resp, JSONObject json)
+	{
+//		EasemobMessages.mySendMsg();
+		System.out.println("IM signup start");
+		EasemobIMUsers xx = new EasemobIMUsers();
+		xx.mysignup();
+		System.out.println("IM signup succesful");
+	}
+	
+	private void huanxin(HttpServletResponse resp, JSONObject json)
+	{
+		String easemobId = json.getString("easemobId");
+		
+		String query_sql = String.format("select * from %s where easemobId='%s'", IStringConstans.USER_TABLE_NAME, easemobId);
+		
+		JSONObject outJson = new JSONObject();
+		
+		List<Account> list = db.queryResult(query_sql);
+		Account account = list.get(0);
+		
+		outJson.put("userId", account.getId());
+		outJson.put("userIcon", account.getIcon());
+		
+		writeJson(resp, outJson.toString());
+	}
 		
 	private void showProfile(HttpServletResponse resp, JSONObject json)
 	{
@@ -235,6 +280,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		List<Account> list = db.queryResult(query_sql);
 		Account account = list.get(0);
+		outJson.put("easemobId", account.getEasemobId());
 		outJson.put("userName", account.getName());
 		outJson.put("userEmail", account.getEmail());
 		outJson.put("userGender", account.getGender());
@@ -288,6 +334,8 @@ public class ClientPostServlet extends HttpServlet
 			if (accout.getIsBaned() == 0) 
 			{
 				outJSon.put("userId", accout.getId());
+				outJSon.put("easemobId", accout.getEasemobId());
+				System.out.println(accout.getEasemobId());
 				outJSon.put("userPassword", accout.getPassword());
 				outJSon.put("userName", accout.getName());
 				outJSon.put("userIcon", accout.getIcon());
@@ -313,7 +361,7 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void loginsina(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String id = jsobj.getString("userId");
+		String id = jsobj.getString("userId");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 		
 		//System.out.println("id:" + id + " password:" + password);
 		
@@ -329,6 +377,8 @@ public class ClientPostServlet extends HttpServlet
 			if (accout.getIsBaned() == 0) 
 			{
 				outJSon.put("userId", accout.getId());
+				outJSon.put("easemobId", accout.getEasemobId());
+				System.out.println(accout.getEasemobId());
 				outJSon.put("userPassword", accout.getPassword());
 				outJSon.put("userName", accout.getName());
 				outJSon.put("userIcon", accout.getIcon());
@@ -370,6 +420,8 @@ public class ClientPostServlet extends HttpServlet
 			if (accout.getIsBaned() == 0) 
 			{
 				outJSon.put("userId", accout.getId());
+				outJSon.put("easemobId", accout.getEasemobId());
+				System.out.println("huanxin:" + accout.getEasemobId());
 				outJSon.put("userPassword", accout.getPassword());
 				outJSon.put("userName", accout.getName());
 				outJSon.put("userIcon", accout.getIcon());
@@ -401,6 +453,13 @@ public class ClientPostServlet extends HttpServlet
 		account.setId(jsobj.getString("userEmail"));
 		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
 		
+		Date date=new Date();
+		DateFormat format=new SimpleDateFormat("MMddHHmm");
+		String time=format.format(date);
+		
+		Random ra = new Random();
+		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		
 		if (!db.query(query_sql)) 
 		{
 			account.setEmail(jsobj.getString("userEmail"));
@@ -415,8 +474,7 @@ public class ClientPostServlet extends HttpServlet
 			IconAndUrl icon2url = new IconAndUrl();
 			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			
-			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail, userAlbumIsPublic) values('%s','%s','%s','%s','%s', '%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), isPublic);
+			String signup_sql = String.format("insert into %s(userId,easemobId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(),easemobId, account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
 //			//credit
@@ -435,7 +493,7 @@ public class ClientPostServlet extends HttpServlet
 //			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
 //			db.excuteUpdate(updateCredit);
 			
-			outJSon.put("result", "true");
+			outJSon.put("result", easemobId);
 			
 		}
 		else 
@@ -468,8 +526,17 @@ public class ClientPostServlet extends HttpServlet
 		JSONObject outJSon = new JSONObject();
 		Account account = new Account();
 		
-		account.setId(jsobj.getString("userId"));
+		String userId = jsobj.getString("userId");
+		account.setId(userId);
 		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
+		
+		Date date=new Date();
+		DateFormat format=new SimpleDateFormat("MMddHHmm");
+		String time=format.format(date);
+		
+		Random ra = new Random();
+		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		
 		
 		if (!db.query(query_sql)) 
 		{
@@ -486,7 +553,7 @@ public class ClientPostServlet extends HttpServlet
 //			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			account.setIcon(jsobj.getString("userIcon"));
 			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			String signup_sql = String.format("insert into %s(userId,easemobId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(),easemobId, account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
 //			//credit
@@ -505,7 +572,8 @@ public class ClientPostServlet extends HttpServlet
 //			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
 //			db.excuteUpdate(updateCredit);
 			
-			outJSon.put("result", "true");
+			
+			outJSon.put("result", easemobId);
 			
 		}
 		else 
@@ -524,6 +592,13 @@ public class ClientPostServlet extends HttpServlet
 		account.setId(jsobj.getString("userId"));
 		String query_sql = String.format("select * from %s where userId='%s'", IStringConstans.USER_TABLE_NAME, account.getId());
 		
+		Date date=new Date();
+		DateFormat format=new SimpleDateFormat("MMddHHmm");
+		String time=format.format(date);
+		
+		Random ra = new Random();
+		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		
 		if (!db.query(query_sql)) 
 		{
 //			account.setEmail(jsobj.getString("userEmail"));
@@ -539,7 +614,7 @@ public class ClientPostServlet extends HttpServlet
 //			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
 			account.setIcon(jsobj.getString("userIcon"));
 			
-			String signup_sql = String.format("insert into %s(userId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(), account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
+			String signup_sql = String.format("insert into %s(userId,easemobId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(),easemobId, account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
 			
 //			//credit
@@ -558,7 +633,7 @@ public class ClientPostServlet extends HttpServlet
 //			String updateCredit = String.format("update user set userCredit=userCredit+10 where userId='%s' ", userCode);
 //			db.excuteUpdate(updateCredit);
 			
-			outJSon.put("result", "true");
+			outJSon.put("result", easemobId);
 			
 		}
 		else 
@@ -578,17 +653,29 @@ public class ClientPostServlet extends HttpServlet
 		String releaseTime = jsobj.getString("releaseTime");
 		
 		activity.setId(CreateId.createAtyId(userId));
+		System.out.println(activity.getId());
 		activity.setName(jsobj.getString("atyName"));
+		System.out.println(activity.getName());
 		activity.setType(jsobj.getString("atyType"));
+		System.out.println(activity.getType());
 		activity.setStartTime(jsobj.getString("atyStartTime"));
+		System.out.println(activity.getStartTime());
 		activity.setEndTime(jsobj.getString("atyEndTime"));
+		System.out.println(activity.getEndTime());
 		activity.setPlace(jsobj.getString("atyPlace"));
+		System.out.println(activity.getPlace());
 		activity.setLongitude(Double.parseDouble(jsobj.getString("longitude")));
+		System.out.println(activity.getLongitude());
 		activity.setLatitude(Double.parseDouble(jsobj.getString("latitude")));
+		System.out.println(activity.getLatitude());
 		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
+		System.out.println(activity.getMembers());
 		activity.setContent(jsobj.getString("atyContent"));
+		System.out.println(activity.getContent());
 		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
+		System.out.println(activity.getShares());
 		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
+		System.out.println(activity.getComments());
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
 		String atyIsPublic = jsobj.getString("atyIsPublic");
@@ -619,12 +706,14 @@ public class ClientPostServlet extends HttpServlet
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
-		String creditContent = "·¢²¼»î¶¯£º" + jsobj.getString("atyName");
-		int creditNumbers = 10;
+		String creditContent = "å‘å¸ƒæ´»åŠ¨ï¼š" + jsobj.getString("atyName");
+		int creditNumbers = 20;
 		
 		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-		
 		db.excuteUpdate(insert_credit);
+		
+		String update_credit = String.format("update %s set userCredit = userCredit + %d where userId = '%s'", IStringConstans.USER_TABLE_NAME, creditNumbers, userId);
+		db.excuteUpdate(update_credit);
 		
 		outJson.put("atyId", activity.getId());
 		writeJson(resp, outJson.toString());		
@@ -692,13 +781,15 @@ public class ClientPostServlet extends HttpServlet
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
-		String atyName = jsobj.getString("atyName");
-		String creditContent = "joined activity" + atyName;
+		String atyName = jsobj.getString("atyId");
+		String creditContent = "å‚åŠ æ´»åŠ¨ï¼š" + atyName;
 		int creditNumbers = 5;
 		
-		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-				
-		db.excuteUpdate(insert_credit);		
+		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);				
+		db.excuteUpdate(insert_credit);
+		
+		String update_credit = String.format("update %s set userCredit = userCredit + %d where userId = '%s'", IStringConstans.USER_TABLE_NAME, creditNumbers, userId);
+		db.excuteUpdate(update_credit);
 
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
@@ -721,14 +812,16 @@ public class ClientPostServlet extends HttpServlet
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
-		String atyName = jsobj.getString("atyName");
-		String creditContent = "ÍË³ö»î¶¯£º" + atyName;
+		String atyName = jsobj.getString("atyId");
+		String creditContent = "é€€å‡ºæ´»åŠ¨ï¼š" + atyName;
 		int creditNumbers = -5;
 				
 		String insert_credit = String.format("insert into %s values('%s', '%s', '%s', %d)", IStringConstans.ADDCREDIT_TABLE_NAME, userId, creditId, creditContent, creditNumbers);
-						
 		db.excuteUpdate(insert_credit);
 
+		String update_credit = String.format("update %s set userCredit = userCredit + %d where userId = '%s'", IStringConstans.USER_TABLE_NAME, creditNumbers, userId);
+		db.excuteUpdate(update_credit);
+		
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
 		writeJson(resp, outJson.toString());
@@ -740,7 +833,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty = "select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
 							"from activity, user, distribute " +
-							"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0";
+							"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)";
 		
 		String queryIsLike =String.format("select atyId " +
 										 "from %s " +
@@ -814,8 +907,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic " +
 											"from %s, %s, %s " +
-											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " +
-											"order by atyMembers", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
+											"order by atyMembers desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
 		
 		String queryIsLike =String.format("select atyId " +
 										 "from %s " +
@@ -892,7 +985,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
 											"from %s, %s, %s " +
-											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 "
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)"
 											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
 											+ "and atyLatitude>%f-1 and atyLatitude<%f+1 ", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userLongitude, userLongitude, userLatitude, userLatitude);
 				
@@ -968,8 +1061,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic " +
 											"from %s, %s, %s " +
-											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 " +
-											"order by atyLikes", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
+											"order by atyLikes desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
 		
 		String queryIsLike =String.format("select atyId " +
 										 "from %s " +
@@ -1088,7 +1181,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " + 
 										"from %s, %s, %s " +
-										"where activity.atyId = joining.atyId and user.userId = joining.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, userId);		
+										"where activity.atyId = joining.atyId and user.userId = joining.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, userId);		
 		
 		String queryIsLike =String.format("select atyId " +
 				 "from %s " +
@@ -1158,7 +1251,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " + 
 										"from %s, %s, %s " +
-										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and activity.atyIsBanned=0 and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
+										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
 		
 		String queryIsLike =String.format("select atyId " +
 				 "from %s " +
@@ -1427,7 +1520,7 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void creditRank(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String queryCredit = String.format("select userId, userName, userIcon from %s order by userCredit", IStringConstans.USER_TABLE_NAME);
+		String queryCredit = String.format("select userId, userName, userIcon from %s where userId!='000' and userId!='001' order by userCredit desc", IStringConstans.USER_TABLE_NAME);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryCredit);
 		writeJson(resp, outJson.toString());
@@ -1443,7 +1536,7 @@ public class ClientPostServlet extends HttpServlet
 		String path = icon2url.getUrl(IMAGE_PATH, pic);
 		
 //		System.out.println("image path:" + path);
-//		System.out.println("ºº×Ö:" + c);
+//		System.out.println("ï¿½ï¿½ï¿½ï¿½:" + c);
 		
 		outJson.put("result", "success");
 		writeJson(resp, outJson.toString());
@@ -1483,6 +1576,7 @@ public class ClientPostServlet extends HttpServlet
 			e.printStackTrace();
 		}
 		
+		System.out.println(jsarray.toString());
 		writeJson(resp, jsarray.toString());
 	}
 }

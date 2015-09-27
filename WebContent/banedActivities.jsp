@@ -5,6 +5,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="com.server.bean.Account" %>
 <%@page import="java.sql.Connection"%>
+<%@ page import="com.server.util.DesUtils" %>
 
 <%
 	Account account = (Account)session.getAttribute("account");
@@ -13,6 +14,9 @@
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+%>
+<%
+	DesUtils des = new DesUtils();
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -85,6 +89,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                     <ul>
                         <li><a href="activities.jsp">all activities</a></li>
                         <li class="active"><a href="banedActivities.jsp">baned activities</a></li>
+                        <li><a href="uncheckedActivities.jsp">unchecked activities</a></li>
                     </ul>
                 </li>
                 <li>
@@ -248,16 +253,21 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                         			status = "normal";
                                         			statusClass = "label label-success";
                                         		}
-                                        		else
+                                        		else if(aty.getIsBanned() == 1)
                                         		{
                                         			status = "banned";
                                         			statusClass = "label label-important";
+                                        		}
+                                        		else
+                                        		{
+                                        			status = "unchecked";
+                                        			statusClass = "label label-info";
                                         		}
                                         	%>
                                         	
                                             <tr>
                                                 <td><input type="checkbox" name="order[]" value="528"/></td>
-                                                <td><a href="AtyDetailsServlet?atyId=<%=aty.getId() %>"><%=aty.getId() %></a></td>
+                                                <td><a href="AtyDetailsServlet?atyId=<%=des.encrypt(aty.getId()) %>"><%=aty.getId() %></a></td>
                                                 <td><%=aty.getType() %></td>
                                                 <td><span class="<%=statusClass%>"><%=status %></span></td>
                                                 <td><%=aty.getStartTime() %></td>

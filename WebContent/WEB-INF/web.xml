@@ -42,6 +42,14 @@
     <url-pattern>/ClientPostServlet</url-pattern>
   </servlet-mapping>
   <servlet>
+    <servlet-name>IMSignupServlet</servlet-name>
+    <servlet-class>com.client.servlet.IMSignupServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>IMSignupServlet</servlet-name>
+    <url-pattern>/IMSignupServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
     <servlet-name>LogoutServlet</servlet-name>
     <servlet-class>com.server.servlet.LogoutServlet</servlet-class>
   </servlet>
@@ -80,6 +88,14 @@
   <servlet-mapping>
     <servlet-name>AtyChangeStatusServlet</servlet-name>
     <url-pattern>/AtyChangeStatusServlet</url-pattern>
+  </servlet-mapping>
+  <servlet>
+    <servlet-name>AtyCheckServlet</servlet-name>
+    <servlet-class>com.server.servlet.AtyCheckServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AtyCheckServlet</servlet-name>
+    <url-pattern>/AtyCheckServlet</url-pattern>
   </servlet-mapping>
   <servlet>
     <servlet-name>IconChangeServlet</servlet-name>

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.server.bean.Activity;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
+import com.server.util.DesUtils;
 
 /**
  * Servlet implementation class AtyDetailsServlet
@@ -27,6 +28,8 @@ public class AtyDetailsServlet extends HttpServlet {
 	private PreparedStatement pstat;
 	
 	private Activity aty;
+	
+	private DesUtils des;
 	
     /**
      * @see HttpServlet#HttpServlet()
@@ -55,7 +58,19 @@ public class AtyDetailsServlet extends HttpServlet {
 		response.setContentType("text/html");
 		response.setCharacterEncoding("utf-8");
 		
-		String atyId = request.getParameter("atyId");
+		String atyId = null;
+		
+		try {
+			des = new DesUtils();
+			
+			atyId = des.decrypt(request.getParameter("atyId"));
+			
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
 		
 		db = new UserDB();
 		db.createConnection();
@@ -95,7 +110,7 @@ public class AtyDetailsServlet extends HttpServlet {
 		
 		request.setAttribute("aty", aty);
 		
-		ArrayList<String> photoURL = new ArrayList<String>();
+		/*ArrayList<String> photoURL = new ArrayList<String>();
 		String sql = String.format("select photoId from photos wehere albumId=%s", atyId);
 		try
 		{
@@ -113,7 +128,7 @@ public class AtyDetailsServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		request.setAttribute("photoURL", photoURL);
+		request.setAttribute("photoURL", photoURL);*/
 		
 		request.getRequestDispatcher("atyDetails.jsp").forward(request, response);
 	}

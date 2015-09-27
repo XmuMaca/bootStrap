@@ -4,6 +4,7 @@
 <%@ page import="com.server.bean.Account" %>
 <%@ page import="java.util.*" %>
 <%@page import="java.sql.Connection"%>
+<%@ page import="com.server.util.DesUtils" %>
 
 <%
 	Account account = (Account)session.getAttribute("account");
@@ -12,6 +13,10 @@
 <%
 String path = request.getContextPath();
 String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
+%>
+
+<%
+	DesUtils des = new DesUtils();
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -257,7 +262,7 @@ String basePath = request.getScheme() + "://" + request.getServerName() + ":" + 
                                         	
                                             <tr>
                                                 <td><input type="checkbox" name="order[]" value="528"/></td>
-                                                <td><a href="UserDetailsServlet?userId=<%=user.getId() %>"><%=user.getId() %></a></td>
+                                                <td><a href="UserDetailsServlet?userId=<%=des.encrypt(user.getId()) %>"><%=user.getId() %></a></td>
                                                 <td><%=user.getName() %></td>
                                                 <td><span class="<%=statusClass%>"><%=status %></span></td>
                                                 <td><%=user.getEmail() %></td>

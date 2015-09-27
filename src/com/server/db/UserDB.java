@@ -54,6 +54,7 @@ public class UserDB extends DB
 				Account account = new Account();
 
 				account.setId(rs.getString("userId"));
+				account.setEasemobId(rs.getString("easemobId"));
 				account.setName(rs.getString("userName"));
 				account.setIcon(rs.getString("userIcon"));
 				account.setGender(rs.getString("userGender"));
