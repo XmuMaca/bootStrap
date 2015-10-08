@@ -2,6 +2,7 @@ package com.server.util;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Random;
 
 public class CreateId 
 {
@@ -24,6 +25,12 @@ public class CreateId
 	public static String createCreditId(String userId)
 	{
 		return createAtyId(userId);
+	}
+	
+	public static String createGroupId(String userId)
+	{
+		Random rd = new Random();
+		return createAtyId(userId) + "x" + rd.nextInt(100);
 	}
 	
 }

@@ -20,6 +20,7 @@ import org.apache.catalina.connector.Request;
 import org.apache.catalina.deploy.LoginConfig;
 
 import com.easemob.server.example.comm.Constants;
+import com.easemob.server.example.httpclient.apidemo.EasemobChatGroups;
 import com.easemob.server.example.httpclient.apidemo.EasemobIMUsers;
 import com.easemob.server.example.httpclient.apidemo.EasemobMessages;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -65,9 +66,13 @@ public class ClientPostServlet extends HttpServlet
 		db.createConnection();
 		
 		JSONObject jsobj = readJson(req);		
-//		String action = jsobj.getString("action");
+		String action = jsobj.getString("action");
 		
-		String action = "easemobMsg";
+//		String action = "easemobMsg";
+//		String action = "";
+		
+//		createTempGroup("mm", "test");
+		//addMember("mm", "110760897001030188");
 		
 		switch (action) {
 		case "huanxin":
@@ -183,11 +188,19 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "editAlbumRight":
 			editAlbumRight(resp, jsobj);
-			
+			break;
 		case "showUserAlbum":
 			showUserAlbum(resp, jsobj);
+			break;
 		case "easemobMsg":
 			easemobMsg(resp, jsobj);
+			break;
+		case "notifyFromAty":
+			sendInfo(resp, jsobj);
+			break;
+		case "showAllNotifications":
+			showAllNotifications(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -254,6 +267,8 @@ public class ClientPostServlet extends HttpServlet
 	private void huanxin(HttpServletResponse resp, JSONObject json)
 	{
 		String easemobId = json.getString("easemobId");
+		
+		System.out.println("easemobId : " + easemobId);
 		
 		String query_sql = String.format("select * from %s where easemobId='%s'", IStringConstans.USER_TABLE_NAME, easemobId);
 		
@@ -458,7 +473,7 @@ public class ClientPostServlet extends HttpServlet
 		String time=format.format(date);
 		
 		Random ra = new Random();
-		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		String easemobId ="t" + time + Integer.toString(ra.nextInt(100));
 		
 		if (!db.query(query_sql)) 
 		{
@@ -535,7 +550,7 @@ public class ClientPostServlet extends HttpServlet
 		String time=format.format(date);
 		
 		Random ra = new Random();
-		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		String easemobId ="t" + time + Integer.toString(ra.nextInt(100));
 		
 		
 		if (!db.query(query_sql)) 
@@ -597,7 +612,7 @@ public class ClientPostServlet extends HttpServlet
 		String time=format.format(date);
 		
 		Random ra = new Random();
-		String easemobId ="t" + time + "x" + Integer.toString(ra.nextInt(100));
+		String easemobId ="t" + time + Integer.toString(ra.nextInt(100));
 		
 		if (!db.query(query_sql)) 
 		{
@@ -652,7 +667,8 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		String releaseTime = jsobj.getString("releaseTime");
 		
-		activity.setId(CreateId.createAtyId(userId));
+		String atyId = CreateId.createAtyId(userId);
+		activity.setId(atyId);
 		System.out.println(activity.getId());
 		activity.setName(jsobj.getString("atyName"));
 		System.out.println(activity.getName());
@@ -679,6 +695,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
 		String atyIsPublic = jsobj.getString("atyIsPublic");
+		String groupId = "";
 		
 		/*insert all pictures*/
 		JSONArray jsonArray = new JSONArray();
@@ -697,12 +714,15 @@ public class ClientPostServlet extends HttpServlet
 		}
 		
 		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
-		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic);
+		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 		
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
 		db.excuteUpdate(joint_sql);
+		
+		//group
+		groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -716,6 +736,7 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(update_credit);
 		
 		outJson.put("atyId", activity.getId());
+		outJson.put("groupId", groupId);
 		writeJson(resp, outJson.toString());		
 	}
 	
@@ -767,6 +788,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		String atyId = jsobj.getString("atyId");
+		String easemobId = jsobj.getString("easemobId");
 		
 		String update_aty = String.format("update %s " +
 										"set atyMembers=atyMembers+1 " +
@@ -778,6 +800,23 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(update_aty);	
 		
 		db.excuteUpdate(insert_like);
+		
+		//group
+		String query_group = String.format("select groupId from activity where atyId = '%s'", atyId);
+		ResultSet rs = db.executeQuery(query_group);
+		
+		String groupId = null;
+		try {
+			while(rs.next())
+			{
+				groupId = rs.getString("groupId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		addMember(easemobId, groupId);
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -800,6 +839,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		String atyId = jsobj.getString("atyId");
+		String easemobId = jsobj.getString("easemobId");
 		
 		String update_aty = String.format("update %s " +
 				"set atyMembers=atyMembers-1 " +
@@ -809,6 +849,23 @@ public class ClientPostServlet extends HttpServlet
 		
 		db.excuteUpdate(update_aty);
 		db.excuteUpdate(delete_aty);
+		
+		//group
+		String query_group = String.format("select groupId from activity where atyId = '%s'", atyId);
+		ResultSet rs = db.executeQuery(query_group);
+				
+		String groupId = null;
+		try {
+			while(rs.next())
+			{
+				groupId = rs.getString("groupId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				
+		deleteMember(easemobId, groupId);		
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -1578,5 +1635,110 @@ public class ClientPostServlet extends HttpServlet
 		
 		System.out.println(jsarray.toString());
 		writeJson(resp, jsarray.toString());
+	}
+	
+	//new functions
+	private String createTempGroup(String easemobId, String atyId)
+	{
+		ObjectNode dataObjectNode = JsonNodeFactory.instance.objectNode();
+		dataObjectNode.put("groupname", atyId);
+		dataObjectNode.put("desc", atyId);
+		dataObjectNode.put("approval", true);
+		dataObjectNode.put("public", true);
+		dataObjectNode.put("maxusers", 100);
+		dataObjectNode.put("owner", easemobId);
+		ArrayNode arrayNode = JsonNodeFactory.instance.arrayNode();
+		arrayNode.add(easemobId);
+		dataObjectNode.put("members", arrayNode);
+		ObjectNode creatChatGroupNode = EasemobChatGroups.creatChatGroups(dataObjectNode);
+		
+		String update_group = String.format("update %s set groupId = %s where atyId = '%s'", IStringConstans.ACTIVITY_TABLE_NAME, creatChatGroupNode.get("data").get("groupid").toString(), atyId);
+		db.excuteUpdate(update_group);
+		
+		System.out.println(creatChatGroupNode.toString());
+		System.out.println(creatChatGroupNode.get("data").get("groupid").toString());
+		
+		return creatChatGroupNode.get("data").get("groupid").toString();
+	}
+	
+	private static void addMember(String easemobId, String groupId)
+	{
+		String addToChatgroupid = groupId;
+		String toAddUsername = easemobId;
+		ObjectNode addUserToGroupNode = EasemobChatGroups.addUserToGroup(addToChatgroupid, toAddUsername);
+		System.out.println(addUserToGroupNode.toString());
+	}
+	
+	private static void deleteMember(String easemobId, String groupId)
+	{
+		String delFromChatgroupid = groupId;
+		String toRemoveUsername = easemobId;
+		ObjectNode deleteUserFromGroupNode = EasemobChatGroups.deleteUserFromGroup(delFromChatgroupid, toRemoveUsername);
+		System.out.println(deleteUserFromGroupNode.asText());
+	}
+	
+	private static ObjectNode getAllMembers(String groupId)
+	{
+		String chatgroupid = groupId;
+		ObjectNode getAllMemberssByGroupIdNode = EasemobChatGroups.getAllMemberssByGroupId(chatgroupid);
+		System.out.println(getAllMemberssByGroupIdNode.toString());
+		return getAllMemberssByGroupIdNode;
+	}
+	
+	private void sendInfo(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String atyId = jsobj.getString("atyId");
+		String msgContent = jsobj.getString("msgContent");
+		String easemobId = jsobj.getString("easemobId");
+		String userName = jsobj.getString("userName");
+		String userIcon = jsobj.getString("userIcon");
+		String atyName = jsobj.getString("atyName");
+		String releaseTime = jsobj.getString("releaseTime");
+		System.out.println("easemobId : " + easemobId);
+		
+		
+		String query_group = String.format("select groupId from activity where atyId = '%s'", atyId);
+		ResultSet rs = db.executeQuery(query_group);
+		
+		String groupId = null;
+		try {
+			while(rs.next())
+			{
+				groupId = rs.getString("groupId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("groupId : " + groupId);
+		
+		ObjectNode allMembers = getAllMembers(groupId);
+		
+		int members = 0;
+		String query_sql = String.format("select atyMembers from activity where atyId = '%s'", atyId);
+	    rs = db.executeQuery(query_sql);
+	    try {
+			while(rs.next())
+			{
+				members = Integer.parseInt(rs.getString("atyMembers"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EasemobMessages.mySendMsg(easemobId, userName, userIcon, atyId, atyName, msgContent, releaseTime, allMembers, members);
+		//EasemobMessages.mySendInfo(easemobId, atyId, msgContent, groupId);
+	}
+	
+	private void showAllNotifications(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userToId = jsobj.getString("easemobId");
+		
+		String queryAllnotifications = String.format("select * from notification where userToId = '%s'", userToId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllnotifications);
+		writeJson(resp, outJson.toString()); 
 	}
 }

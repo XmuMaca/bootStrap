@@ -16,8 +16,12 @@ import com.easemob.server.example.httpclient.vo.EndPoints;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.server.db.UserDB;
 
 public class EasemobMessages {
+	
+	private static UserDB db = new UserDB();
+	
 	private static final Logger LOGGER = LoggerFactory.getLogger(EasemobMessages.class);
     private static final String APPKEY = Constants.APPKEY;
     private static final JsonNodeFactory factory = new JsonNodeFactory(false);
@@ -76,6 +80,63 @@ public class EasemobMessages {
         ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
         if (null != sendTxtMessageusernode) {
             LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+        }
+    }
+    
+    public static void mySendMsg(String easemobId,String userName, String userIcon, String atyId, String atyName, String msgContent, String releaseTime, ObjectNode allMembers, int members)
+    {
+    	System.out.println("start");
+    	System.out.println("msg: " + msgContent);
+
+        // 给用户发一条文本消息
+        String from = easemobId;
+        String targetTypeus = "users";
+        ObjectNode ext = factory.objectNode();
+        ext.put("identify", "notification");
+        
+        db.createConnection();
+        
+        ArrayNode targetusers = factory.arrayNode();
+        for(int i = 1; i < members; i++)
+        {
+        	String toUser = allMembers.path("data").get(i).path("member").asText();
+        	targetusers.add(toUser);
+        	
+        	String query_sql = String.format("insert into notification values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", easemobId, toUser, atyId, userName, userIcon, atyName, msgContent, releaseTime);
+        	db.excuteUpdate(query_sql);
+        }
+        
+        db.close();
+        
+        ObjectNode txtmsg = factory.objectNode();
+        txtmsg.put("msg", msgContent);
+        txtmsg.put("type","txt");
+        
+        ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
+        if (null != sendTxtMessageusernode) {
+            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+        }
+    }
+    
+    public static void mySendInfo(String easemobId, String atyId, String msgContent, String groupId)
+    {
+    	String from = easemobId;
+    	ObjectNode ext = factory.objectNode();
+        
+        ObjectNode txtmsg = factory.objectNode();
+        txtmsg.put("msg", msgContent);
+        txtmsg.put("type","txt");
+        
+        String targetTypegr = "chatgroups";
+        
+        //ArrayNode  chatgroupidsNode = (ArrayNode) EasemobChatGroups.getAllChatgroupids().path("data");
+        ArrayNode targetgroup = factory.arrayNode();
+        targetgroup.add(groupId);
+        
+        //targetgroup.add(allMembers);
+        ObjectNode sendTxtMessagegroupnode = sendMessages(targetTypegr, targetgroup, txtmsg, from, ext);
+        if (null != sendTxtMessagegroupnode) {
+            LOGGER.info("给一个群组发文本消息: " + sendTxtMessagegroupnode.toString());
         }
     }
     
