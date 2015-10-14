@@ -27,6 +27,11 @@ public class CreateId
 		return createAtyId(userId);
 	}
 	
+	public static String createCtyId(String ctyName)
+	{
+		return createAtyId(ctyName);
+	}
+	
 	public static String createGroupId(String userId)
 	{
 		Random rd = new Random();

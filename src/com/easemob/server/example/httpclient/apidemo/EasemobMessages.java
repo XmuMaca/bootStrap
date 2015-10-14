@@ -30,7 +30,7 @@ public class EasemobMessages {
     private static Credential credential = new ClientSecretCredential(Constants.APP_CLIENT_ID,
             Constants.APP_CLIENT_SECRET, Roles.USER_ROLE_APPADMIN);
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
     	System.out.println("start");
     	
         //  检测用户是否在线
@@ -116,6 +116,34 @@ public class EasemobMessages {
         if (null != sendTxtMessageusernode) {
             LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
         }
+    }
+    
+    public static void myEditAtyMsg(String easemobId, String msgContent, int members, ObjectNode allMembers)
+    {
+        // 给用户发一条文本消息
+        String from = easemobId;
+        String targetTypeus = "users";
+        ObjectNode ext = factory.objectNode();
+        ext.put("identify", "notificationBySystem");
+        
+        db.createConnection();
+        
+        ArrayNode targetusers = factory.arrayNode();
+        for(int i = 1; i < members; i++)
+        {
+        	String toUser = allMembers.path("data").get(i).path("member").asText();
+        	targetusers.add(toUser);        	
+        }      
+        db.close();
+        
+        ObjectNode txtmsg = factory.objectNode();
+        txtmsg.put("msg", msgContent);
+        txtmsg.put("type","txt");
+        
+        ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
+        if (null != sendTxtMessageusernode) {
+            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+        }   	
     }
     
     public static void mySendInfo(String easemobId, String atyId, String msgContent, String groupId)

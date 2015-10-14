@@ -59,5 +59,6 @@ public interface IStringConstans
 	String JSON_TRUE = "true";
 	String JSON_FALSE = "false";
 	
-	
+	/*system easemob id*/
+	String SYSTEM_EASEMOB_ID = "systemzero";
 }
