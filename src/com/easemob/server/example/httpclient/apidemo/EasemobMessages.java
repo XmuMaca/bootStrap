@@ -56,26 +56,55 @@ public class EasemobMessages {
         }
     }
     
-    public static void mySendMsg()
+    public static void mySendMsgJoin(String from, String to, String msgContent, String atyName)
     {
     	System.out.println("start");
     	
         //  检测用户是否在线
-        String targetUserName = "wxmzero";
+        String targetUserName = to;
         ObjectNode usernode = getUserStatus(targetUserName);
         if (null != usernode) {
             LOGGER.info("检测用户是否在线: " + usernode.toString());
         }
 
         // 给用户发一条文本消息
-        String from = "wxmzero";
         String targetTypeus = "users";
         ObjectNode ext = factory.objectNode();
+        ext.put("identify", "join");
+        ext.put("atyName", atyName);
+        
         ArrayNode targetusers = factory.arrayNode();
-        targetusers.add("zerowxm");
-        //targetusers.add("kenshinnuser002");
+        targetusers.add(to);
         ObjectNode txtmsg = factory.objectNode();
-        txtmsg.put("msg", "welcome!");
+        txtmsg.put("msg", msgContent);
+        txtmsg.put("type","txt");
+        ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
+        if (null != sendTxtMessageusernode) {
+            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+        }
+    }
+    
+    public static void mySendMsgComment(String from, String to, String msgContent, String userName)
+    {
+    	System.out.println("start");
+    	
+        //  检测用户是否在线
+        String targetUserName = to;
+        ObjectNode usernode = getUserStatus(targetUserName);
+        if (null != usernode) {
+            LOGGER.info("检测用户是否在线: " + usernode.toString());
+        }
+
+        // 给用户发一条文本消息
+        String targetTypeus = "users";
+        ObjectNode ext = factory.objectNode();
+        ext.put("identify", "comment");
+        ext.put("userName", userName);
+        
+        ArrayNode targetusers = factory.arrayNode();
+        targetusers.add(to);
+        ObjectNode txtmsg = factory.objectNode();
+        txtmsg.put("msg", msgContent);
         txtmsg.put("type","txt");
         ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
         if (null != sendTxtMessageusernode) {
@@ -93,11 +122,12 @@ public class EasemobMessages {
         String targetTypeus = "users";
         ObjectNode ext = factory.objectNode();
         ext.put("identify", "notification");
+        ext.put("userName", userName);
         
         db.createConnection();
         
         ArrayNode targetusers = factory.arrayNode();
-        for(int i = 1; i < members; i++)
+        for(int i = 0; i < members; i++)
         {
         	String toUser = allMembers.path("data").get(i).path("member").asText();
         	targetusers.add(toUser);
