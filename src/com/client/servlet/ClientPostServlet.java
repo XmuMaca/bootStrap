@@ -75,8 +75,14 @@ public class ClientPostServlet extends HttpServlet
 		//addMember("mm", "110760897001030188");
 		
 		switch (action) {
-		case "huanxin":
-			huanxin(resp, jsobj);
+		case "userChat":
+			userChat(resp, jsobj);
+			break;
+		case "sendMessage":
+			sendMsg(resp, jsobj);
+			break;
+		case "showChatlist":
+			showChatlist(resp, jsobj);
 			break;
 		case "loginemail":
 			loginemail(resp, jsobj);
@@ -205,6 +211,9 @@ public class ClientPostServlet extends HttpServlet
 			editAty(resp, jsobj);
 		case "deleteAty":
 			deleteAty(resp, jsobj);
+		case "showUserComments":
+			showUserComments(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -268,10 +277,52 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println("IM signup succesful");
 	}
 	
-	private void huanxin(HttpServletResponse resp, JSONObject json)
+	private void sendMsg(HttpServletResponse resp, JSONObject json)
 	{
 		String easemobId = json.getString("easemobId");
+		String toEasemobId = json.getString("toEasemobId");
+		String fromUserId = json.getString("userId");
+		String fromUserName = json.getString("userName");
+		String msgContent = json.getString("msgContent");
+		String fromUserIcon = "";
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		String sendTime = sdf.format(new Date()).toString();
 		
+		String chatlist_sql = String.format("select * from chatlist where fromEasemobId = '%s' and toEasemobId = '%s'", easemobId, toEasemobId);
+		ResultSet rs = db.executeQuery(chatlist_sql);
+		
+		try {
+			if(rs.next())
+			{
+				String update_sql = String.format("update chatlist set msgContent = '%s', newMsgCount = newMsgCount+1, sendTime = '%s' " +
+						"where fromEasemobId = '%s' and toEasemobId = '%s'", msgContent, sendTime, easemobId, toEasemobId);
+				db.excuteUpdate(update_sql);
+			}
+			else
+			{
+				String insert_sql = String.format("insert into chatlist values('%s', '%s', '%s', '%s', '%s', '%s', %d, '%s')", easemobId, toEasemobId, fromUserId, fromUserIcon, fromUserName, msgContent, 1, sendTime);
+				db.excuteUpdate(insert_sql);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void showChatlist(HttpServletResponse resp, JSONObject json)
+	{
+		String toEasemobId = json.getString("easemobId");
+		
+		String queryChatlist = String.format("select * from chatlist where toEasemobId = '%s'", toEasemobId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryChatlist);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void userChat(HttpServletResponse resp, JSONObject json)
+	{
+		String easemobId = json.getString("easemobId");
+				
 		System.out.println("easemobId : " + easemobId);
 		
 		String query_sql = String.format("select * from %s where easemobId='%s'", IStringConstans.USER_TABLE_NAME, easemobId);
@@ -282,6 +333,7 @@ public class ClientPostServlet extends HttpServlet
 		Account account = list.get(0);
 		
 		outJson.put("userId", account.getId());
+		outJson.put("userName", account.getName());
 		outJson.put("userIcon", account.getIcon());
 		
 		writeJson(resp, outJson.toString());
@@ -794,6 +846,7 @@ public class ClientPostServlet extends HttpServlet
 	private void join(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
+		String userName = jsobj.getString("userName");
 		String atyId = jsobj.getString("atyId");
 		String easemobId = jsobj.getString("easemobId");
 		
@@ -840,6 +893,22 @@ public class ClientPostServlet extends HttpServlet
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
 		writeJson(resp, outJson.toString());
+		
+		String toEasemobId = "";
+		//sendMessage
+		String query_sql = String.format("select easemobId from user, distribute where distribute.userId = user.userId and atyId = '%s'", atyId);
+		rs = db.executeQuery(query_sql);
+		try {
+			while(rs.next())
+			{
+				toEasemobId = rs.getString("easemobId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EasemobMessages.mySendMsgJoin(easemobId, easemobId, userName + "参加了您的活动：" + atyName, atyName);
 	}
 	
 	private void notJoin(HttpServletResponse resp, JSONObject jsobj)
@@ -1212,7 +1281,10 @@ public class ClientPostServlet extends HttpServlet
 	private void comment(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
+		String atyName = jsobj.getString("atyName");
+		String userName = jsobj.getString("userName");
 		String userId = jsobj.getString("userId");
+		String easemobId = jsobj.getString("easemobId");
 		String cmtId = CreateId.createCommentId(userId);
 		String cmtContent = jsobj.getString("cmtContent");
 		String cmtTime = jsobj.getString("cmtTime");
@@ -1231,6 +1303,22 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(insert_evaluation);
 		db.excuteUpdate(update_comments);
 		
+		String query_easemobId = String.format("select easemobId from distribute,user where atyId = '%s' and user.userId = distribute.userId", atyId);
+		ResultSet rs = db.executeQuery(query_easemobId);
+		
+		String ToEasemobId = null;
+		try {
+			while(rs.next())
+			{
+				ToEasemobId = rs.getString("easemobId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("groupId : " + ToEasemobId);
+		
+		EasemobMessages.mySendMsgComment(easemobId, ToEasemobId, cmtContent, userName);
 		
 		JSONObject out = db.queryGetJsonObj(query_comment);
 		out.put("cmtContent", cmtContent);
@@ -1984,5 +2072,17 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("atyId", activity.getId());
 		outJson.put("groupId", groupId);
 		writeJson(resp, outJson.toString());		
+	}
+	
+	private void showUserComments(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryUserComment = String.format("select user.userId, user.userName, user.userIcon, activity.atyName, comment.cmtContent, comment.cmtTime" +
+				" from user, activity, distribute, comment, evaluation " +
+				"where evaluation.userId = user.userId and evaluation.atyId = distribute.atyId and distribute.atyId = activity.atyId and evaluation.cmtId = comment.cmtId and distribute.userId = '%s'", userId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryUserComment);
+		writeJson(resp, outJson.toString());
 	}
 }
