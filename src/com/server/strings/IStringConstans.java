@@ -35,11 +35,11 @@ public interface IStringConstans
 //	String LOCAL_USER = "root";
 //	String LOCAL_PASSWORD = "ethink";
 	
-	String LOCAL_USER = "hikalif";
-	String LOCAL_PASSWORD = "140030";
+//	String LOCAL_USER = "hikalif";
+//	String LOCAL_PASSWORD = "140030";
 	
-//	String LOCAL_USER = "root";
-//	String LOCAL_PASSWORD = "root";
+	String LOCAL_USER = "root";
+	String LOCAL_PASSWORD = "software";
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
@@ -59,5 +59,6 @@ public interface IStringConstans
 	String JSON_TRUE = "true";
 	String JSON_FALSE = "false";
 	
-	
+	/*system easemob id*/
+	String SYSTEM_EASEMOB_ID = "systemzero";
 }

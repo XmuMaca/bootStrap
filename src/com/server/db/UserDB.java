@@ -115,4 +115,23 @@ public class UserDB extends DB
 		
 		
 	}
+	
+	/*获得满足sql的某一元组的colName列的string值*/
+	public String getOneColValue(String sql, String colName)
+	{
+		ResultSet rs = executeQuery(sql);
+		String id = null;
+		try {
+			while(rs.next())
+			{
+				id = rs.getString(colName);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return id;
+	}
 }
