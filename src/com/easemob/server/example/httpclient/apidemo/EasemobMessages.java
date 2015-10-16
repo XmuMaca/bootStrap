@@ -80,7 +80,7 @@ public class EasemobMessages {
         txtmsg.put("type","txt");
         ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
         if (null != sendTxtMessageusernode) {
-            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+            LOGGER.info("给用户发一条加入活动消息: " + sendTxtMessageusernode.toString());
         }
     }
     
@@ -108,7 +108,7 @@ public class EasemobMessages {
         txtmsg.put("type","txt");
         ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
         if (null != sendTxtMessageusernode) {
-            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+            LOGGER.info("给用户发一条评论消息: " + sendTxtMessageusernode.toString());
         }
     }
     
@@ -144,7 +144,7 @@ public class EasemobMessages {
         
         ObjectNode sendTxtMessageusernode = sendMessages(targetTypeus, targetusers, txtmsg, from, ext);
         if (null != sendTxtMessageusernode) {
-            LOGGER.info("给用户发一条文本消息: " + sendTxtMessageusernode.toString());
+            LOGGER.info("给用户发一条通知消息: " + sendTxtMessageusernode.toString());
         }
     }
     

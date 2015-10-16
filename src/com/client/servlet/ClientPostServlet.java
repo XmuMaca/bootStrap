@@ -281,7 +281,7 @@ public class ClientPostServlet extends HttpServlet
 		String fromUserName = json.getString("userName");
 		String msgContent = json.getString("msgContent");
 		String fromUserIcon = "";
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String sendTime = sdf.format(new Date()).toString();
 		
 		String chatlist_sql = String.format("select * from chatlist where fromEasemobId = '%s' and toEasemobId = '%s'", easemobId, toEasemobId);
@@ -717,7 +717,9 @@ public class ClientPostServlet extends HttpServlet
 		Activity activity = new Activity();
 		
 		String userId = jsobj.getString("userId");
-		String releaseTime = jsobj.getString("releaseTime");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String releaseTime = sdf.format(new Date());
 		
 		String atyId = CreateId.createAtyId(userId);
 		activity.setId(atyId);
@@ -873,7 +875,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
-		String atyName = jsobj.getString("atyId");
+		String atyName = jsobj.getString("atyName");
 		String creditContent = "参加活动：" + atyName;
 		int creditNumbers = 5;
 		
@@ -901,12 +903,13 @@ public class ClientPostServlet extends HttpServlet
 			e.printStackTrace();
 		}
 		
-		EasemobMessages.mySendMsgJoin(easemobId, easemobId, userName + "参加了您的活动：" + atyName, atyName);
+		EasemobMessages.mySendMsgJoin(easemobId, toEasemobId, userName + "参加了您的活动：" + atyName, atyName);
 	}
 	
 	private void notJoin(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
+		String userName = jsobj.getString("userName");
 		String atyId = jsobj.getString("atyId");
 		String easemobId = jsobj.getString("easemobId");
 		
@@ -951,6 +954,22 @@ public class ClientPostServlet extends HttpServlet
 		JSONObject outJson = new JSONObject();
 		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
 		writeJson(resp, outJson.toString());
+		
+		String toEasemobId = "";
+		//sendMessage
+		String query_sql = String.format("select easemobId from user, distribute where distribute.userId = user.userId and atyId = '%s'", atyId);
+		rs = db.executeQuery(query_sql);
+		try {
+			while(rs.next())
+			{
+				toEasemobId = rs.getString("easemobId");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		EasemobMessages.mySendMsgJoin(easemobId, toEasemobId, userName + "退出了您的活动：" + atyName, atyName);
 	}
 	
 	private void showActivities(HttpServletResponse resp, JSONObject jsobj)
@@ -1280,7 +1299,9 @@ public class ClientPostServlet extends HttpServlet
 		String easemobId = jsobj.getString("easemobId");
 		String cmtId = CreateId.createCommentId(userId);
 		String cmtContent = jsobj.getString("cmtContent");
-		String cmtTime = jsobj.getString("cmtTime");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String cmtTime = sdf.format(new Date());
+		
 		
 		String insert_comment = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.COMMENT_TABLE_NAME, cmtId, cmtContent, cmtTime);
 		String insert_evaluation = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.EVALUATION_TABLE_NAME, userId, atyId, cmtId);
@@ -1782,7 +1803,8 @@ public class ClientPostServlet extends HttpServlet
 		String userName = jsobj.getString("userName");
 		String userIcon = jsobj.getString("userIcon");
 		String atyName = jsobj.getString("atyName");
-		String releaseTime = jsobj.getString("releaseTime");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String releaseTime = sdf.format(new Date());
 		System.out.println("easemobId : " + easemobId);
 		
 		
