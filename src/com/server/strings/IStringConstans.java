@@ -38,17 +38,17 @@ public interface IStringConstans
 //	String LOCAL_USER = "hikalif";
 //	String LOCAL_PASSWORD = "140030";
 	
-	String LOCAL_USER = "root";
-	String LOCAL_PASSWORD = "software";
+	String LOCAL_USER = "hikalif";
+	String LOCAL_PASSWORD = "140030";
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
 	
 	/*the url of the image*/
 	//String REMOTE_IMAGE_PATH = "http://172.16.1.246:8081/bootStrap/images_repo/";
-	String REMOTE_IMAGE_PATH = "http://192.241.229.214:8080/bootStrap/images_repo/";
+	//String REMOTE_IMAGE_PATH = "http://192.241.229.214:8080/bootStrap/images_repo/";
 	//String REMOTE_IMAGE_PATH = "http://124.172.185.128:8090/bootStrap/images_repo/";
-	//String REMOTE_IMAGE_PATH = "http://192.168.199.217:8081/bootStrap/images_repo/";
+	String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
 	
 	/*the pattern of the image*/
 	String PNG = ".png";

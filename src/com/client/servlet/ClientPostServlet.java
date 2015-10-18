@@ -32,6 +32,7 @@ import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
 import com.server.util.IconAndUrl;
+import com.server.util.TimeFilter;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -171,8 +172,11 @@ public class ClientPostServlet extends HttpServlet
 		case "showMembers":
 			showMembers(resp, jsobj);
 			break;
-		case "showAllCommunities":
+		case "showJoinedCommunities":
 			showAllCommunities(resp, jsobj);
+			break;
+		case "showOwnedCommunities":
+			showOwnedCommunities(resp, jsobj);
 			break;
 		case "showCommunity":
 			showCommunity(resp, jsobj);
@@ -213,6 +217,9 @@ public class ClientPostServlet extends HttpServlet
 			deleteAty(resp, jsobj);
 		case "showUserComments":
 			showUserComments(resp, jsobj);
+			break;
+		case "createCommunity":
+			createCommunity(resp, jsobj);
 			break;
 		default:
 			break;
@@ -288,8 +295,23 @@ public class ClientPostServlet extends HttpServlet
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String sendTime = sdf.format(new Date()).toString();
 		
-		String chatlist_sql = String.format("select * from chatlist where fromEasemobId = '%s' and toEasemobId = '%s'", easemobId, toEasemobId);
-		ResultSet rs = db.executeQuery(chatlist_sql);
+		String userIcon_sql = String.format("select userIcon from user where userId = '%s'", fromUserId);
+		ResultSet rs = db.executeQuery(userIcon_sql);
+		
+		try {
+			if(rs.next())
+			{
+				fromUserIcon = rs.getString("userIcon");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		String chatlist_sql = String.format("select newMsgCount from chatlist where fromEasemobId = '%s' and toEasemobId = '%s'", easemobId, toEasemobId);
+		rs = db.executeQuery(chatlist_sql);
+		
+		int newMsgCount = 0;
 		
 		try {
 			if(rs.next())
@@ -297,6 +319,8 @@ public class ClientPostServlet extends HttpServlet
 				String update_sql = String.format("update chatlist set msgContent = '%s', newMsgCount = newMsgCount+1, sendTime = '%s' " +
 						"where fromEasemobId = '%s' and toEasemobId = '%s'", msgContent, sendTime, easemobId, toEasemobId);
 				db.excuteUpdate(update_sql);
+				
+				newMsgCount = rs.getInt("newMsgCount");
 			}
 			else
 			{
@@ -307,6 +331,12 @@ public class ClientPostServlet extends HttpServlet
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		JSONObject outJson = new JSONObject();
+		
+		outJson.put("newMsgCount", newMsgCount+1);
+		
+		writeJson(resp, outJson.toString());
 	}
 	
 	private void showChatlist(HttpServletResponse resp, JSONObject json)
@@ -987,6 +1017,12 @@ public class ClientPostServlet extends HttpServlet
 							"from activity, user, distribute " +
 							"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)";
 		
+		/*String queryAllAty = "select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
+				"from activity, user, distribute, distributebycty " +
+				"where (activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)) " +
+				"or (activity.atyId = distributebycty.atyId and cty.ctyId = distributebycty.ctyId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1))";
+*/		
+		
 		String queryIsLike =String.format("select atyId " +
 										 "from %s " +
 										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
@@ -1289,7 +1325,7 @@ public class ClientPostServlet extends HttpServlet
 				"where activity.atyId = evaluation.atyId and user.userId = evaluation.userId and comment.cmtId = evaluation.cmtId and activity.atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.COMMENT_TABLE_NAME, IStringConstans.EVALUATION_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId); 
 
 		
-		JSONArray outJson = db.queryGetJsonArray(query_sql);		
+		JSONArray outJson = db.queryGetJsonArrayWithTime(query_sql, "cmtTime");		
 		
 		System.out.println(outJson.toString());
 		
@@ -1306,7 +1342,7 @@ public class ClientPostServlet extends HttpServlet
 		String easemobId = jsobj.getString("easemobId");
 		String cmtId = CreateId.createCommentId(userId);
 		String cmtContent = jsobj.getString("cmtContent");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String cmtTime = sdf.format(new Date());
 		
 		
@@ -1343,7 +1379,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		JSONObject out = db.queryGetJsonObj(query_comment);
 		out.put("cmtContent", cmtContent);
-		out.put("cmtTime", cmtTime);
+		out.put("cmtTime", "moments ago");
 		
 		writeJson(resp, out.toString());
 	}
@@ -1566,7 +1602,18 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllCty = String.format("select attention.ctyId, ctyIcon,ctyMembers from attention, communnity where userId='%s' and attention.ctyId=communnity.ctyId", userId);
+		String queryAllCty = String.format("select communnity.ctyId, ctyName, ctyIcon,ctyMembers from attention, communnity where userId='%s' and attention.ctyId=communnity.ctyId", userId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
+		writeJson(resp, outJson.toString());
+	}
+	
+	/*展示userId所创建的所有社区*/
+	private void showOwnedCommunities(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllCty = String.format("select ctyId, ctyName, ctyIcon, ctyMembers from communnity where ctyCreatorId='%s'", userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
 		writeJson(resp, outJson.toString());
@@ -1590,6 +1637,7 @@ public class ClientPostServlet extends HttpServlet
 			String ctyIcon = null;
 			String ctyName = null;
 			String ctyType = null;
+			String ctyIntro = null;
 			int ctyMembers = 0;
 			try
 			{
@@ -1599,6 +1647,8 @@ public class ClientPostServlet extends HttpServlet
 					ctyMembers = rs.getInt("ctyMembers");
 					ctyName = rs.getString("ctyName");
 					ctyType = rs.getString("ctyType");
+					ctyIntro = rs.getString("ctyIntro");
+					
 				}
 				
 				outJson.put("ctyId", ctyId);
@@ -1606,6 +1656,7 @@ public class ClientPostServlet extends HttpServlet
 				outJson.put("ctyMembers", ctyMembers);
 				outJson.put("ctyName", ctyName);
 				outJson.put("ctyType", ctyType);
+				outJson.put("ctyIntro", ctyIntro);
 			}
 			catch(Exception e)
 			{
@@ -1828,7 +1879,7 @@ public class ClientPostServlet extends HttpServlet
 		String userName = jsobj.getString("userName");
 		String userIcon = jsobj.getString("userIcon");
 		String atyName = jsobj.getString("atyName");
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String releaseTime = sdf.format(new Date());
 		System.out.println("easemobId : " + easemobId);
 		
@@ -1874,6 +1925,7 @@ public class ClientPostServlet extends HttpServlet
 		String queryAllnotifications = String.format("select * from notification where userToId = '%s'", userToId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllnotifications);
+		
 		writeJson(resp, outJson.toString()); 
 	}
 	
@@ -2003,6 +2055,7 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		String ctyName = jsobj.getString("ctyName");
 		String ctyType = jsobj.getString("ctyType");
+		String ctyIntro = jsobj.getString("ctyIntro");
 		String ctyId = CreateId.createCtyId(ctyName);
 		
 		String iconData = jsobj.getString("ctyIcon");		
@@ -2017,9 +2070,19 @@ public class ClientPostServlet extends HttpServlet
 		
 		String ctyEaseId = createTempGroup(userEaseid, ctyId);
 		
-		String insertSql = String.format("insert into community(cytId, ctyIcon, ctyName, ctyType, ctyGroupId, ctyCreatorId) values('%s', '%s', '%s', '%s', '%s', '%s')", ctyId, iconURL, ctyName, ctyType, ctyEaseId, userId);
+		String insertSql = String.format("insert into communnity(ctyId, ctyIcon, ctyName, ctyType, ctyGroupId, ctyCreatorId, ctyIntro) values('%s', '%s', '%s', '%s', '%s', '%s', '%s')", ctyId, iconURL, ctyName, ctyType, ctyEaseId, userId, ctyIntro);
 		db.excuteUpdate(insertSql);
 //		String groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
+		
+		String update_cty = String.format("update %s " +
+				"set ctyMembers=ctyMembers+1 " +
+				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyId);
+
+		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyId);
+		
+		db.excuteUpdate(update_cty);	
+
+		db.excuteUpdate(insert_attention);
 	}	
 
 	/*由社区发布活动*/

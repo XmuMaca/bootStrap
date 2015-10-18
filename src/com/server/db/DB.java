@@ -15,6 +15,7 @@ import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import com.server.strings.IStringConstans;
+import com.server.util.TimeFilter;
 
 public class DB 
 {	
@@ -97,7 +98,39 @@ public class DB
 				{
 					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
 				}
-				jsonArray.add(jsonObj);
+				jsonArray.add(0, jsonObj);
+				jsonObj = new JSONObject();				
+			}
+			
+			return jsonArray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public JSONArray queryGetJsonArrayWithTime(String sql, String timeName)
+	{
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObj = new JSONObject();
+		
+		ResultSet rs = executeQuery(sql);
+		ResultSetMetaData rsmd;
+		try {
+			
+			rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			while (rs.next()) 
+			{
+				for (int i = 1; i <= cols; i++) 
+				{
+					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				String oldTime = jsonObj.getString(timeName);
+				jsonObj.put(timeName, TimeFilter.Parse(oldTime));
+				
+				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
 			}
 			
