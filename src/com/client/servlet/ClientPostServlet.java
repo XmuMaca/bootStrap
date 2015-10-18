@@ -16,10 +16,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.catalina.connector.Request;
-import org.apache.catalina.deploy.LoginConfig;
-
-import com.easemob.server.example.comm.Constants;
 import com.easemob.server.example.httpclient.apidemo.EasemobChatGroups;
 import com.easemob.server.example.httpclient.apidemo.EasemobIMUsers;
 import com.easemob.server.example.httpclient.apidemo.EasemobMessages;
@@ -65,16 +61,20 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(IMAGE_PATH);
 		
 		db.createConnection();
+		JSONObject jsobj;
 		
-		JSONObject jsobj = readJson(req);		
+		if(!IStringConstans.DEBUG)
+		{
+			jsobj = testJson();
+		}
+		else
+		{
+			jsobj = readJson(req);
+		}
+
+		
 		String action = jsobj.getString("action");
-		
-//		String action = "easemobMsg";
-//		String action = "";
-		
-//		createTempGroup("mm", "test");
-		//addMember("mm", "110760897001030188");
-		
+				
 		switch (action) {
 		case "userChat":
 			userChat(resp, jsobj);
@@ -221,11 +221,53 @@ public class ClientPostServlet extends HttpServlet
 		case "createCommunity":
 			createCommunity(resp, jsobj);
 			break;
+		case "releaseByCty":
+			releaseByCty(resp, jsobj);
+			break;
 		default:
 			break;
 		}
 		
 		db.close();
+	}
+	
+	private JSONObject testJson()
+	{		
+		JSONObject jsonObject = new JSONObject();
+		/*
+		 * test the createCommunity
+		jsonObject.put("action", "createCommunity");
+		jsonObject.put("userId", "cc@qq.com");
+		jsonObject.put("ctyName", "a community name");
+		jsonObject.put("ctyType", "a community type");
+		jsonObject.put("ctyIntro", "cc@qq.com");
+		jsonObject.put("ctyIcon", "");
+		*/
+		
+		/*
+		 * test the releasebycty
+		*/		
+		JSONArray album = new JSONArray();
+		jsonObject.put("action", "releaseByCty");
+		jsonObject.put("userId", "cc@qq.com");
+		jsonObject.put("ctyId", "a community name20151016203152");
+		jsonObject.put("releaseTime", "Its release time");
+		jsonObject.put("atyName", "activity name");
+		jsonObject.put("atyType", "activity type");
+		jsonObject.put("atyStartTime", "activity start time");
+		jsonObject.put("atyEndTime", "activity end time");
+		jsonObject.put("atyPlace", "activity place");
+		jsonObject.put("easemobId", "t1007105840");
+		jsonObject.put("longitude", "10");
+		jsonObject.put("latitude", "10");
+		jsonObject.put("atyMembers", "0");
+		jsonObject.put("atyContent", "activity content");
+		jsonObject.put("atyShares", "0");
+		jsonObject.put("atyComments", "0");
+		jsonObject.put("atyAlbum", album.toString());
+		jsonObject.put("atyIsPublic", "toVisitors");
+		
+		return jsonObject;
 	}
 	
 	private JSONObject readJson(HttpServletRequest req)
@@ -2156,8 +2198,11 @@ public class ClientPostServlet extends HttpServlet
 		
 		outJson.put("atyId", activity.getId());
 		outJson.put("groupId", groupId);
-		writeJson(resp, outJson.toString());		
+		writeJson(resp, outJson.toString());
+		
 	}
+	
+	
 	
 	private void showUserComments(HttpServletResponse resp, JSONObject jsobj)
 	{

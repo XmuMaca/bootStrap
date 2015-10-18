@@ -61,4 +61,8 @@ public interface IStringConstans
 	
 	/*system easemob id*/
 	String SYSTEM_EASEMOB_ID = "systemzero";
+	
+	/*debug mode*/
+	boolean DEBUG = true;
+	boolean UN_DEBUG = false;
 }
