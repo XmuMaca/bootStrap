@@ -38,8 +38,8 @@ public interface IStringConstans
 //	String LOCAL_USER = "hikalif";
 //	String LOCAL_PASSWORD = "140030";
 	
-	String LOCAL_USER = "hikalif";
-	String LOCAL_PASSWORD = "140030";
+	String LOCAL_USER = "root";
+	String LOCAL_PASSWORD = "software";
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
@@ -65,4 +65,7 @@ public interface IStringConstans
 	/*debug mode*/
 	boolean DEBUG = true;
 	boolean UN_DEBUG = false;
+	
+	/*initial picture flag*/
+	String INIT_PIC_FLAG = "i";
 }

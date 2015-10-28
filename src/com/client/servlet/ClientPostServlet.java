@@ -28,7 +28,6 @@ import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
 import com.server.util.IconAndUrl;
-import com.server.util.TimeFilter;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -224,6 +223,11 @@ public class ClientPostServlet extends HttpServlet
 		case "releaseByCty":
 			releaseByCty(resp, jsobj);
 			break;
+		case "editCommunity":
+			editCommunity(resp, jsobj);
+			break;
+		case "showHotCty":
+			showHotCty(resp, jsobj);
 		default:
 			break;
 		}
@@ -235,18 +239,19 @@ public class ClientPostServlet extends HttpServlet
 	{		
 		JSONObject jsonObject = new JSONObject();
 		/*
-		 * test the createCommunity
+		 * test the createCommunity	*/
 		jsonObject.put("action", "createCommunity");
 		jsonObject.put("userId", "cc@qq.com");
 		jsonObject.put("ctyName", "a community name");
 		jsonObject.put("ctyType", "a community type");
 		jsonObject.put("ctyIntro", "cc@qq.com");
 		jsonObject.put("ctyIcon", "");
-		*/
+	
 		
 		/*
 		 * test the releasebycty
-		*/		
+		*/
+		/*
 		JSONArray album = new JSONArray();
 		jsonObject.put("action", "releaseByCty");
 		jsonObject.put("userId", "cc@qq.com");
@@ -266,6 +271,14 @@ public class ClientPostServlet extends HttpServlet
 		jsonObject.put("atyComments", "0");
 		jsonObject.put("atyAlbum", album.toString());
 		jsonObject.put("atyIsPublic", "toVisitors");
+		*/
+		
+		/*
+		 * test the editCommunity
+		 * */
+//		jsonObject.put("action", "editCommunity");
+//		jsonObject.put("ctyId", "a community name20151016203043");
+//		jsonObject.put("ctyIntro", "the changed community introduction");
 		
 		return jsonObject;
 	}
@@ -614,8 +627,10 @@ public class ClientPostServlet extends HttpServlet
 			String isPublic = "true";
 			
 			String iconData = jsobj.getString("userIcon");		
-			IconAndUrl icon2url = new IconAndUrl();
-			account.setIcon(icon2url.getUrl(IMAGE_PATH, iconData));
+//			IconAndUrl icon2url = new IconAndUrl();
+//			String iconurl = IconAndUrl.getUrl(IMAGE_PATH, iconData) 
+			account.setIcon(IconAndUrl.getUrl(IMAGE_PATH, iconData));
+//			IconAndUrl.writeIcon(iconurl, iconData);
 			
 			String signup_sql = String.format("insert into %s(userId,easemobId,userName,userPassword,userIcon,userGender,userEmail,userPhone, userAlbumIsPublic) values('%s','%s','%s','%s','%s','%s','%s','%s', '%s')", IStringConstans.USER_TABLE_NAME, account.getId(),easemobId, account.getName(), account.getPassword(),account.getIcon(), account.getGender(), account.getEmail(), account.getPhone(), isPublic);
 			db.save(signup_sql);
@@ -835,8 +850,8 @@ public class ClientPostServlet extends HttpServlet
 		String albumId_user = userId;
 		for (int i = 0; i < jsonArray.size(); i++) 
 		{
-			IconAndUrl icon2url = new IconAndUrl();
-			String picurl = icon2url.getUrl(IMAGE_PATH, jsonArray.getString(i), i);
+//			IconAndUrl icon2url = new IconAndUrl();
+			String picurl = IconAndUrl.getUrl(IMAGE_PATH, jsonArray.getString(i), i);
 			String insert_pics_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_aty);
 			String insert_pics_sql2 = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_user);
 			db.excuteUpdate(insert_pics_sql);
@@ -1768,15 +1783,16 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		String ctyId = jsobj.getString("ctyId");
 		
+		/*community's credit plus 2 if the member number of community plus one*/
 		String update_cty = String.format("update %s " +
-				"set ctyMembers=ctyMembers+1 " +
+				"set ctyMembers=ctyMembers+1" +
 				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyId);
 
 		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyId);
 		
 		db.excuteUpdate(update_cty);	
-
 		db.excuteUpdate(insert_attention);
+		
 		
 		JSONObject out = new JSONObject();
 		out.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
@@ -1816,8 +1832,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		String c = jsobj.getString("char");
 		String pic = jsobj.getString("pic");
-		IconAndUrl icon2url = new IconAndUrl();
-		String path = icon2url.getUrl(IMAGE_PATH, pic);
+//		IconAndUrl icon2url = new IconAndUrl();
+		String path = IconAndUrl.getUrl(IMAGE_PATH, pic);
 		
 //		System.out.println("image path:" + path);
 //		System.out.println("����:" + c);
@@ -2101,29 +2117,31 @@ public class ClientPostServlet extends HttpServlet
 		String ctyId = CreateId.createCtyId(ctyName);
 		
 		String iconData = jsobj.getString("ctyIcon");		
-		IconAndUrl icon2url = new IconAndUrl();
-		String iconURL = icon2url.getUrl(IMAGE_PATH, iconData);
+//		IconAndUrl icon2url = new IconAndUrl();
+		String iconURL = IconAndUrl.getUrl(IMAGE_PATH, iconData);
+		
+//		System.out.printf("userId:", userId);
 		
 		String easeidColName = "easemobId";
 		String getUserEaseIdSql = String.format("select easemobId "
 											  + "from user "
 											  + "where userId='%s'", userId);
+		
 		String userEaseid = db.getOneColValue(getUserEaseIdSql, easeidColName);
 		
 		String ctyEaseId = createTempGroup(userEaseid, ctyId);
 		
-		String insertSql = String.format("insert into communnity(ctyId, ctyIcon, ctyName, ctyType, ctyGroupId, ctyCreatorId, ctyIntro) values('%s', '%s', '%s', '%s', '%s', '%s', '%s')", ctyId, iconURL, ctyName, ctyType, ctyEaseId, userId, ctyIntro);
-		db.excuteUpdate(insertSql);
-//		String groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
+		System.out.printf("userEaseid:%s;ctyEaseiD:%S", userEaseid, ctyEaseId);
 		
+		String insertSql = String.format("insert into communnity(ctyId, ctyIcon, ctyName, ctyType, ctyGroupId, ctyCreatorId, ctyIntro) values('%s', '%s', '%s', '%s', '%s', '%s', '%s')", ctyId, iconURL, ctyName, ctyType, ctyEaseId, userId, ctyIntro);		
 		String update_cty = String.format("update %s " +
 				"set ctyMembers=ctyMembers+1 " +
 				"where ctyId='%s'", IStringConstans.COMMUNITY_TABLE_NAME, ctyId);
 
 		String insert_attention = String.format("insert into %s values('%s', '%s')", IStringConstans.ATTENTION_TABLE_NAME, userId, ctyId);
 		
+		db.excuteUpdate(insertSql);
 		db.excuteUpdate(update_cty);	
-
 		db.excuteUpdate(insert_attention);
 	}	
 
@@ -2163,8 +2181,7 @@ public class ClientPostServlet extends HttpServlet
 		String albumId_user = userId;
 		for (int i = 0; i < jsonArray.size(); i++) 
 		{
-			IconAndUrl icon2url = new IconAndUrl();
-			String picurl = icon2url.getUrl(IMAGE_PATH, jsonArray.getString(i), i);
+			String picurl = IconAndUrl.getUrl(IMAGE_PATH, jsonArray.getString(i), i);
 			String insert_pics_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_aty);
 			String insert_pics_sql2 = String.format("insert into %s values('%s', '%s')", IStringConstans.PHOTOS_TABLE_NAME, picurl, albumId_user);
 			db.excuteUpdate(insert_pics_sql);
@@ -2174,10 +2191,14 @@ public class ClientPostServlet extends HttpServlet
 		String insert_sql1 = String.format("insert into distributebycty values('%s', '%s', '%s')", ctyId, activity.getId(), releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
+//		String update_cty_sql = String.format("update communnity "
+//											 + "set ctyNumOfAty=ctyNumOfAty+1, ctyCredit=ctyCredit+0.5 "
+//											 + "where ctyId='%s'", ctyId);
 		
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
 		db.excuteUpdate(joint_sql);
+//		db.excuteUpdate(update_cty_sql);
 		
 		//group
 		groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
@@ -2201,9 +2222,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 		
 	}
-	
-	
-	
+		
 	private void showUserComments(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2213,6 +2232,28 @@ public class ClientPostServlet extends HttpServlet
 				"where evaluation.userId = user.userId and evaluation.atyId = distribute.atyId and distribute.atyId = activity.atyId and evaluation.cmtId = comment.cmtId and distribute.userId = '%s'", userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryUserComment);
+		writeJson(resp, outJson.toString());
+	}
+	
+	/*edit the introduction of the community*/
+	private void editCommunity(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String ctyIntro = jsobj.getString("ctyIntro");
+		String ctyId = jsobj.getString("ctyId");
+		
+		String update_cty = String.format("update communnity set ctyIntro='%s' where ctyId='%s'", ctyIntro, ctyId);
+		
+		db.excuteUpdate(update_cty);
+		
+	}
+
+	private void showHotCty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String query_hot_cty = String.format("select ctyName, ctyIcon, ctyMembers, ctyNumOfAty, ctyCredit "
+										   + "from communnity "
+										   + "order by ctyCredit DESC "
+										   + "limit 10");
+		JSONArray outJson = db.queryGetJsonArray(query_hot_cty);
 		writeJson(resp, outJson.toString());
 	}
 }
