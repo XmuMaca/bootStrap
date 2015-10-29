@@ -6,6 +6,9 @@ import java.util.Date;
 
 public class TimeFilter {
 
+	/**
+	 * 评论时间格式转换
+	 *  */
 	public static String Parse(String tempTime)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -38,5 +41,86 @@ public class TimeFilter {
 		}
 		
 		return tempTime;
+	}
+	
+	/** 
+	 * 私信时间格式转换
+	 * */
+	public static String ChatTimeParse(String tempTime)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date newTime = new Date();
+		
+		try {
+			Date oldTime = sdf.parse(tempTime);
+			
+			long timeInterval = newTime.getDate() - oldTime.getDate();
+			
+			if(timeInterval == 0)
+			{
+				String timeFormat = "HH:mm";
+				int hour = oldTime.getHours();
+				
+				if(hour >= 0 && hour < 6)
+				{
+					timeFormat = "凌晨 hh:mm";
+				}
+				else if(hour >= 6 && hour < 12)
+				{
+					timeFormat = "上午 hh:mm";
+				}
+				else if(hour >= 12 && hour < 18)
+				{
+					timeFormat = "下午 hh:mm";
+				}
+				else if(hour >= 18 && hour < 24)
+				{
+					timeFormat = "晚上 hh:mm";
+				}
+				
+				return new SimpleDateFormat(timeFormat).format(oldTime);
+			}
+			else if(timeInterval == 1)
+			{
+				return "昨天";
+			}
+			else if(timeInterval == 2)
+			{
+				return "前天";
+			}
+			else
+			{
+				return new SimpleDateFormat("yyyy-MM-dd").format(oldTime);
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return tempTime;
+	}
+	
+	/** 
+	 * 活动开始时间格式转换
+	 * */
+	public static String AtyTimeParse(String tempTime)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date newTime = new Date();
+		
+		String format = "MM月dd日\nHH:mm";
+		
+		Date oldTime = new Date();
+		
+		try {
+			oldTime = sdf.parse(tempTime);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new SimpleDateFormat(format).format(oldTime);
 	}
 }

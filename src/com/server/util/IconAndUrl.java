@@ -1,5 +1,7 @@
 package com.server.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -10,12 +12,40 @@ import java.util.Date;
 
 import com.server.strings.IStringConstans;
 
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 public class IconAndUrl 
 {
 	public IconAndUrl()
 	{
 		
 	}
+	
+	 public static byte[] unZip(byte[] data) {
+	        byte[] b = null;
+	        try {
+	            ByteArrayInputStream bis = new ByteArrayInputStream(data);
+	            ZipInputStream zip = new ZipInputStream(bis);
+	            while (zip.getNextEntry() != null) {
+	                byte[] buf = new byte[1024];
+	                int num = -1;
+	                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+	                while ((num = zip.read(buf, 0, buf.length)) != -1) {
+	                    baos.write(buf, 0, num);
+	                }
+	                b = baos.toByteArray();
+	                baos.flush();
+	                baos.close();
+	            }
+	            zip.close();
+	            bis.close();
+	        } catch (Exception ex) {
+	            ex.printStackTrace();
+	        }
+	        return b;
+	    }
 	
 	public String getUrl(String store_path, String icon)
 	{
@@ -33,9 +63,16 @@ public class IconAndUrl
 	
 	public String getUrl(String store_path, byte[] icon)
 	{
+		System.out.println("zip:" + icon.length);
+		
 		String imageName = createIconName();
 		String path = store_path + imageName;
-		writeIcon(path, icon);		
+		//writeIcon(path, icon);
+		byte[] temp = unZip(icon);
+		
+		System.out.println("unzip:" + icon.length);
+		
+		writeIcon(path, temp);
 		
 		return IStringConstans.REMOTE_IMAGE_PATH + imageName;
 	}

@@ -97,6 +97,7 @@ public class DB
 				for (int i = 1; i <= cols; i++) 
 				{
 					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+					
 				}
 				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
@@ -110,7 +111,10 @@ public class DB
 		}
 	}
 	
-	public JSONArray queryGetJsonArrayWithTime(String sql, String timeName)
+	/** 
+	 * 获取评论列表+时间转换
+	 * */
+	public JSONArray commentsQueryGetJsonArrayWithTime(String sql, String timeName)
 	{
 		JSONArray jsonArray = new JSONArray();
 		JSONObject jsonObj = new JSONObject();
@@ -129,6 +133,76 @@ public class DB
 				}
 				String oldTime = jsonObj.getString(timeName);
 				jsonObj.put(timeName, TimeFilter.Parse(oldTime));
+				
+				jsonArray.add(0, jsonObj);
+				jsonObj = new JSONObject();				
+			}
+			
+			return jsonArray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/** 
+	 * 获取私信列表+时间转换
+	 * */
+	public JSONArray chatListQueryGetJsonArrayWithTime(String sql, String timeName)
+	{
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObj = new JSONObject();
+		
+		ResultSet rs = executeQuery(sql);
+		ResultSetMetaData rsmd;
+		try {
+			
+			rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			while (rs.next()) 
+			{
+				for (int i = 1; i <= cols; i++) 
+				{
+					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				String oldTime = jsonObj.getString(timeName);
+				jsonObj.put(timeName, TimeFilter.ChatTimeParse(oldTime));
+				
+				jsonArray.add(0, jsonObj);
+				jsonObj = new JSONObject();				
+			}
+			
+			return jsonArray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/** 
+	 * 获取活动列表+时间转换
+	 * */
+	public JSONArray AtyQueryGetJsonArrayWithTime(String sql, String timeName)
+	{
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObj = new JSONObject();
+		
+		ResultSet rs = executeQuery(sql);
+		ResultSetMetaData rsmd;
+		try {
+			
+			rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			while (rs.next()) 
+			{
+				for (int i = 1; i <= cols; i++) 
+				{
+					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				String oldTime = jsonObj.getString(timeName);
+				jsonObj.put(timeName, TimeFilter.AtyTimeParse(oldTime));
 				
 				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
