@@ -10,11 +10,10 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.server.strings.IAttritubes;
 import com.server.strings.IStringConstans;
 
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
+import net.coobird.thumbnailator.Thumbnails;
 
 public class IconAndUrl 
 {
@@ -23,31 +22,10 @@ public class IconAndUrl
 		
 	}
 	
-	 public static byte[] unZip(byte[] data) {
-	        byte[] b = null;
-	        try {
-	            ByteArrayInputStream bis = new ByteArrayInputStream(data);
-	            ZipInputStream zip = new ZipInputStream(bis);
-	            while (zip.getNextEntry() != null) {
-	                byte[] buf = new byte[1024];
-	                int num = -1;
-	                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	                while ((num = zip.read(buf, 0, buf.length)) != -1) {
-	                    baos.write(buf, 0, num);
-	                }
-	                b = baos.toByteArray();
-	                baos.flush();
-	                baos.close();
-	            }
-	            zip.close();
-	            bis.close();
-	        } catch (Exception ex) {
-	            ex.printStackTrace();
-	        }
-	        return b;
-	    }
-	
-	public String getUrl(String store_path, String icon)
+	/*get the url by the icon data consisting of string type
+	 * 
+	 * */
+	public static String getUrl(String store_path, String icon)
 	{
 		try 
 		{
@@ -60,33 +38,40 @@ public class IconAndUrl
 			return null;
 		}
 	}
-	
-	public String getUrl(String store_path, byte[] icon)
+
+	/*get the url by the icon data consisting of bytes array type
+	 * the url is produced by store path and image name
+	 * */
+	public static String getUrl(String store_path, byte[] icon)
 	{
 		System.out.println("zip:" + icon.length);
 		
 		String imageName = createIconName();
-		String path = store_path + imageName;
-		//writeIcon(path, icon);
-		byte[] temp = unZip(icon);
-		
-		System.out.println("unzip:" + icon.length);
-		
-		writeIcon(path, temp);
+
+		String path = store_path + IStringConstans.INIT_PIC_FLAG +imageName;
+		String thumnailPath = store_path + imageName;
+		writeIcon(path, icon);		
+		icon2thumnail(path, thumnailPath);
 		
 		return IStringConstans.REMOTE_IMAGE_PATH + imageName;
 	}
 	
-	public String getUrl(String store_path, byte[] icon, int var)
+	/*
+	 * the url is produced by store path ,image name and number, which aims at 
+	 * distinguishing different pictures distributed at the same time by one person. 
+	 * */
+	public static String getUrl(String store_path, byte[] icon, int var)
 	{
 		String imageName = createIconName();
 		String path = store_path + var + imageName;
+		String thumnailPath = store_path + imageName;
 		writeIcon(path, icon);		
+		icon2thumnail(path, thumnailPath);
 		
 		return IStringConstans.REMOTE_IMAGE_PATH + var + imageName ;
 	}
 	
-	public String getUrl(String store_path, String icon, int var)
+	public static String getUrl(String store_path, String icon, int var)
 	{
 		try 
 		{
@@ -100,7 +85,10 @@ public class IconAndUrl
 		}
 	}	
 	
-	private void writeIcon(String path, byte[] icon) 
+	/*
+	 * write the icon data to the file
+	 * */
+	private static void writeIcon(String path, byte[] icon) 
 	{
 		try {
 			File file = new File(path);
@@ -114,11 +102,24 @@ public class IconAndUrl
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-		
+		}		
 	}
 
-	private String createIconName()
+	private static void icon2thumnail(String fromPath, String toPath)
+	{
+		try {
+			Thumbnails.of(fromPath)
+					  .scale(IAttritubes.THUMNAIL_RATE)
+					  .outputFormat(IStringConstans.PNG)
+					  .toFile(toPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+				  
+	}
+	
+	private static String createIconName()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
 		return sdf.format(new Date()) + IStringConstans.PNG;
