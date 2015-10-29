@@ -2402,16 +2402,16 @@ public class ClientPostServlet extends HttpServlet
 		String insert_sql1 = String.format("insert into distributebycty values('%s', '%s', '%s')", ctyId, activity.getId(), releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
-//		String update_cty_sql = String.format("update communnity "
-//											 + "set ctyNumOfAty=ctyNumOfAty+1, ctyCredit=ctyCredit+0.5 "
-//											 + "where ctyId='%s'", ctyId);
+		String update_cty_sql = String.format("update communnity "
+											 + "set ctyNumOfAty=ctyNumOfAty+1"
+											 + "where ctyId='%s'", ctyId);
 		
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
 		db.excuteUpdate(joint_sql);
-//		db.excuteUpdate(update_cty_sql);
+		db.excuteUpdate(update_cty_sql);
 		
-		//group
+		//create a easemob id for the activity
 		groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
 		
 		String update_group = String.format("update %s set groupId = %s where atyId = '%s'", IStringConstans.ACTIVITY_TABLE_NAME, groupId, atyId);
