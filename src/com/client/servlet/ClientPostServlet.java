@@ -105,7 +105,7 @@ public class ClientPostServlet extends HttpServlet
 		case "signupqq":
 			signupqq(resp, jsobj);
 			break;
-		case "release":
+		case "releaseByPerson":
 			release(resp, jsobj);
 			break;
 		case "like":
@@ -147,6 +147,8 @@ public class ClientPostServlet extends HttpServlet
 		case "showHightAty":
 			showHightAty(resp, jsobj);
 			break;
+		case "showGroupAty":
+			showGroupAty(resp, jsobj);
 		case "join":
 			join(resp, jsobj);
 			break;
@@ -232,7 +234,7 @@ public class ClientPostServlet extends HttpServlet
 		case "editCommunity":
 			editCommunity(resp, jsobj);
 			break;
-		case "showHotCty":
+		case "showHotCommunities":
 			showHotCty(resp, jsobj);
 		default:
 			break;
@@ -882,9 +884,9 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(activity.getEndTime());
 		activity.setPlace(jsobj.getString("atyPlace"));
 		System.out.println(activity.getPlace());
-		activity.setLongitude(Double.parseDouble(jsobj.getString("longitude")));
+		activity.setLongitude(0);
 		System.out.println(activity.getLongitude());
-		activity.setLatitude(Double.parseDouble(jsobj.getString("latitude")));
+		activity.setLatitude(0);
 		System.out.println(activity.getLatitude());
 		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
 		System.out.println(activity.getMembers());
@@ -915,7 +917,8 @@ public class ClientPostServlet extends HttpServlet
 			db.excuteUpdate(insert_pics_sql2);
 		}
 		
-		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), releaseTime);
+		String ctyId = "";
+		String insert_sql1 = String.format("insert into %s values('%s', '%s', '%s', '%s')", IStringConstans.DISTRIBUTE_TABLE_NAME, userId, activity.getId(), ctyId, releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 		
@@ -1727,7 +1730,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " + 
 										"from %s, %s, %s " +
-										"where activity.atyId = distributebycty.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, "distributebycty", ctyId);
+										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and distribute.ctyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, ctyId);
 		
 		String queryIsLike =String.format("select atyId " +
 				 "from %s " +
@@ -1932,8 +1935,11 @@ public class ClientPostServlet extends HttpServlet
 		}
 		
 		/*获得创建者的Name*/
+		String queryCreatorId = String.format("select userId from user, communnity where userId = '%s' and userId = ctyCreatorId", userId);
+		String creatorId = db.getOneColValue(queryCreatorId, "userId");
 		String queryCreatorName = String.format("select userName from user, communnity where userId = '%s' and userId = ctyCreatorId", userId);
 		String userName = db.getOneColValue(queryCreatorName, "userName");
+		outJson.put("creatorId", creatorId);
 		outJson.put("creatorName", userName);
 		
 		/*判断点开此小组的人是否订阅了此小组
@@ -2363,8 +2369,9 @@ public class ClientPostServlet extends HttpServlet
 		Activity activity = new Activity();
 		
 		String userId = jsobj.getString("userId");
-		String ctyId = jsobj.getString("ctyId");
-		String releaseTime = jsobj.getString("releaseTime");
+		String ctyId = jsobj.getString("atyCtyId");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String releaseTime = sdf.format(new Date());
 		
 		String atyId = CreateId.createAtyId(userId);
 		activity.setId(atyId);
@@ -2373,8 +2380,8 @@ public class ClientPostServlet extends HttpServlet
 		activity.setStartTime(jsobj.getString("atyStartTime"));
 		activity.setEndTime(jsobj.getString("atyEndTime"));
 		activity.setPlace(jsobj.getString("atyPlace"));
-		activity.setLongitude(Double.parseDouble(jsobj.getString("longitude")));
-		activity.setLatitude(Double.parseDouble(jsobj.getString("latitude")));
+		activity.setLongitude(0);
+		activity.setLatitude(0);
 		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
 		activity.setContent(jsobj.getString("atyContent"));
 		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
@@ -2399,7 +2406,7 @@ public class ClientPostServlet extends HttpServlet
 			db.excuteUpdate(insert_pics_sql2);
 		}
 		
-		String insert_sql1 = String.format("insert into distributebycty values('%s', '%s', '%s')", ctyId, activity.getId(), releaseTime);
+		String insert_sql1 = String.format("insert into distribute values('%s', '%s', '%s', '%s')", userId, activity.getId(), ctyId, releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 //		String update_cty_sql = String.format("update communnity "
@@ -2458,9 +2465,10 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 
+	/*显示热门小组*/
 	private void showHotCty(HttpServletResponse resp, JSONObject jsobj)
 	{
-		String query_hot_cty = String.format("select ctyName, ctyIcon, ctyMembers, ctyNumOfAty, ctyCredit "
+		String query_hot_cty = String.format("select ctyId, ctyName, ctyIcon, ctyMembers, ctyNumOfAty, ctyCredit "
 										   + "from communnity "
 										   + "order by ctyCredit DESC "
 										   + "limit 10");

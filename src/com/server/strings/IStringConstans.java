@@ -54,7 +54,8 @@ public interface IStringConstans
 	//String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
 	
 	/*the pattern of the image*/
-	String PNG = ".png";
+	String DOT_PNG = ".png";
+	String PNG = "png";
 	
 	/*Json response*/
 	String JSON_RESULT = "result";
