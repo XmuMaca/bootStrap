@@ -2454,8 +2454,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String update_cty = String.format("update communnity set ctyIntro='%s' where ctyId='%s'", ctyIntro, ctyId);
 		
-		db.excuteUpdate(update_cty);
-		
+		db.excuteUpdate(update_cty);		
 	}
 
 	private void showHotCty(HttpServletResponse resp, JSONObject jsobj)
