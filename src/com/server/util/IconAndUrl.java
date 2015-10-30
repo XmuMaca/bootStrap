@@ -44,7 +44,6 @@ public class IconAndUrl
 	 * */
 	public static String getUrl(String store_path, byte[] icon)
 	{
-		System.out.println("zip:" + icon.length);
 		
 		String imageName = createIconName();
 
@@ -63,7 +62,7 @@ public class IconAndUrl
 	public static String getUrl(String store_path, byte[] icon, int var)
 	{
 		String imageName = createIconName();
-		String path = store_path + var + imageName;
+		String path = store_path + IStringConstans.INIT_PIC_FLAG + var + imageName;
 		String thumnailPath = store_path + imageName;
 		writeIcon(path, icon);		
 		icon2thumnail(path, thumnailPath);
@@ -122,6 +121,6 @@ public class IconAndUrl
 	private static String createIconName()
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
-		return sdf.format(new Date()) + IStringConstans.PNG;
+		return sdf.format(new Date()) + IStringConstans.DOT_PNG;
 	}
 }
