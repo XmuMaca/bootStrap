@@ -27,6 +27,7 @@ import com.server.bean.Activity;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
+import com.server.util.GzipHelper;
 import com.server.util.IconAndUrl;
 
 import net.sf.json.JSONArray;
@@ -233,6 +234,7 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "releaseByCty":
 			releaseByCty(resp, jsobj);
+			
 			break;
 		case "editCommunity":
 			editCommunity(resp, jsobj);
@@ -303,6 +305,9 @@ public class ClientPostServlet extends HttpServlet
 			
 			Object obj = ois.readObject();
 			
+//			String decompressReq = GzipHelper.decompress((String)obj);
+//			JSONObject jsobj = JSONObject.fromObject(decompressReq);
+	
 			JSONObject jsobj = JSONObject.fromObject((String)obj);
 			
 			ois.close();
@@ -324,13 +329,17 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void writeJson(HttpServletResponse resp, String json)
 	{
+		
 		resp.setContentType("text/html;charset=utf-8");
 		
 		ObjectOutputStream oos;
 		
 		try {
+			//String compress_resp = GzipHelper.compress(json);
+			
 			oos = new ObjectOutputStream(resp.getOutputStream());
 			
+			//oos.writeObject(compress_resp);
 			oos.writeObject(json);
 						
 			oos.flush();
@@ -2410,16 +2419,16 @@ public class ClientPostServlet extends HttpServlet
 		String insert_sql1 = String.format("insert into distribute values('%s', '%s', '%s', '%s')", userId, activity.getId(), ctyId, releaseTime);
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
-//		String update_cty_sql = String.format("update communnity "
-//											 + "set ctyNumOfAty=ctyNumOfAty+1, ctyCredit=ctyCredit+0.5 "
-//											 + "where ctyId='%s'", ctyId);
+		String update_cty_sql = String.format("update communnity "
+											 + "set ctyNumOfAty=ctyNumOfAty+1"
+											 + "where ctyId='%s'", ctyId);
 		
 		db.excuteUpdate(insert_sql1);
 		db.excuteUpdate(insert_sql2);
 		db.excuteUpdate(joint_sql);
-//		db.excuteUpdate(update_cty_sql);
+		db.excuteUpdate(update_cty_sql);
 		
-		//group
+		//create a easemob id for the activity
 		groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
 		
 		String update_group = String.format("update %s set groupId = %s where atyId = '%s'", IStringConstans.ACTIVITY_TABLE_NAME, groupId, atyId);
@@ -2462,8 +2471,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		String update_cty = String.format("update communnity set ctyIntro='%s' where ctyId='%s'", ctyIntro, ctyId);
 		
-		db.excuteUpdate(update_cty);
-		
+		db.excuteUpdate(update_cty);		
 	}
 
 	/*显示热门小组*/
