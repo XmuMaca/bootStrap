@@ -197,10 +197,13 @@ public class DB
 			int cols = rsmd.getColumnCount();
 			while (rs.next()) 
 			{
-				for (int i = 1; i <= cols; i++) 
+				int i;
+				for (i = 1; i < cols; i++) 
 				{
 					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
 				}
+				jsonObj.put("atyCtyId", rs.getString(i));
+				
 				String oldTime = jsonObj.getString(timeName);
 				jsonObj.put(timeName, TimeFilter.AtyTimeParse(oldTime));
 				

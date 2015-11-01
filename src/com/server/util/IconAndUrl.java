@@ -63,7 +63,7 @@ public class IconAndUrl
 	{
 		String imageName = createIconName();
 		String path = store_path + IStringConstans.INIT_PIC_FLAG + var + imageName;
-		String thumnailPath = store_path + imageName;
+		String thumnailPath = store_path + var + imageName;
 		writeIcon(path, icon);		
 		icon2thumnail(path, thumnailPath);
 		

@@ -70,7 +70,7 @@ public class ClientPostServlet extends HttpServlet
 		{
 			jsobj = readJson(req);
 		}
-
+		System.out.println("jsobj: " + jsobj);
 		
 		String action = jsobj.getString("action");
 				
@@ -149,6 +149,7 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showGroupAty":
 			showGroupAty(resp, jsobj);
+			break;
 		case "join":
 			join(resp, jsobj);
 			break;
@@ -220,8 +221,10 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "editAty":
 			editAty(resp, jsobj);
+			break;
 		case "deleteAty":
 			deleteAty(resp, jsobj);
+			break;
 		case "showUserComments":
 			showUserComments(resp, jsobj);
 			break;
@@ -236,6 +239,7 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showHotCommunities":
 			showHotCty(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -1131,16 +1135,11 @@ public class ClientPostServlet extends HttpServlet
 		
 		System.out.println("nowTime: " + nowTime);
 		
-		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " +
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
 				"from activity, user, distribute " +
 				"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and atyEndTime > '%s' " +
 				"order by distribute.releaseTime", nowTime);
-		
-		/*String queryAllAty = "select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic " +
-				"from activity, user, distribute, distributebycty " +
-				"where (activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)) " +
-				"or (activity.atyId = distributebycty.atyId and cty.ctyId = distributebycty.ctyId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1))";
-*/		
+			
 		
 		String queryIsLike =String.format("select atyId " +
 										 "from %s " +
@@ -1215,7 +1214,7 @@ public class ClientPostServlet extends HttpServlet
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		String nowTime = sdf.format(new Date());
 		
-		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " +
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
 				"from activity, user, distribute " +
 				"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and atyEndTime > '%s' " +
 				"order by activity.atyStartTime desc", nowTime);
@@ -1296,7 +1295,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic, releaseTime " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
 											"order by atyMembers*2+atyLikes desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -1374,7 +1373,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		Double userLatitude = Double.parseDouble(jsobj.getString("latitude"));
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)"
 											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
@@ -1450,7 +1449,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime " +
+		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
 											"order by atyLikes desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -1589,9 +1588,9 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " + 
-										"from %s, %s, %s " +
-										"where activity.atyId = joining.atyId and user.userId = joining.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, userId);		
+		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
+										"from %s, %s, %s, %s " +
+										"where distribute.atyId = activity.atyId and activity.atyId = joining.atyId and user.userId = joining.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, "distribute", userId);		
 		
 		String queryIsLike =String.format("select atyId " +
 				 "from %s " +
@@ -1659,7 +1658,7 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " + 
+		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
 		
@@ -1728,7 +1727,7 @@ public class ClientPostServlet extends HttpServlet
 		String userId = jsobj.getString("userId");
 		String ctyId = jsobj.getString("ctyId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime " + 
+		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and distribute.ctyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, ctyId);
 		
@@ -1994,6 +1993,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	/*加入社区*/
 	private void joinCty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2015,6 +2015,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, out.toString());
 	}
 	
+	/*退出社区*/
 	private void notJoinCty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
