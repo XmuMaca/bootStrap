@@ -27,6 +27,7 @@ import com.server.bean.Activity;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
+import com.server.util.GzipHelper;
 import com.server.util.IconAndUrl;
 
 import net.sf.json.JSONArray;
@@ -230,6 +231,7 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "releaseByCty":
 			releaseByCty(resp, jsobj);
+			
 			break;
 		case "editCommunity":
 			editCommunity(resp, jsobj);
@@ -299,6 +301,9 @@ public class ClientPostServlet extends HttpServlet
 			
 			Object obj = ois.readObject();
 			
+//			String decompressReq = GzipHelper.decompress((String)obj);
+//			JSONObject jsobj = JSONObject.fromObject(decompressReq);
+	
 			JSONObject jsobj = JSONObject.fromObject((String)obj);
 			
 			ois.close();
@@ -320,13 +325,17 @@ public class ClientPostServlet extends HttpServlet
 	
 	private void writeJson(HttpServletResponse resp, String json)
 	{
+		
 		resp.setContentType("text/html;charset=utf-8");
 		
 		ObjectOutputStream oos;
 		
 		try {
+			//String compress_resp = GzipHelper.compress(json);
+			
 			oos = new ObjectOutputStream(resp.getOutputStream());
 			
+			//oos.writeObject(compress_resp);
 			oos.writeObject(json);
 						
 			oos.flush();
