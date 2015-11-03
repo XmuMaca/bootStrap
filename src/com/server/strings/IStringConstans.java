@@ -52,9 +52,9 @@ public interface IStringConstans
 	//String REMOTE_IMAGE_PATH = "http://192.241.229.214:8080/bootStrap/images_repo/";
 	//String REMOTE_IMAGE_PATH = "http://124.172.185.128:8090/bootStrap/images_repo/";
 	
-	String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
+	//String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
 	
-	//String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
+	String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
 	
 	//this the remote image path in Tianyi cloud.
 	//String REMOTE_IMAGE_PATH = "http://106.0.4.149:8081/bootStrap/images_repo/";

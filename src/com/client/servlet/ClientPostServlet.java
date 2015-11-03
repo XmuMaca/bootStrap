@@ -178,8 +178,11 @@ public class ClientPostServlet extends HttpServlet
 		case "setPublicFalse":
 			setPublicFalse(resp, jsobj);
 			break;
-		case "showMembers":
-			showMembers(resp, jsobj);
+		case "showAtyMembers":
+			showAtyMembers(resp, jsobj);
+			break;
+		case "showCtyMembers":
+			showCtyMembers(resp, jsobj);
 			break;
 		case "showJoinedCommunities":
 			showAllCommunities(resp, jsobj);
@@ -1865,11 +1868,21 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(query_update);
 	}
 	
-	private void showMembers(HttpServletResponse resp, JSONObject jsobj)
+	private void showAtyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
 		
 		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId = joining.userId and joining.atyId='%s'", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
+		
+		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
+		writeJson(resp, outJson.toString());
+	}
+	
+	private void showCtyMembers(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String ctyId = jsobj.getString("ctyId");
+		
+		String queryAllMembers = String.format("select user.userId, userName, userIcon from %s, %s where user.userId = attention.userId and attention.ctyId='%s'", IStringConstans.ATTENTION_TABLE_NAME, IStringConstans.USER_TABLE_NAME, ctyId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllMembers);
 		writeJson(resp, outJson.toString());
