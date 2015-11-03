@@ -2484,4 +2484,5 @@ public class ClientPostServlet extends HttpServlet
 		JSONArray outJson = db.queryGetJsonArray(query_hot_cty);
 		writeJson(resp, outJson.toString());
 	}
+
 }

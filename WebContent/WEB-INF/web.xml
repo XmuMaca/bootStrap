@@ -41,6 +41,15 @@
     <servlet-name>ClientPostServlet</servlet-name>
     <url-pattern>/ClientPostServlet</url-pattern>
   </servlet-mapping>
+    <servlet>
+    <servlet-name>ShareServlet</servlet-name>
+    <servlet-class>com.client.servlet.ShareServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ShareServlet</servlet-name>
+    <url-pattern>/ShareServlet</url-pattern>
+  </servlet-mapping>
+  
   <servlet>
     <servlet-name>IMSignupServlet</servlet-name>
     <servlet-class>com.client.servlet.IMSignupServlet</servlet-class>

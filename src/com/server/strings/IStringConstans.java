@@ -35,14 +35,17 @@ public interface IStringConstans
 //	String LOCAL_USER = "root";
 //	String LOCAL_PASSWORD = "ethink";
 	
-	String LOCAL_USER = "hikalif";
-	String LOCAL_PASSWORD = "140030";
+//	String LOCAL_USER = "hikalif";
+//	String LOCAL_PASSWORD = "140030";
 	
-//	String LOCAL_USER = "root";
-//	String LOCAL_PASSWORD = "software";
+	String LOCAL_USER = "root";
+	String LOCAL_PASSWORD = "software";
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
+	
+	String TIAN_YI_CLOUD_USER = "root";
+	String TIAN_YI_CLOUD_PASSWORD = "jCB2Q6ZaXpJrE";
 	
 	/*the url of the image*/
 	//String REMOTE_IMAGE_PATH = "http://172.16.1.246:8081/bootStrap/images_repo/";
@@ -52,6 +55,9 @@ public interface IStringConstans
 	String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
 	
 	//String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
+	
+	//this the remote image path in Tianyi cloud.
+	//String REMOTE_IMAGE_PATH = "http://106.0.4.149:8081/bootStrap/images_repo/";
 	
 	/*the pattern of the image*/
 	String DOT_PNG = ".png";
