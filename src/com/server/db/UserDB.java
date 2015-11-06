@@ -134,4 +134,23 @@ public class UserDB extends DB
 		
 		return id;
 	}
+	
+	/*get the list of the one colum*/
+	public List<String> getListBySql(String sql, String colName)
+	{
+		List<String> result = new ArrayList<String>();
+		ResultSet rs = executeQuery(sql);
+		try {
+			while(rs.next())
+			{
+				result.add(rs.getString(colName));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+		
+		return result;
+	}
 }
