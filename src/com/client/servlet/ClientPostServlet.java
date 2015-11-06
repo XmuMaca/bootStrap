@@ -245,6 +245,12 @@ public class ClientPostServlet extends HttpServlet
 		case "showHotCommunities":
 			showHotCty(resp, jsobj);
 			break;
+		case "getLatestAty":
+			getLatestAty(resp, jsobj);
+			break;
+		case "showJoinedMembers":
+			showJoinedMembers(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -914,7 +920,7 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(activity.getComments());
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
-		String atyIsPublic = jsobj.getString("atyIsPublic");
+		String atyIsPublic = "toVisitors";
 		String groupId = "";
 		
 		/*insert all pictures*/
@@ -2411,7 +2417,7 @@ public class ClientPostServlet extends HttpServlet
 		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
-		String atyIsPublic = jsobj.getString("atyIsPublic");
+		String atyIsPublic = "toVisitors";
 		String groupId = "";
 		
 		/*insert all pictures*/
@@ -2496,5 +2502,17 @@ public class ClientPostServlet extends HttpServlet
 										   + "limit 10");
 		JSONArray outJson = db.queryGetJsonArray(query_hot_cty);
 		writeJson(resp, outJson.toString());
+	}
+	
+	/*获取当前发布者最近发布活动*/
+	private void getLatestAty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		
+	}
+	
+	/*查看参加人员*/
+	private void showJoinedMembers(HttpServletResponse resp, JSONObject jsobj)
+	{
+		
 	}
 }

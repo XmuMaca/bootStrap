@@ -147,7 +147,7 @@ public class DB
 	}
 	
 	/** 
-	 * 获取私信列表+时间转换
+	 * 获取私信列表+时间转换(发布时间&开始时间)
 	 * */
 	public JSONArray chatListQueryGetJsonArrayWithTime(String sql, String timeName)
 	{
@@ -168,6 +168,7 @@ public class DB
 				}
 				String oldTime = jsonObj.getString(timeName);
 				jsonObj.put(timeName, TimeFilter.ChatTimeParse(oldTime));
+				jsonObj.put(timeName, TimeFilter.Parse("releaseTime"));
 				
 				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
