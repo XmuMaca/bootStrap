@@ -56,7 +56,7 @@ public class EasemobMessages {
         }
     }
     
-    public static void mySendMsgJoin(String from, String to, String msgContent, String atyName)
+   /* public static void mySendMsgJoin(String from, String to, String msgContent, String atyName)
     {
     	System.out.println("start");
     	
@@ -196,7 +196,7 @@ public class EasemobMessages {
         if (null != sendTxtMessagegroupnode) {
             LOGGER.info("给一个群组发文本消息: " + sendTxtMessagegroupnode.toString());
         }
-    }
+    }*/
     
     /**
 	 * 检测用户是否在线

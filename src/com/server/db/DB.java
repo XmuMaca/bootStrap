@@ -168,7 +168,7 @@ public class DB
 				}
 				String oldTime = jsonObj.getString(timeName);
 				jsonObj.put(timeName, TimeFilter.ChatTimeParse(oldTime));
-				jsonObj.put(timeName, TimeFilter.Parse("releaseTime"));
+				//jsonObj.put("releaseTime", TimeFilter.Parse(jsonObj.getString("releaseTime")));
 				
 				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
