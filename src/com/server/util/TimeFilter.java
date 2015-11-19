@@ -123,4 +123,27 @@ public class TimeFilter {
 		
 		return new SimpleDateFormat(format).format(oldTime);
 	}
+	
+	/** 
+	 * 活动开始时间格式转换
+	 * */
+	public static String notiTimeParse(String tempTime)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date newTime = new Date();
+		
+		String format = "MM月dd日 HH:mm";
+		
+		Date oldTime = new Date();
+		
+		try {
+			oldTime = sdf.parse(tempTime);
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new SimpleDateFormat(format).format(oldTime);
+	}
 }

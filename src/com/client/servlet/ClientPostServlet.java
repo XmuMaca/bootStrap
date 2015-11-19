@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.easemob.server.example.comm.Constants;
 import com.easemob.server.example.httpclient.apidemo.EasemobChatGroups;
 import com.easemob.server.example.httpclient.apidemo.EasemobIMUsers;
 import com.easemob.server.example.httpclient.apidemo.EasemobMessages;
@@ -33,6 +34,7 @@ import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
 import com.server.util.GzipHelper;
 import com.server.util.IconAndUrl;
+import com.server.util.TimeFilter;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -121,6 +123,27 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showActivities":
 			showActivities(resp, jsobj);
+			break;
+		case "showCompetition":
+			showCompetition(resp, jsobj);
+			break;
+		case "showSeminar":
+			showCareerTalk(resp, jsobj);
+			break;
+		case "showLeague":
+			showOrganization(resp, jsobj);
+			break;
+		case "showTour":
+			showTour(resp, jsobj);
+			break;
+		case "showSport":
+			showSports(resp, jsobj);
+			break;
+		case "showStudy":
+			showStudy(resp, jsobj);
+			break;
+		case "showGame":
+			showGame(resp, jsobj);
 			break;
 		case "showComments":
 			showComments(resp, jsobj);
@@ -252,11 +275,11 @@ public class ClientPostServlet extends HttpServlet
 		case "showHotCommunities":
 			showHotCty(resp, jsobj);
 			break;
-		case "getLatestAty":
-			getLatestAty(resp, jsobj);
+		case "showOtherAty":
+			showOtherAty(resp, jsobj);
 			break;
-		case "showJoinedMembers":
-			showJoinedMembers(resp, jsobj);
+		case "showAtyDetailsAll":
+			showAtyDetailsAll(resp, jsobj);
 			break;
 		default:
 			break;
@@ -376,6 +399,7 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println("IM signup succesful");
 	}
 	
+	//发送消息
 	private void sendMsg(HttpServletResponse resp, JSONObject json)
 	{
 		String easemobId = json.getString("easemobId");
@@ -479,6 +503,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//删除一条聊天记录
 	private void deleteOneChat(HttpServletResponse resp, JSONObject json)
 	{
 		String toEasemobId = json.getString("toEasemobId");
@@ -513,7 +538,8 @@ public class ClientPostServlet extends HttpServlet
 		String update_sql = String.format("update chatlist set newMsgCount = 0 where fromEasemobId = '%s' and toEasemobId = '%s'", toEasemobId, fromEasemobId);
 		db.excuteUpdate(update_sql);
 	}
-		
+	
+	//查看用户信息
 	private void showProfile(HttpServletResponse resp, JSONObject json)
 	{
 		String userId = json.getString("userId");
@@ -522,24 +548,13 @@ public class ClientPostServlet extends HttpServlet
 										 "from %s " +
 										 "where userId='%s'", IStringConstans.USER_TABLE_NAME, userId);
 		
-		JSONObject outJson = new JSONObject();
-		
-		List<Account> list = db.queryResult(query_sql);
-		Account account = list.get(0);
-		outJson.put("easemobId", account.getEasemobId());
-		outJson.put("userName", account.getName());
-		outJson.put("userEmail", account.getEmail());
-		outJson.put("userGender", account.getGender());
-		outJson.put("userLocation", account.getLocation());
-		outJson.put("userPhone", account.getPhone());
-		outJson.put("userAlbumIsPublic", account.getIsPublic());
-		outJson.put("userIcon", account.getIcon());		
-		outJson.put("userCredit", account.getCredit());
+		JSONObject outJson = db.queryGetJsonObj(query_sql);
 		
 		writeJson(resp, outJson.toString());
 		
 	}
 	
+	//修改用户信息
 	private void editProfile(HttpServletResponse resp, JSONObject json)
 	{
 		String userId = json.getString("userId");
@@ -561,6 +576,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//邮箱登录
 	private void loginemail(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String id = jsobj.getString("userEmail");
@@ -590,6 +606,24 @@ public class ClientPostServlet extends HttpServlet
 				outJSon.put("userPhone", accout.getPhone());
 				outJSon.put("userIsBaned", accout.getIsBaned());
 				outJSon.put("result", "true");
+
+				
+				/*ObjectNode datanode = JsonNodeFactory.instance.objectNode();
+		        datanode.put("username",accout.getEasemobId());
+		        datanode.put("password", Constants.DEFAULT_PASSWORD);
+		        ObjectNode createNewIMUserSingleNode = EasemobIMUsers.createNewIMUserSingle(datanode);
+		        if (null != createNewIMUserSingleNode) {
+		           System.out.println("注册IM用户[单个]: " + createNewIMUserSingleNode.toString());
+		        }
+
+		        *//**
+		         * IM用户登录
+		         *//*
+		        ObjectNode imUserLoginNode = EasemobIMUsers.imUserLogin(datanode.get("username").asText(), datanode.get("password").asText());
+		        if (null != imUserLoginNode) {
+		            //LOGGER.info("IM用户登录: " + imUserLoginNode.toString());
+		        	System.out.println("IM用户登录: " + imUserLoginNode.toString());
+		        }*/
 			}
 			else 
 			{
@@ -605,6 +639,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//新浪登录
 	private void loginsina(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String id = jsobj.getString("userId");                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
@@ -648,6 +683,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//qq登录
 	private void loginqq(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String id = jsobj.getString("userId");
@@ -691,6 +727,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//邮箱注册
 	private void signupemail(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJSon = new JSONObject();
@@ -769,6 +806,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJSon.toString());
 	}
 	
+	//新浪注册
 	private void signupsina(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJSon = new JSONObject();
@@ -831,7 +869,8 @@ public class ClientPostServlet extends HttpServlet
 		
 		writeJson(resp, outJSon.toString());
 	}
-
+	
+	//qq注册
 	private void signupqq(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJSon = new JSONObject();
@@ -892,6 +931,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJSon.toString());
 	}
 	
+	//个人发布活动
 	private void release(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJson = new JSONObject();
@@ -919,13 +959,13 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(activity.getLongitude());
 		activity.setLatitude(0);
 		System.out.println(activity.getLatitude());
-		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
+		activity.setMembers(1);
 		System.out.println(activity.getMembers());
 		activity.setContent(jsobj.getString("atyContent"));
 		System.out.println(activity.getContent());
-		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
+		activity.setShares(0);
 		System.out.println(activity.getShares());
-		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
+		activity.setComments(0);
 		System.out.println(activity.getComments());
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
@@ -979,50 +1019,74 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());		
 	}
 	
+	//点赞
 	private void like(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		String atyId = jsobj.getString("atyId");
 		
-		String update_aty = String.format("update %s " +
-										"set atyLikes=atyLikes+1 " +
-										"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
+		String is_alreadyLike = String.format("select * from %s where userId = '%s' and atyId = '%s'", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+		ResultSet rs = db.executeQuery(is_alreadyLike);
+		try {
+			if(!rs.next())
+			{
+				String update_aty = String.format("update %s " +
+						"set atyLikes=atyLikes+1 " +
+						"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
+
+
+
+				String insert_like = String.format("insert into %s values('%s','%s')", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+				int row1 = db.excuteUpdate(update_aty);
+				int row2 = db.excuteUpdate(insert_like);
+
+				JSONObject outJson = new JSONObject();
+				outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+				outJson.put("row1", row1);
+				outJson.put("row2", row2);
+				writeJson(resp, outJson.toString());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
-		
-		
-		String insert_like = String.format("insert into %s values('%s','%s')", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
-		int row1 = db.excuteUpdate(update_aty);
-		int row2 = db.excuteUpdate(insert_like);
-		
-		JSONObject outJson = new JSONObject();
-		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
-		outJson.put("row1", row1);
-		outJson.put("row2", row2);
-		writeJson(resp, outJson.toString());
 		
 		
 	}
 	
+	//取消点赞
 	private void notLike(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		String atyId = jsobj.getString("atyId");
 		
-		String update_aty = String.format("update %s " +
-										"set atyLikes=atyLikes-1 " +
-										"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
-		
-		
-		
-		String delete_like = String.format("delete from %s where userId='%s' and atyId='%s'", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
-		db.excuteUpdate(update_aty);
-		db.excuteUpdate(delete_like);
-		
-		JSONObject outJson = new JSONObject();
-		outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
-		writeJson(resp, outJson.toString());
+		String is_alreadyLike = String.format("select * from %s where userId = '%s' and atyId = '%s'", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+		ResultSet rs = db.executeQuery(is_alreadyLike);
+		try {
+			if(rs.next())
+			{
+				String update_aty = String.format("update %s " +
+						"set atyLikes=atyLikes-1 " +
+						"where atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, atyId);
+
+
+
+				String delete_like = String.format("delete from %s where userId='%s' and atyId='%s'", IStringConstans.LIKE_TABLE_NAME, userId, atyId);
+				db.excuteUpdate(update_aty);
+				db.excuteUpdate(delete_like);
+
+				JSONObject outJson = new JSONObject();
+				outJson.put(IStringConstans.JSON_RESULT, IStringConstans.JSON_OK);
+				writeJson(resp, outJson.toString());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
+	//加入活动
 	private void join(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1088,13 +1152,14 @@ public class ClientPostServlet extends HttpServlet
 		
 		//EasemobMessages.mySendMsgJoin(easemobId, toEasemobId, userName + "参加了您的活动：" + atyName, atyName);
 		Set<String> alias = new HashSet<String>();
-		alias.add(easemobId);
-		System.out.println("jpush send message!!!" + easemobId);
+		alias.add(toEasemobId);
+		System.out.println("jpush send message!!!" + toEasemobId);
 		MessagePush mp = new MessagePush(userName + "参加了您的活动：" + atyName, "参加人员通知");
-		//mp.sendPushAlias(alias);
-		mp.sendPushAll();
+		mp.sendPushAlias(alias);
+		//mp.sendPushAll();
 	}
 	
+	//退出活动
 	private void notJoin(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1158,11 +1223,91 @@ public class ClientPostServlet extends HttpServlet
 		
 		//EasemobMessages.mySendMsgJoin(easemobId, toEasemobId, userName + "退出了您的活动：" + atyName, atyName);
 		Set<String> alias = new HashSet<String>();
-		alias.add(easemobId);		
+		alias.add(toEasemobId);		
 		MessagePush mp = new MessagePush(userName + "退出了您的活动：" + atyName, "退出人员通知");
 		mp.sendPushAlias(alias);
 	}
 	
+	private void showAtyDetailsAll(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String atyId = jsobj.getString("atyId");
+		
+		JSONObject outJson = new JSONObject();
+		
+		String queryAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
+				"from activity, user, distribute " +
+				"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and activity.atyId = '%s' ", atyId);
+		
+		ResultSet rs = db.executeQuery(queryAty);
+		//ResultSetMetaData rsmd;
+		try {
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			
+			if(rs.next())
+			{
+				int i;
+				for (i = 1; i < cols; i++) 
+				{
+					outJson.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				outJson.put("atyCtyId", rs.getString(i));
+				
+				String oldStartTime = outJson.getString("atyStartTime");
+				outJson.put("atyStartTime", TimeFilter.AtyTimeParse(oldStartTime));
+				String oldEndTime = outJson.getString("atyEndTime");
+				outJson.put("atyEndTime", TimeFilter.AtyTimeParse(oldEndTime));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String queryIsLike =String.format("select atyId " +
+				 "from %s " +
+				 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId);
+		
+		String isLike = "false";
+		rs = db.executeQuery(queryIsLike);
+		try {
+			while(rs.next())
+			{
+				isLike = "true";
+				outJson.put("atyIsLiked", isLike);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String queryIsJoined =String.format("select atyId " +
+					"from %s " +
+					"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);
+		
+		String isJoined = "false";
+		rs = db.executeQuery(queryIsJoined);
+		try {
+			while(rs.next())
+			{
+				isJoined = "true";
+				outJson.put("atyIsJoined", isJoined);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  outJson.getString("atyId"));
+		
+		JSONArray jsarray = db.getAlbumUrl(query_album);
+		
+		outJson.put("atyAlbum", jsarray);
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//查看活动详情内的是否加入
 	private void showAtyDetails(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1206,6 +1351,35 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//显示活动发起人发起的其他活动
+	private void showOtherAty(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		String atyId = jsobj.getString("atyId");
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String nowTime = sdf.format(new Date());
+		
+		String distribute_select = String.format("SELECT atyId, atyName "
+												+"FROM activity "
+												+"where atyId<>'%s' and atyId IN (SELECT atyId "
+																				+"FROM distribute "
+																			    +"where userId = '%s') "
+																			    +"limit 2", atyId, userId);
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
+				"from activity, user, distribute " +
+				"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and atyEndTime > '%s' and activity.atyId<>'%s' and activity.atyId IN (SELECT atyId "
+																				+"FROM distribute "
+																			    +"where userId = '%s') "
+																			    +"limit 3 ", nowTime, atyId, userId);
+		
+		JSONArray json = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		writeJson(resp, json.toString());
+		
+	}
+	
+	//显示活动列表
 	private void showActivities(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1287,6 +1461,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//显示最近活动
 	private void showLatestAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1371,11 +1546,12 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//显示热门活动
 	private void showHotAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic, releaseTime, ctyId " +
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments ,atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
 											"order by atyMembers*2+atyLikes desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -1445,6 +1621,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());		
 	}
 	
+	//显示附近活动
 	private void showNearbyAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1453,7 +1630,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		Double userLatitude = Double.parseDouble(jsobj.getString("latitude"));
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)"
 											+ "and atyLongitude>%f-1 and atyLongitude<%f+1 "
@@ -1525,11 +1702,12 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());				
 	}
 	
+	//显示高评价活动
 	private void showHightAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty = String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
 											"from %s, %s, %s " +
 											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1)" +
 											"order by atyLikes desc", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME );
@@ -1599,10 +1777,536 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());				
 	}
 	
+	//显示比赛活动
+	private void showCompetition(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%竞赛%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示宣讲会活动
+	private void showCareerTalk(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%宣讲会%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示社团活动
+	private void showOrganization(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%社团%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示运动活动
+	private void showSports(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%运动%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示出游活动
+	private void showTour(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%出游%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示学习活动
+	private void showStudy(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%学习%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示游戏活动
+	private void showGame(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String userId = jsobj.getString("userId");
+		
+		String queryAllAty = String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments,atyIsPublic, releaseTime, ctyId " +
+											"from %s, %s, %s " +
+											"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) " +
+											"and atyType like '%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, "%游戏%" );
+		
+		String queryIsLike = String.format("select atyId " +
+										 "from %s " +
+										 "where userId='%s'", IStringConstans.LIKE_TABLE_NAME, userId); 
+		
+		String queryIsJoined = String.format("select atyId " +
+											"from %s " +
+											"where userId='%s'", IStringConstans.JOIN_TABLE_NAME, userId);				
+		
+		
+		JSONArray outJson = db.AtyQueryGetJsonArrayWithTime(queryAllAty, "atyStartTime");
+		List<String> likeAty = db.getAtyId(queryIsLike);
+		List<String> joinAty = db.getAtyId(queryIsJoined);
+		
+		System.out.println(likeAty.size());
+		System.out.println(joinAty.size());
+		
+		for (int i = 0; i < outJson.size(); i++) 
+		{
+			JSONObject temp = outJson.getJSONObject(i);
+			
+			String query_album = String.format("select photoId from %s where albumId='%s'", IStringConstans.PHOTOS_TABLE_NAME,  temp.getString("atyId"));
+			
+			JSONArray jsarray = db.getAlbumUrl(query_album);
+			
+			temp.put("atyAlbum", jsarray);
+			
+			if (likeAty.size() > 0) 
+			{
+				if (likeAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsLiked", "true");
+				}
+				else 
+				{
+					temp.put("atyIsLiked", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsLiked", "false");
+			}
+			
+			if (joinAty.size() > 0) 
+			{
+				if (joinAty.contains(temp.get("atyId"))) 
+				{
+					temp.put("atyIsJoined", "true");
+				}
+				else 
+				{
+					temp.put("atyIsJoined", "false");
+				}	
+			}
+			else 
+			{
+				temp.put("atyIsJoined", "false");
+			}
+			
+			outJson.set(i, temp);
+		}
+		
+		
+		writeJson(resp, outJson.toString());
+	}
+	
+	//显示评论
 	private void showComments(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
-		String query_sql = String.format("select userName,userIcon,cmtContent,cmtTime " +
+		String query_sql = String.format("select user.userId, userName,userIcon,cmtContent,cmtTime " +
 				"from %s, %s, %s, %s " +
 				"where activity.atyId = evaluation.atyId and user.userId = evaluation.userId and comment.cmtId = evaluation.cmtId and activity.atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.COMMENT_TABLE_NAME, IStringConstans.EVALUATION_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId); 
 
@@ -1615,6 +2319,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//评论
 	private void comment(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
@@ -1657,7 +2362,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		//EasemobMessages.mySendMsgComment(easemobId, ToEasemobId, cmtContent, userName);
 		Set<String> alias = new HashSet<String>();
-		alias.add(easemobId);		
+		alias.add(ToEasemobId);		
 		MessagePush mp = new MessagePush(userName + "评论了您的活动：" + cmtContent, "评论通知");
 		mp.sendPushAlias(alias);
 		
@@ -1668,13 +2373,14 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, out.toString());
 	}
 
+	//显示已加入活动
 	private void showJoinedAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
-										"from %s, %s, %s, %s " +
-										"where distribute.atyId = activity.atyId and activity.atyId = joining.atyId and user.userId = joining.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, "distribute", userId);		
+		String queryAllAty =String.format("select user.userId,userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, communnity.ctyId " + 
+										"from %s, %s, %s, %s, %s " +
+										"where communnity.ctyId = distribute.ctyId and distribute.atyId = activity.atyId and activity.atyId = joining.atyId and user.userId = joining.userId and communnity.ctyCreatorId <> '%s' and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.JOIN_TABLE_NAME, "distribute","communnity",userId, userId);		
 		
 		String queryIsLike =String.format("select atyId " +
 				 "from %s " +
@@ -1738,11 +2444,12 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());		
 	}
 	
+	//显示已发布活动
 	private void showDistributeAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
+		String queryAllAty =String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and user.userId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, userId);
 		
@@ -1806,12 +2513,13 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());	
 	}
 	
+	//显示小组活动
 	private void showGroupAty(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
 		String ctyId = jsobj.getString("ctyId");
 		
-		String queryAllAty =String.format("select userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
+		String queryAllAty =String.format("select user.userId, userName,userIcon, activity.atyId, atyName, atyType, atyStartTime,atyEndTime, atyPlace, atyMembers,atyContent, atyLikes, atyShares, atyComments, atyIsPublic, releaseTime, ctyId " + 
 										"from %s, %s, %s " +
 										"where activity.atyId = distribute.atyId and user.userId = distribute.userId and (activity.atyIsBanned=0 or activity.atyIsBanned=-1) and distribute.ctyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.USER_TABLE_NAME, IStringConstans.DISTRIBUTE_TABLE_NAME, ctyId);
 		
@@ -1875,11 +2583,12 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());	
 	}
 	
+	//显示加入活动的成员列表
 	private void atyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
 		
-		String select_sql = String.format("select userName, userIcon " +
+		String select_sql = String.format("select user.userId, userName, userIcon " +
 										  "from %s, %s " +
 										  "where atyId='%s' and joining.userId=user.userId", IStringConstans.JOIN_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId);
 		
@@ -1888,6 +2597,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, jsArray.toString());
 	}
 
+	//显示积分
 	private void showCredit(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1899,6 +2609,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//发送系统消息
 	private void sendMessage(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1912,6 +2623,7 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(query_update);
 	}
 	
+	//显示系统消息
 	private void showMessage(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1922,6 +2634,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//设置相册公开
 	private void setPublicTrue(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1931,6 +2644,7 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(query_update);
 	}
 	
+	//设置相册不公开
 	private void setPublicFalse(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -1940,6 +2654,7 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(query_update);
 	}
 	
+	//显示参加活动成员列表（同方法atyMembers）
 	private void showAtyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
@@ -1950,6 +2665,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//显示小组成员列表
 	private void showCtyMembers(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String ctyId = jsobj.getString("ctyId");
@@ -1965,7 +2681,9 @@ public class ClientPostServlet extends HttpServlet
 	{
 		String userId = jsobj.getString("userId");
 		
-		String queryAllCty = String.format("select communnity.ctyId, ctyName, ctyIcon,ctyMembers, user.userName, user.userIcon from attention, communnity, user where user.userId='%s' and user.userId = ctyCreatorId and attention.ctyId=communnity.ctyId", userId);
+		String queryAllCty = String.format("select communnity.ctyId, ctyName, ctyIcon,ctyMembers, user.userName, user.userIcon "
+											+"from attention, communnity, user "
+											+"where user.userId='%s' and user.userId <> ctyCreatorId and attention.ctyId=communnity.ctyId and user.userId = attention.userId", userId);
 		
 		JSONArray outJson = db.queryGetJsonArray(queryAllCty);
 		writeJson(resp, outJson.toString());
@@ -2068,6 +2786,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//展示小组活动列表
 	private void showAtyInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String ctyId = jsobj.getString("ctyId");
@@ -2080,6 +2799,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//显示小组成员列表（同方法showCtyMembers）
 	private void showMembersInCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String ctyId = jsobj.getString("ctyId");
@@ -2169,6 +2889,7 @@ public class ClientPostServlet extends HttpServlet
 		deleteMember(easemobId, ctyGroupId);
 	}
 	
+	//积分排列
 	private void creditRank(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String queryCredit = String.format("select userId, userName, userIcon from %s where userId!='000' and userId!='001' order by userCredit desc", IStringConstans.USER_TABLE_NAME);
@@ -2177,6 +2898,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//测试方法
 	private void test(HttpServletResponse resp, JSONObject jsobj)
 	{
 		JSONObject outJson = new JSONObject();
@@ -2193,6 +2915,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
+	//修改相册公开性
 	private void editAlbumRight(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2208,6 +2931,7 @@ public class ClientPostServlet extends HttpServlet
 		
 	}
 	
+	//查看用户相册
 	private void showUserAlbum(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2232,6 +2956,7 @@ public class ClientPostServlet extends HttpServlet
 	}
 	
 	//new functions
+	//创建环信小组
 	private String createTempGroup(String easemobId, String atyId)
 	{
 		ObjectNode dataObjectNode = JsonNodeFactory.instance.objectNode();
@@ -2255,6 +2980,7 @@ public class ClientPostServlet extends HttpServlet
 		return creatChatGroupNode.get("data").get("groupid").asText();
 	}
 	
+	//环信群组添加成员
 	private static void addMember(String easemobId, String groupId)
 	{
 		String addToChatgroupid = groupId;
@@ -2263,6 +2989,7 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(addUserToGroupNode.toString());
 	}
 	
+	//环信群组删除成员
 	private static void deleteMember(String easemobId, String groupId)
 	{
 		String delFromChatgroupid = groupId;
@@ -2271,6 +2998,7 @@ public class ClientPostServlet extends HttpServlet
 		System.out.println(deleteUserFromGroupNode.asText());
 	}
 	
+	//获得环信小组所有成员
 	private static ObjectNode getAllMembers(String groupId)
 	{
 		String chatgroupid = groupId;
@@ -2279,6 +3007,7 @@ public class ClientPostServlet extends HttpServlet
 		return getAllMemberssByGroupIdNode;
 	}
 	
+	//小组内发布通知（需要改）
 	private void sendInfo(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2325,13 +3054,14 @@ public class ClientPostServlet extends HttpServlet
 		//EasemobMessages.mySendMsg(easemobId, userName, userIcon, atyId, atyName, msgContent, releaseTime, allMembers, members);
 	}
 	
+	//查看所有通知
 	private void showAllNotifications(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userToId = jsobj.getString("easemobId");
 		
 		String queryAllnotifications = String.format("select * from notification where userToId = '%s'", userToId);
 		
-		JSONArray outJson = db.queryGetJsonArray(queryAllnotifications);
+		JSONArray outJson = db.NotiQueryGetJsonArrayWithTime(queryAllnotifications, "releaseTime");
 		
 		writeJson(resp, outJson.toString()); 
 	}
@@ -2516,10 +3246,10 @@ public class ClientPostServlet extends HttpServlet
 		activity.setPlace(jsobj.getString("atyPlace"));
 		activity.setLongitude(0);
 		activity.setLatitude(0);
-		activity.setMembers(Integer.parseInt(jsobj.getString("atyMembers")));
+		activity.setMembers(1);
 		activity.setContent(jsobj.getString("atyContent"));
-		activity.setShares(Integer.parseInt(jsobj.getString("atyShares")));
-		activity.setComments(Integer.parseInt(jsobj.getString("atyComments")));
+		activity.setShares(0);
+		activity.setComments(0);
 		
 		String atyAlbumStr = jsobj.getString("atyAlbum");
 		String atyIsPublic = "toVisitors";
@@ -2544,7 +3274,7 @@ public class ClientPostServlet extends HttpServlet
 		String insert_sql2 = String.format("insert into %s(atyId, atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyLongitude, atyLatitude, atyMembers, atyContent, atyShares, atyIsPublic, groupId) values('%s', '%s', '%s', '%s', '%s', '%s', %f, %f, '%s', '%s', '%s', '%s', '%s')", IStringConstans.ACTIVITY_TABLE_NAME, activity.getId(), activity.getName(),activity.getType(), activity.getStartTime(), activity.getEndTime(), activity.getPlace(), activity.getLongitude(), activity.getLatitude(), activity.getMembers(), activity.getContent(), activity.getShares(), atyIsPublic, groupId);
 		String joint_sql = String.format("insert into %s values('%s', '%s')", IStringConstans.JOIN_TABLE_NAME, userId, activity.getId());
 		String update_cty_sql = String.format("update communnity "
-											 + "set ctyNumOfAty=ctyNumOfAty+1"
+											 + "set ctyNumOfAty=ctyNumOfAty+1 "
 											 + "where ctyId='%s'", ctyId);
 		
 		db.excuteUpdate(insert_sql1);
@@ -2553,10 +3283,10 @@ public class ClientPostServlet extends HttpServlet
 		db.excuteUpdate(update_cty_sql);
 		
 		//create a easemob id for the activity
-		groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
+		//groupId = createTempGroup(jsobj.getString("easemobId"), atyId);
 		
-		String update_group = String.format("update %s set groupId = %s where atyId = '%s'", IStringConstans.ACTIVITY_TABLE_NAME, groupId, atyId);
-		db.excuteUpdate(update_group);
+		//String update_group = String.format("update %s set groupId = %s where atyId = '%s'", IStringConstans.ACTIVITY_TABLE_NAME, groupId, atyId);
+		//db.excuteUpdate(update_group);
 		
 		//credit
 		String creditId = CreateId.createCreditId(userId);
@@ -2573,8 +3303,51 @@ public class ClientPostServlet extends HttpServlet
 		outJson.put("groupId", groupId);
 		writeJson(resp, outJson.toString());
 		
-	}
+		String creatorId = "";
+		String creatorName = "";
+		String creatorIcon = "";
+		String creator_sql = String.format("select easemobId, userName, userIcon from user where userId = '%s'", userId);
+		ResultSet rs_self = db.executeQuery(creator_sql);
+		try {
+			while(rs_self.next())
+			{
+				creatorId = rs_self.getString("easemobId");
+				creatorName = rs_self.getString("userName");
+				creatorIcon = rs_self.getString("userIcon");
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
+		String notiType = "小组";
+		
+		String members_sql = String.format("select easemobId from attention, user where user.userId = attention.userId and ctyId = '%s'", ctyId);
+		ResultSet rs = db.executeQuery(members_sql);
+		
+		Set<String> alias = new HashSet<String>();
+		
+		try {
+			
+			while(rs.next())
+			{
+				String toUser = rs.getString("easemobId");
+				if(!toUser.equals(creatorId))
+				{
+					alias.add(toUser);
+				}
+				
+				String query_sql = String.format("insert into notification values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", creatorId, toUser, atyId, creatorName, creatorIcon, activity.getName(), activity.getName(), releaseTime, notiType, "小组“" + ctyId.substring(0, ctyId.length()-14) + "”发布了新活动：");
+				db.excuteUpdate(query_sql);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
+	
+	//查看用户收到的评论列表
 	private void showUserComments(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String userId = jsobj.getString("userId");
@@ -2620,7 +3393,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, jsonArray.toString());
 	}
 	
-	/*edit the introduction of the community*/
+	/*修改小组简介*/
 	private void editCommunity(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String ctyIntro = jsobj.getString("ctyIntro");
@@ -2642,18 +3415,6 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
-	/*获取当前发布者最近发布活动*/
-	private void getLatestAty(HttpServletResponse resp, JSONObject jsobj)
-	{
-		
-	}
-	
-	/*查看参加人员*/
-	private void showJoinedMembers(HttpServletResponse resp, JSONObject jsobj)
-	{
-		
-	}
-	
 	/*活动发起人给活动成员发通知*/
 	private void notifyFromAty(HttpServletResponse resp, JSONObject jsobj)
 	{
@@ -2668,6 +3429,8 @@ public class ClientPostServlet extends HttpServlet
 		String releaseTime = sdf.format(new Date());
 		System.out.println("easemobId : " + easemobId);
 		
+		String notiType = "活动";
+		
 		Set<String> alias = new HashSet<String>();
 		
 		String member_sql = String.format("select easemobId from user, joining where user.userId = joining.userId and atyId = '%s'", atyId);
@@ -2676,9 +3439,12 @@ public class ClientPostServlet extends HttpServlet
 			while(rs.next())
 			{
 				String toUser = rs.getString("easemobId");
-				alias.add(toUser);
+				if(!toUser.equals(easemobId))
+				{
+					alias.add(toUser);
+				}
 				
-				String query_sql = String.format("insert into notification values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", easemobId, toUser, atyId, userName, userIcon, atyName, msgContent, releaseTime);
+				String query_sql = String.format("insert into notification values('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')", easemobId, toUser, atyId, userName, userIcon, atyName, msgContent, releaseTime, notiType, "活动“" + atyName + "”发布了一条通知：");
 				db.excuteUpdate(query_sql);
 			}
 		} catch (SQLException e) {

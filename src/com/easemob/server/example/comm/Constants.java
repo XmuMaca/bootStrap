@@ -16,5 +16,5 @@ public interface Constants {
 		//public static String APP_CLIENT_SECRET = PropertiesUtils.getProperties().getProperty("APP_CLIENT_SECRET");
 		public static String APP_CLIENT_SECRET = "YXA6CDFYYynTXHNeOVpO_t-xL-49EjY";
 		// DEFAULT_PASSWORD
-		public static String DEFAULT_PASSWORD = "123456";
+		public static String DEFAULT_PASSWORD = "7777777";
 }

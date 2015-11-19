@@ -28,14 +28,14 @@ public class EasemobIMUsers {
     private static Credential credential = new ClientSecretCredential(Constants.APP_CLIENT_ID,
             Constants.APP_CLIENT_SECRET, Roles.USER_ROLE_APPADMIN);
 
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
         /**
          * 注册IM用户[单个]
          */
     	/*myCreateUser("mm", "123");*/
     	System.out.println("signup");   	
-        ObjectNode datanode = JsonNodeFactory.instance.objectNode();
-        datanode.put("username","yyf");
+        /**/ObjectNode datanode = JsonNodeFactory.instance.objectNode();
+        datanode.put("username","t1114050488");
         datanode.put("password", Constants.DEFAULT_PASSWORD);
         ObjectNode createNewIMUserSingleNode = createNewIMUserSingle(datanode);
         if (null != createNewIMUserSingleNode) {
@@ -44,13 +44,16 @@ public class EasemobIMUsers {
 
         /**
          * IM用户登录
-         *//*
+         */
         ObjectNode imUserLoginNode = imUserLogin(datanode.get("username").asText(), datanode.get("password").asText());
         if (null != imUserLoginNode) {
             LOGGER.info("IM用户登录: " + imUserLoginNode.toString());
-        }
-
-        *//**
+        }/*
+    	ObjectNode imUserLoginNode = imUserLogin("t20151114x54", "123");
+        if (null != imUserLoginNode) {
+            LOGGER.info("IM用户登录: " + imUserLoginNode.toString());
+        }*/
+        /**
          * 注册IM用户[批量生成用户然后注册]
          *//*
         String usernamePrefix = "kenshinnuser";

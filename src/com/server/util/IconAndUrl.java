@@ -1,7 +1,5 @@
 package com.server.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -17,11 +15,12 @@ import net.coobird.thumbnailator.Thumbnails;
 
 public class IconAndUrl 
 {
+	
 	public IconAndUrl()
 	{
 		
 	}
-	
+
 	/*get the url by the icon data consisting of string type
 	 * 
 	 * */
@@ -44,7 +43,6 @@ public class IconAndUrl
 	 * */
 	public static String getUrl(String store_path, byte[] icon)
 	{
-		
 		String imageName = createIconName();
 
 		String path = store_path + IStringConstans.INIT_PIC_FLAG +imageName;
@@ -107,6 +105,7 @@ public class IconAndUrl
 	private static void icon2thumnail(String fromPath, String toPath)
 	{
 		try {
+			
 			Thumbnails.of(fromPath)
 					  .scale(IAttritubes.THUMNAIL_RATE)
 					  .outputFormat(IStringConstans.PNG)
@@ -114,8 +113,21 @@ public class IconAndUrl
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
-				  
+		}		  
+	}
+	/*thi method will be used*/
+	private static void thumbnail(String fromPath, String toPath, float rate)
+	{
+		try {
+			
+			Thumbnails.of(fromPath)
+					  .scale(IAttritubes.THUMNAIL_RATE)
+					  .outputFormat(IStringConstans.PNG)
+					  .toFile(toPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}		
 	}
 	
 	private static String createIconName()

@@ -52,7 +52,10 @@ public interface IStringConstans
 	//String REMOTE_IMAGE_PATH = "http://192.241.229.214:8080/bootStrap/images_repo/";
 	//String REMOTE_IMAGE_PATH = "http://124.172.185.128:8090/bootStrap/images_repo/";
 	
-	String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
+	//String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
+	
+	//String REMOTE_IMAGE_PATH = "http://192.168.66.43:8082/bootStrap/images_repo/";
+	String REMOTE_IMAGE_PATH = "http://106.0.4.149:8082/bootStrap/images_repo/";
 	
 	//String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
 	
@@ -62,6 +65,14 @@ public interface IStringConstans
 	/*the pattern of the image*/
 	String DOT_PNG = ".png";
 	String PNG = "png";
+	
+	/*the level of the compression*/
+	long COMPRESSION_LEVEL_1 = 50 * 1024; 
+	float COMPRESSION_RATE_1 = 0.8f;
+	long COMPRESSION_LEVEL_2 = 200 * 1024; 
+	float COMPRESSION_RATE_2 = 0.5f;
+	long COMPRESSION_LEVEL_3 = 500 * 1024; 
+	float COMPRESSION_RATE_3 = 0.3f;
 	
 	/*Json response*/
 	String JSON_RESULT = "result";
@@ -78,4 +89,5 @@ public interface IStringConstans
 	
 	/*initial picture flag*/
 	String INIT_PIC_FLAG = "i";
+
 }

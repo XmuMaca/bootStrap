@@ -32,8 +32,8 @@ public class DB
 			Class.forName(IStringConstans.MYSQL_DRIVER);	
 			
 			String url = IStringConstans.LocalURL;
-			String user = IStringConstans.LOCAL_USER;
-			String password = IStringConstans.LOCAL_PASSWORD;
+			String user = IStringConstans.TIAN_YI_CLOUD_USER;
+			String password = IStringConstans.TIAN_YI_CLOUD_PASSWORD;
 			
 			connection = DriverManager.getConnection(url, user, password);
 			//System.out.print("connection succeed.");
@@ -205,8 +205,47 @@ public class DB
 				}
 				jsonObj.put("atyCtyId", rs.getString(i));
 				
+				String oldStartTime = jsonObj.getString(timeName);
+				jsonObj.put(timeName, TimeFilter.AtyTimeParse(oldStartTime));
+				String oldEndTime = jsonObj.getString("atyEndTime");
+				jsonObj.put("atyEndTime", TimeFilter.AtyTimeParse(oldEndTime));
+				
+				jsonArray.add(0, jsonObj);
+				jsonObj = new JSONObject();				
+			}
+			
+			return jsonArray;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	/** 
+	 * 获取通知列表+时间转换
+	 * */
+	public JSONArray NotiQueryGetJsonArrayWithTime(String sql, String timeName)
+	{
+		JSONArray jsonArray = new JSONArray();
+		JSONObject jsonObj = new JSONObject();
+		
+		ResultSet rs = executeQuery(sql);
+		ResultSetMetaData rsmd;
+		try {
+			
+			rsmd = rs.getMetaData();
+			int cols = rsmd.getColumnCount();
+			while (rs.next()) 
+			{
+				int i;
+				for (i = 1; i <= cols; i++) 
+				{
+					jsonObj.put(rsmd.getColumnName(i), rs.getString(i));
+				}
+				
 				String oldTime = jsonObj.getString(timeName);
-				jsonObj.put(timeName, TimeFilter.AtyTimeParse(oldTime));
+				jsonObj.put(timeName, TimeFilter.notiTimeParse(oldTime));
 				
 				jsonArray.add(0, jsonObj);
 				jsonObj = new JSONObject();				
