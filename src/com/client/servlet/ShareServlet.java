@@ -53,7 +53,6 @@ public class ShareServlet extends HttpServlet
 				
 		db.close();
 		
-//		System.out.println(atyInfo.toString());
 		
 		req.setAttribute("atyInfo", atyInfo);
 		req.setAttribute("distributedAty", distributedAty);
