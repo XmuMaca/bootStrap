@@ -4,6 +4,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <%
 		String path = request.getContextPath();
@@ -13,45 +14,61 @@
 <head>
 	<base href="<%=basePath%>">
 	<link rel="stylesheet" type="text/css" href="css/share/share.css">
-	<script type="text/javascript" src="js/share/share.js"></script>
+
+	<script language="javascript" type="text/javascript" src="js/share/share.js"></script>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" /> 
 <title>校园岛</title>
 </head>
 <body>
 	<% 
-		JSONObject jsobj = (JSONObject)request.getAttribute("atyInfo");
-
+		JSONObject jsobj = (JSONObject)request.getAttribute("atyInfo");	
 		String tags = jsobj.getString("atyType");
 		request.setAttribute("tags", tags);
-	%>
+	%>	
 	<div><h1>校园岛</h1></div>
 	<hr/>
 	<div><h2><%= jsobj.getString("atyName") %></h2></div>
-	<div><span>开始时间: <%=jsobj.getString("atyStartTime") %></span><span>结束时间: <%=jsobj.getString("atyEndTime") %></span></div>
-	<div><span>地点:<%=jsobj.getString("atyPlace") %></span></div>
-	
+	<div class="detailed"><span><%=jsobj.getString("atyStartTime") %></span><span><%=jsobj.getString("atyEndTime") %></span></div>
+	<div class="detailed"><span>地点:</span><span><%=jsobj.getString("atyPlace") %></span></div>	
 	<div><%=jsobj.getString("atyContent") %></div>
-	<c:forTokens items="${tags}" delims="&" var="tag">
-		<span><c:out value="${tag}"/></span>
-	</c:forTokens>
+	<div>
+		<c:forEach items="${photos}" var="photourl">
+				<img class="atyPic" src="${photourl}"/>
+		</c:forEach>
+	</div>
 	
-	<c:forEach items="${photos}" var="photo">
-		<c:out value="${photo}"/>
-		<img src="${photo}"/>
-	</c:forEach>
+	<div class="detailed">
+		<c:forTokens items="${tags}" delims="&" var="tag">
+			<span class="atyTag"><c:out value="${tag}"/></span>
+		</c:forTokens>
+	</div>
 	<hr/>
 	<div><h3>发布者</h3></div>
-	<div><span>昵称</span><span><%=jsobj.getString("userName") %></span></div>
+	<div><img class="userIcon" src="<%=jsobj.getString("userIcon")%>"/><span><%=jsobj.getString("userName") %></span></div>
 	<hr/>
-	<div><h3>Ta还发布了</h3></div>
-	<c:forEach items="${distributedAty}" var="aty">
-		<span><c:out value="${aty}"/></span>
-	</c:forEach>
-	<div>
-	</div>
-	<div>
-		<a href="http://www.baidu.com" id="openApp" onclick="openApp()">进入App</a>
+	<div><h3>Ta还发布了</h3></div>	
+	<c:choose>
+		<c:when test="${distributedAty.size() != 0 }">	
+			<div>
+				<c:forEach items="${distributedAty}" var="activity">
+					<span><c:out value="${activity}"/></span>
+				</c:forEach>
+			</div>
+		</c:when>
+		<c:otherwise>
+			<div>
+				<span><c:out value="这是Ta发布的第一个活动哟~"/></span>
+			</div>
+		</c:otherwise>
+	</c:choose>
+	
+		<!--充当占位符的div块，无实质内容 -->
+	<div style="height:20px;"></div> <!--fixed悬浮出来的footer -->
+	<div class='footer'>
+		<img src=""/>
+		<span>校园岛</span>
+		<a id="enterApp" href="http://www.baidu.com" class="sharelink">进入App</a>
 	</div>
 </body>
 </html>

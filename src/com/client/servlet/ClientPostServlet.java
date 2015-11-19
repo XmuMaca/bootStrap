@@ -1,5 +1,6 @@
 package com.client.servlet;
 
+import java.awt.Image;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -64,6 +65,7 @@ public class ClientPostServlet extends HttpServlet
 		
 		//IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
 		IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
+//		IMAGE_PATH = req.getRealPath("/");
 		System.out.println(IMAGE_PATH);
 		
 		db.createConnection();
@@ -267,7 +269,7 @@ public class ClientPostServlet extends HttpServlet
 			createCommunity(resp, jsobj);
 			break;
 		case "releaseByCty":
-			releaseByCty(resp, jsobj);
+			releaseByCty(resp, jsobj);			
 			break;
 		case "editCommunity":
 			editCommunity(resp, jsobj);
@@ -280,6 +282,9 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		case "showAtyDetailsAll":
 			showAtyDetailsAll(resp, jsobj);
+			break;
+		case "latestAtyOfUser":
+			latestAtyOfUser(resp, jsobj);
 			break;
 		default:
 			break;
@@ -3454,5 +3459,22 @@ public class ClientPostServlet extends HttpServlet
 		
 		MessagePush mp = new MessagePush(msgContent, "活动通知");
 		mp.sendPushAlias(alias);
+	}
+
+	/*the latest activity distributed by certain user*/
+	private void latestAtyOfUser(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String atyId = jsobj.getString("atyId");
+		String userId = jsobj.getString("userId");
+		
+		String distribute_select = String.format("SELECT atyName "
+												+"FROM activity "
+												+"where atyId<>'%s' and atyId IN (SELECT atyId "
+												+"FROM distribute "
+											    +"where userId = '%s') "
+											    +"limit 3", atyId, userId);
+		
+		JSONArray out = db.queryGetJsonArray(distribute_select);
+		writeJson(resp, out.toString());
 	}
 }

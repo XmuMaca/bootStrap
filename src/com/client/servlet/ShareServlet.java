@@ -30,7 +30,7 @@ public class ShareServlet extends HttpServlet
 		String atyId = "cc@qq.com20151020221856";
 		
 		//get the basic activity info
-		String aty_select = String.format("SELECT atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyContent, userName, user.userId "
+		String aty_select = String.format("SELECT atyName, atyType, atyStartTime, atyEndTime, atyPlace, atyContent, userName, user.userId, userIcon "
 										+ "from activity, user, distribute "
 										+ "where activity.atyId = '%s'and activity.atyId = distribute.atyId and user.userId = distribute.userId", atyId);
 		
@@ -53,7 +53,7 @@ public class ShareServlet extends HttpServlet
 				
 		db.close();
 		
-		System.out.println(atyInfo.toString());
+//		System.out.println(atyInfo.toString());
 		
 		req.setAttribute("atyInfo", atyInfo);
 		req.setAttribute("distributedAty", distributedAty);

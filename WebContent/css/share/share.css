@@ -1,0 +1,92 @@
+<<<<<<< 3dea643a6793b049b0a8320f68699e0e58eebda5
+=======
+h1, h2, div, span{
+
+		font-family: 微软雅黑;
+}
+
+h1{
+	margin: 10px;
+
+}
+
+span{
+	margin-left: 1%;
+	margin-right: 1%;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+div{
+	margin: 10px;
+
+}
+
+hr{
+	color:rgb(230, 230, 255);
+	background-color:rgb(230, 230, 255);
+	height:1px;
+	line-height:1px;
+	font-size:0;
+	border:none;
+}
+
+
+/*detailed introduction div*/
+.detailed{
+	font-size: 0.7em;
+	color: gray;
+}
+
+/*tags*/
+.atyTag{
+	padding: 1%;
+	border-radius: 4px;
+	background: #9BD1FA;
+}
+
+
+/*activity picture*/
+.atyPic{
+	margin-left: 1%;
+	margin-right: 1%;
+	width: 20%;
+	height: 20%;
+}
+
+/*icon*/
+.userIcon{
+	width: 20px;
+	height: 20px;
+}
+
+/*footer*/
+
+.footer{
+	margin: 0;
+	padding: 10px;
+	max-width: 100%;
+	min-width: 100%;
+	background-color: rgb(223, 226, 230);
+	position: fixed;
+	bottom: 0;
+
+}
+
+/*share link*/
+
+a:link {color:#000000;}		/* 未被访问的链接 */
+a:visited {color:#000000;}	/* 已被访问的链接 */
+a:hover {color:#000000;}	/* 鼠标指针移动到链接上 */
+a:active {color:#000000;}	/* 正在被点击的链接 */
+
+.sharelink{
+	margin-left: 60px;
+	padding: 2px;
+	border-radius: 2px;
+	background: #9BD1FA;
+	text-decoration:none;
+
+	font-weight: bolder;
+}
+>>>>>>> 11.19 for integration
