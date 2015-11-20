@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import net.sf.json.JSONObject;
 
 import com.server.db.UserDB;
-import com.server.util.IconAndUrl;
+import com.server.util.imageHandler.IconAndUrl;
 
 public class PicPostServlet extends HttpServlet 
 {

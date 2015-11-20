@@ -1,3 +1,4 @@
+<%@page import="net.sf.json.JSONArray"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
 <%@page import="net.sf.json.JSONObject"%>
@@ -23,10 +24,11 @@
 <body>
 	<% 
 		JSONObject jsobj = (JSONObject)request.getAttribute("atyInfo");	
+		JSONArray comments = (JSONArray)request.getAttribute("comments");
 		String tags = jsobj.getString("atyType");
 		request.setAttribute("tags", tags);
 	%>	
-	<div><h1>校园岛</h1></div>
+	<h1><img class="logo" src="images_repo/logo.JPG">校园岛</h1>
 	<hr/>
 	<div><h2><%= jsobj.getString("atyName") %></h2></div>
 	<div class="detailed"><span><%=jsobj.getString("atyStartTime") %></span><span><%=jsobj.getString("atyEndTime") %></span></div>
@@ -44,10 +46,10 @@
 		</c:forTokens>
 	</div>
 	<hr/>
-	<div><h3>发布者</h3></div>
+	<div><h4>发布者</h4></div>
 	<div><img class="userIcon" src="<%=jsobj.getString("userIcon")%>"/><span><%=jsobj.getString("userName") %></span></div>
 	<hr/>
-	<div><h3>Ta还发布了</h3></div>	
+	<div><h4>Ta还发布了</h4></div>	
 	<c:choose>
 		<c:when test="${distributedAty.size() != 0 }">	
 			<div>
@@ -61,12 +63,27 @@
 				<span><c:out value="这是Ta发布的第一个活动哟~"/></span>
 			</div>
 		</c:otherwise>
-	</c:choose>
+	</c:choose>	
+	<%
+		int cmtNum = comments.size();
+		for(int i = 0; i < cmtNum; i++)
+		{
+	%> 
+	<hr/>
+	<div>
+		<img src="<%= comments.getJSONObject(i).getString("userIcon")%>"/>
+		<span class="fontbold"><%= comments.getJSONObject(i).getString("userName")%></span>
+		<span class="detailed"><%= comments.getJSONObject(i).getString("cmtTime")%></span>
+	</div>
+	<div><%= comments.getJSONObject(i).getString("cmtContent")%></div>
+	
+	<%  }%>
+	
 	
 		<!--充当占位符的div块，无实质内容 -->
 	<div style="height:20px;"></div> <!--fixed悬浮出来的footer -->
 	<div class='footer'>
-		<img src=""/>
+		<img class = "little_logo" src="images_repo/logo.JPG"/>
 		<span>校园岛</span>
 		<a id="enterApp" href="http://www.baidu.com" class="sharelink">进入App</a>
 	</div>

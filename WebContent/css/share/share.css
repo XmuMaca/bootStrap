@@ -1,8 +1,8 @@
-<<<<<<< 3dea643a6793b049b0a8320f68699e0e58eebda5
-=======
-h1, h2, div, span{
+h1, h2, h3, h4, div, span, img{
 
-		font-family: 微软雅黑;
+		font-family:微软雅黑;
+		margin:0;
+		padding: 0;
 }
 
 h1{
@@ -18,7 +18,7 @@ span{
 }
 
 div{
-	margin: 10px;
+	margin: 5px;
 
 }
 
@@ -30,7 +30,10 @@ hr{
 	font-size:0;
 	border:none;
 }
-
+/*special style*/
+.fontbold{
+	font-style: bolder;
+}
 
 /*detailed introduction div*/
 .detailed{
@@ -40,7 +43,7 @@ hr{
 
 /*tags*/
 .atyTag{
-	padding: 1%;
+	padding: 2px;
 	border-radius: 4px;
 	background: #9BD1FA;
 }
@@ -54,12 +57,21 @@ hr{
 	height: 20%;
 }
 
-/*icon*/
+/*picture*/
 .userIcon{
 	width: 20px;
 	height: 20px;
 }
 
+.logo{
+	width: 40px;
+	height: 40px;	
+}
+
+.little_logo{
+	width: 20px;
+	height: 20px;		
+}
 /*footer*/
 
 .footer{
@@ -73,12 +85,15 @@ hr{
 
 }
 
+/*comment time, name , icon*/
+
+
 /*share link*/
 
-a:link {color:#000000;}		/* 未被访问的链接 */
-a:visited {color:#000000;}	/* 已被访问的链接 */
-a:hover {color:#000000;}	/* 鼠标指针移动到链接上 */
-a:active {color:#000000;}	/* 正在被点击的链接 */
+a:link {color:#000000;}		/* 鏈璁块棶鐨勯摼鎺� */
+a:visited {color:#000000;}	/* 宸茶璁块棶鐨勯摼鎺� */
+a:hover {color:#000000;}	/* 榧犳爣鎸囬拡绉诲姩鍒伴摼鎺ヤ笂 */
+a:active {color:#000000;}	/* 姝ｅ湪琚偣鍑荤殑閾炬帴 */
 
 .sharelink{
 	margin-left: 60px;
@@ -89,4 +104,3 @@ a:active {color:#000000;}	/* 正在被点击的链接 */
 
 	font-weight: bolder;
 }
->>>>>>> 11.19 for integration

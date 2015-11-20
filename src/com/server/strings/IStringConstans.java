@@ -35,11 +35,11 @@ public interface IStringConstans
 //	String LOCAL_USER = "root";
 //	String LOCAL_PASSWORD = "ethink";
 	
-	String LOCAL_USER = "hikalif";
-	String LOCAL_PASSWORD = "140030";
+//	String LOCAL_USER = "hikalif";
+//	String LOCAL_PASSWORD = "140030";
 	
-//	String LOCAL_USER = "root";
-//	String LOCAL_PASSWORD = "software";
+	String LOCAL_USER = "root";
+	String LOCAL_PASSWORD = "software";
 	
 	String SAE_USER = "15owwk10j0";
 	String SAE_PASSWORD = "y43wy1wi4mhj1lhlwhjmixh13xkwjxk05m10w4y3";
@@ -48,16 +48,16 @@ public interface IStringConstans
 	String TIAN_YI_CLOUD_PASSWORD = "jCB2Q6ZaXpJrE";
 	
 	/*the url of the image*/
-	//String REMOTE_IMAGE_PATH = "http://172.16.1.246:8081/bootStrap/images_repo/";
-	//String REMOTE_IMAGE_PATH = "http://192.241.229.214:8080/bootStrap/images_repo/";
-	//String REMOTE_IMAGE_PATH = "http://124.172.185.128:8090/bootStrap/images_repo/";
+	String RELATIVE_IMAGE_PATH = "../images_repo/";
 	
-	//String REMOTE_IMAGE_PATH = "http://192.168.199.217:8080/bootStrap/images_repo/";
-	
-	//String REMOTE_IMAGE_PATH = "http://192.168.66.43:8082/bootStrap/images_repo/";
+	//Tian Yi cloud server
 	String REMOTE_IMAGE_PATH = "http://106.0.4.149:8082/bootStrap/images_repo/";
+	//cz's local path
+	//String REMOTE_IMAGE_PATH = "http://106.0.4.149:8082/bootStrap/images_repo/";
 	
-	//String REMOTE_IMAGE_PATH = "http://192.168.1.103:8080/bootStrap/images_repo/";
+	
+	//String REMOTE_IMAGE_PATH = "/images_repo/";
+	
 
 	
 	//this the remote image path in Tianyi cloud.
@@ -68,12 +68,12 @@ public interface IStringConstans
 	String PNG = "png";
 	
 	/*the level of the compression*/
-	long COMPRESSION_LEVEL_1 = 50 * 1024; 
-	float COMPRESSION_RATE_1 = 0.8f;
+	long COMPRESSION_LEVEL_1 = 500 * 1024; 
+	float COMPRESSION_RATE_1 = 0.3f;
 	long COMPRESSION_LEVEL_2 = 200 * 1024; 
 	float COMPRESSION_RATE_2 = 0.5f;
-	long COMPRESSION_LEVEL_3 = 500 * 1024; 
-	float COMPRESSION_RATE_3 = 0.3f;
+	long COMPRESSION_LEVEL_3 = 50 * 1024; 
+	float COMPRESSION_RATE_3 = 0.8f;
 	
 	/*Json response*/
 	String JSON_RESULT = "result";

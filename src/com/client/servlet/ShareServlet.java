@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 public class ShareServlet extends HttpServlet 
@@ -50,13 +51,21 @@ public class ShareServlet extends HttpServlet
 																			    +"limit 2", atyId, userId);
 		
 		List<String> distributedAty = db.getListBySql(distribute_select, "atyName");
+		
+		//get the comment about the activity
+		String query_comments = String.format("select user.userId, userName,userIcon,cmtContent,cmtTime " +
+				"from %s, %s, %s, %s " +
+				"where activity.atyId = evaluation.atyId and user.userId = evaluation.userId and comment.cmtId = evaluation.cmtId and activity.atyId='%s'", IStringConstans.ACTIVITY_TABLE_NAME, IStringConstans.COMMENT_TABLE_NAME, IStringConstans.EVALUATION_TABLE_NAME, IStringConstans.USER_TABLE_NAME, atyId); 
+
+		
+		JSONArray comments = db.commentsQueryGetJsonArrayWithTime(query_comments, "cmtTime");	
 				
 		db.close();
-		
-		
+				
 		req.setAttribute("atyInfo", atyInfo);
 		req.setAttribute("distributedAty", distributedAty);
 		req.setAttribute("photos", photos);
+		req.setAttribute("comments", comments);
 		req.getRequestDispatcher("/client_jsp/share.jsp").forward(req, resp);
 	}
 

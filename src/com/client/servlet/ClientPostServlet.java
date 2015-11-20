@@ -34,8 +34,8 @@ import com.server.db.UserDB;
 import com.server.strings.IStringConstans;
 import com.server.util.CreateId;
 import com.server.util.GzipHelper;
-import com.server.util.IconAndUrl;
 import com.server.util.TimeFilter;
+import com.server.util.imageHandler.IconAndUrl;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -63,8 +63,7 @@ public class ClientPostServlet extends HttpServlet
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		
-		//IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
-		IMAGE_PATH = getServletContext().getRealPath("/") + "images_repo/";
+		IMAGE_PATH = getServletContext().getRealPath("/") + IStringConstans.RELATIVE_IMAGE_PATH;
 //		IMAGE_PATH = req.getRealPath("/");
 		System.out.println(IMAGE_PATH);
 		
@@ -298,20 +297,24 @@ public class ClientPostServlet extends HttpServlet
 		JSONObject jsonObject = new JSONObject();
 		/*
 		 * test the createCommunity	*/
-		jsonObject.put("action", "createCommunity");
-		jsonObject.put("userId", "cc@qq.com");
-		jsonObject.put("ctyName", "a community name");
-		jsonObject.put("ctyType", "a community type");
-		jsonObject.put("ctyIntro", "cc@qq.com");
-		jsonObject.put("ctyIcon", "");
-	
+//		jsonObject.put("action", "createCommunity");
+//		jsonObject.put("userId", "cc@qq.com");
+//		jsonObject.put("ctyName", "a community name");
+//		jsonObject.put("ctyType", "a community type");
+//		jsonObject.put("ctyIntro", "cc@qq.com");
+//		jsonObject.put("ctyIcon", "");
+	 
 		
 		/*
 		 * test the releasebycty
 		*/
-		/*
+	
 		JSONArray album = new JSONArray();
+		
+		album.add("asfewgergregergre");
+		album.add("ffwevgtrbtr");
 		jsonObject.put("action", "releaseByCty");
+		jsonObject.put("atyCtyId", "aaaa");
 		jsonObject.put("userId", "cc@qq.com");
 		jsonObject.put("ctyId", "a community name20151016203152");
 		jsonObject.put("releaseTime", "Its release time");
@@ -329,7 +332,7 @@ public class ClientPostServlet extends HttpServlet
 		jsonObject.put("atyComments", "0");
 		jsonObject.put("atyAlbum", album.toString());
 		jsonObject.put("atyIsPublic", "toVisitors");
-		*/
+			/**/
 		
 		/*
 		 * test the editCommunity
@@ -2307,7 +2310,7 @@ public class ClientPostServlet extends HttpServlet
 		writeJson(resp, outJson.toString());
 	}
 	
-	//显示评论
+	//show all comments
 	private void showComments(HttpServletResponse resp, JSONObject jsobj)
 	{
 		String atyId = jsobj.getString("atyId");
