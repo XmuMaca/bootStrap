@@ -37,6 +37,7 @@ import com.server.util.GzipHelper;
 import com.server.util.TimeFilter;
 import com.server.util.imageHandler.IconAndUrl;
 
+import net.sf.json.JSON;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -285,6 +286,9 @@ public class ClientPostServlet extends HttpServlet
 		case "latestAtyOfUser":
 			latestAtyOfUser(resp, jsobj);
 			break;
+		case "search":
+			search(resp, jsobj);
+			break;
 		default:
 			break;
 		}
@@ -308,7 +312,7 @@ public class ClientPostServlet extends HttpServlet
 		/*
 		 * test the releasebycty
 		*/
-	
+	/*
 		JSONArray album = new JSONArray();
 		
 		album.add("asfewgergregergre");
@@ -332,7 +336,7 @@ public class ClientPostServlet extends HttpServlet
 		jsonObject.put("atyComments", "0");
 		jsonObject.put("atyAlbum", album.toString());
 		jsonObject.put("atyIsPublic", "toVisitors");
-			/**/
+			*/
 		
 		/*
 		 * test the editCommunity
@@ -340,6 +344,9 @@ public class ClientPostServlet extends HttpServlet
 //		jsonObject.put("action", "editCommunity");
 //		jsonObject.put("ctyId", "a community name20151016203043");
 //		jsonObject.put("ctyIntro", "the changed community introduction");
+		
+		jsonObject.put("action", "search");
+		jsonObject.put("keyWord", "c");
 		
 		return jsonObject;
 	}
@@ -3480,4 +3487,27 @@ public class ClientPostServlet extends HttpServlet
 		JSONArray out = db.queryGetJsonArray(distribute_select);
 		writeJson(resp, out.toString());
 	}
+	
+	/*search the users, communities and activities by key word*/
+	private void search(HttpServletResponse resp, JSONObject jsobj)
+	{
+		String keyWord = jsobj.getString("keyWord");
+		
+		String queryUser = "SELECT userName, userIcon FROM user WHERE userName like '%" + keyWord + "%'";
+		String queryAty = "SELECT atyName, atyType, atyContent FROM activity WHERE atyName like '%" + keyWord + "%'";
+		String queryCty = "SELECT ctyName, ctyIcon, ctyIntro FROM communnity WHERE ctyName like '%" + keyWord + "%'";
+		
+		JSONArray search_user = db.queryGetJsonArray(queryUser);
+		JSONArray search_aty = db.queryGetJsonArray(queryAty);
+		JSONArray search_cty = db.queryGetJsonArray(queryCty);
+		
+		JSONObject out = new JSONObject();
+		out.put("searchUser", search_user);
+		out.put("searchAty", search_aty);
+		out.put("searchCty", search_cty);
+		
+		writeJson(resp, out.toString());
+		
+	}
+	
 }
