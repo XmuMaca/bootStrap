@@ -66,12 +66,11 @@ public class ClientPostServlet extends HttpServlet
 		
 		IMAGE_PATH = getServletContext().getRealPath("/") + IStringConstans.RELATIVE_IMAGE_PATH;
 //		IMAGE_PATH = req.getRealPath("/");
-		System.out.println(IMAGE_PATH);
+//		System.out.println(IMAGE_PATH);
 		
-		db.createConnection();
-		JSONObject jsobj;
+		JSONObject jsobj;		
 		
-		if(!IStringConstans.DEBUG)
+		if(IStringConstans.DEBUG)
 		{
 			jsobj = testJson();
 		}
@@ -79,10 +78,13 @@ public class ClientPostServlet extends HttpServlet
 		{
 			jsobj = readJson(req);
 		}
-		System.out.println("jsobj: " + jsobj);
+//		System.out.println("jsobj: " + jsobj);
 		
 		String action = jsobj.getString("action");
-				
+		
+		db.createConnection();
+		db.setTransactionIsolation();
+		
 		switch (action) {
 		case "userChat":
 			userChat(resp, jsobj);
@@ -293,6 +295,7 @@ public class ClientPostServlet extends HttpServlet
 			break;
 		}
 		
+		db.commit();
 		db.close();
 	}
 	

@@ -36,7 +36,8 @@ public class DB
 			String password = IStringConstans.LOCAL_PASSWORD;
 			
 			connection = DriverManager.getConnection(url, user, password);
-			//System.out.print("connection succeed.");
+			
+			connection.setAutoCommit(false);
 			
 		}
 		catch (Exception e) 
@@ -81,6 +82,33 @@ public class DB
 		
 	}
 
+	public void commit()
+	{
+		try {
+			connection.commit();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+			try{
+				connection.rollback();
+			}
+			catch(Exception ex){
+				ex.printStackTrace();
+			}
+		}
+	}
+
+	public void setTransactionIsolation()
+	{
+		try {
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 	public JSONArray queryGetJsonArray(String sql)
 	{
 		JSONArray jsonArray = new JSONArray();
